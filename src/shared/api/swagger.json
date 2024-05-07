@@ -1,0 +1,1619 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "QRQ API",
+    "description": "QRQ core API",
+    "contact": {
+      "email": "garrigilmanov@gmail.com"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://virtserver.swaggerhub.com/riderufa/qrq_core/1.0.0",
+      "description": "SwaggerHub API Auto Mocking"
+    },
+    {
+      "url": "https://test.qrq.ru/core/api/v1/",
+      "description": "test qrq server"
+    },
+    {
+      "url": "http://127.0.0.1:8000/core/api/v1/",
+      "description": "local server"
+    }
+  ],
+  "paths": {
+    "/token": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "метод получения токенов",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserAuth"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "успешный ответ с токенами",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/token/refresh": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "метод обновления токена",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserAuthRefresh"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "успешный ответ с токеном",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessToken"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/token/verify": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "метод проверки токена",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserAuthVerify"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "успешный ответ с токеном"
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "метод получения информации о пользователе",
+        "operationId": "getUser",
+        "responses": {
+          "200": {
+            "description": "успешный ответ с информацией о пользователе",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "User"
+        ],
+        "summary": "метод изменения пользователя",
+        "operationId": "updateUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "успешный ответ с измененным пользователем",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "метод создания пользователя",
+        "operationId": "createUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "успешный ответ с созданным пользователем",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/companies/": {
+      "get": {
+        "tags": [
+          "Companies"
+        ],
+        "summary": "метод получения списка организаций пользователя",
+        "operationId": "getUserCompanies",
+        "responses": {
+          "200": {
+            "description": "успешный ответ со списком организаций пользователя",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Companies"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Companies"
+        ],
+        "summary": "метод создания организации пользователя",
+        "operationId": "createUserCompany",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Company"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "успешный ответ с созданной организацией пользователя",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Company"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/companies/{company_id}": {
+      "get": {
+        "tags": [
+          "Companies"
+        ],
+        "summary": "метод получения организации пользователя",
+        "operationId": "getUserCompany",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "description": "идентификатор организации",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "успешный ответ с организацией пользователя",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Company"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Companies"
+        ],
+        "summary": "метод изменения организации пользователя",
+        "operationId": "updateUserCompany",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "description": "идентификатор организации",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Company"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "успешный ответ с измененной организацией пользователя",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Company"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Companies"
+        ],
+        "summary": "метод удаления организации пользователя",
+        "operationId": "deleteUserCompany",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "description": "идентификатор организации",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_204"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/categories/": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "метод получения списка категорий",
+        "operationId": "getCategories",
+        "responses": {
+          "200": {
+            "description": "успешный ответ со списком категорий",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Categories"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "метод создания категории",
+        "operationId": "createCategory",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Category"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "успешный ответ с созданной категорией",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Category"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/categories/{category_id}": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "метод получения категории",
+        "operationId": "getCategory",
+        "parameters": [
+          {
+            "name": "category_id",
+            "in": "path",
+            "description": "идентификатор категории",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "успешный ответ с категорией",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Category"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "метод изменения категории",
+        "operationId": "updateCategory",
+        "parameters": [
+          {
+            "name": "category_id",
+            "in": "path",
+            "description": "идентификатор категории",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Category"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "успешный ответ с измененной категорией",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Category"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "метод удаления категории",
+        "operationId": "deleteCategory",
+        "parameters": [
+          {
+            "name": "category_id",
+            "in": "path",
+            "description": "идентификатор категории",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_204"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/bids/": {
+      "get": {
+        "tags": [
+          "Bids"
+        ],
+        "summary": "метод получения списка заявок",
+        "operationId": "getBids",
+        "responses": {
+          "200": {
+            "description": "успешный ответ со списком заявок",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Bids"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Bids"
+        ],
+        "summary": "метод создания заявки",
+        "operationId": "createBid",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Bid"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "успешный ответ с созданной заявкой",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Bid"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/pre_search": {
+      "post": {
+        "tags": [
+          "QWEP"
+        ],
+        "summary": "предварительный поиск",
+        "operationId": "getPreSearch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreSearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "успешный ответ с списком брендов",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreSearchResponses"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://test.qrq.ru/qwep/api/v1/",
+            "description": "test qwep server"
+          }
+        ]
+      }
+    },
+    "/search": {
+      "post": {
+        "tags": [
+          "QWEP"
+        ],
+        "summary": "поиск",
+        "operationId": "getSearch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "успешный ответ с списком предложений",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://test.qrq.ru/qwep/api/v1/",
+            "description": "test qwep server"
+          }
+        ]
+      }
+    },
+    "/vendors": {
+      "post": {
+        "tags": [
+          "QWEP"
+        ],
+        "summary": "метод получения списка поставщиков",
+        "operationId": "getVendors",
+        "responses": {
+          "200": {
+            "description": "успешный ответ с списком поставщиков",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Vendors"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://test.qrq.ru/qwep/api/v1/",
+            "description": "test qwep server"
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "writeOnly": true
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "date_of_birth": {
+            "type": "string",
+            "format": "date",
+            "example": "2022-07-01"
+          },
+          "phone": {
+            "type": "string"
+          }
+        }
+      },
+      "UserAuth": {
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "UserAuthRefresh": {
+        "required": [
+          "refresh"
+        ],
+        "type": "object",
+        "properties": {
+          "refresh": {
+            "type": "string"
+          }
+        }
+      },
+      "UserAuthVerify": {
+        "required": [
+          "token"
+        ],
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "Token": {
+        "type": "object",
+        "properties": {
+          "refresh": {
+            "type": "string"
+          },
+          "access": {
+            "type": "string"
+          }
+        }
+      },
+      "AccessToken": {
+        "type": "object",
+        "properties": {
+          "access": {
+            "type": "string"
+          }
+        }
+      },
+      "Company": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          }
+        }
+      },
+      "Companies": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Company"
+        }
+      },
+      "Category": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "Categories": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Category"
+        }
+      },
+      "Bid": {
+        "required": [
+          "amount",
+          "category",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "example": "2024-04-14T08:12:44.533679Z"
+          },
+          "status": {
+            "type": "integer",
+            "description": "dictionary:\n  * 0 Создана\n  * 1 Опубликована\n  * 2 Исполнена\n  * 3 Архивирована\n",
+            "default": 0,
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "integer"
+          },
+          "description": {
+            "type": "string"
+          },
+          "company": {
+            "type": "integer",
+            "description": "company_id"
+          },
+          "category": {
+            "type": "integer",
+            "description": "category_id"
+          }
+        }
+      },
+      "Bids": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Bid"
+        }
+      },
+      "PreSearchRequest": {
+        "type": "object",
+        "properties": {
+          "search": {
+            "type": "string"
+          }
+        }
+      },
+      "PreSearchResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "article": {
+            "type": "string"
+          },
+          "brand": {
+            "type": "string"
+          },
+          "part_name": {
+            "type": "string"
+          }
+        }
+      },
+      "PreSearchResponses": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/PreSearchResponse"
+        }
+      },
+      "PriceFilter": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "number"
+          },
+          "to": {
+            "type": "number"
+          }
+        }
+      },
+      "DeliveryFilter": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "integer"
+          },
+          "to": {
+            "type": "integer"
+          }
+        }
+      },
+      "Filters": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "article": {
+            "type": "string"
+          },
+          "price": {
+            "$ref": "#/components/schemas/PriceFilter"
+          },
+          "delivery": {
+            "$ref": "#/components/schemas/DeliveryFilter"
+          }
+        }
+      },
+      "ExcludeFilters": {
+        "type": "object",
+        "properties": {
+          "brand": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "vendor": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "city_id": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "SearchRequest": {
+        "required": [
+          "brand",
+          "search"
+        ],
+        "type": "object",
+        "properties": {
+          "search": {
+            "type": "string"
+          },
+          "brand": {
+            "type": "string"
+          },
+          "page_size": {
+            "type": "integer"
+          },
+          "page": {
+            "type": "integer"
+          },
+          "filters": {
+            "$ref": "#/components/schemas/Filters"
+          },
+          "exclude": {
+            "$ref": "#/components/schemas/ExcludeFilters"
+          }
+        }
+      },
+      "Item": {
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "string"
+          },
+          "fromClarification": {
+            "type": "string"
+          },
+          "brand": {
+            "type": "string"
+          },
+          "highlightBrand": {
+            "type": "string"
+          },
+          "article": {
+            "type": "string"
+          },
+          "originalArticle": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "photo": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "subway": {
+            "type": "string"
+          },
+          "warehouse": {
+            "type": "string"
+          },
+          "origWarehouse": {
+            "type": "string"
+          },
+          "delivery": {
+            "type": "string"
+          },
+          "deliveryStart": {
+            "type": "string"
+          },
+          "deliveryEnd": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "minQuantity": {
+            "type": "string"
+          },
+          "price": {
+            "$ref": "#/components/schemas/Item_price"
+          },
+          "quantity": {
+            "$ref": "#/components/schemas/Item_quantity"
+          },
+          "qwepCross": {
+            "type": "string"
+          },
+          "info": {
+            "$ref": "#/components/schemas/Item_info"
+          },
+          "vendorTitle": {
+            "type": "string"
+          },
+          "parsedDelivery": {
+            "type": "string"
+          }
+        }
+      },
+      "SearchResponse": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer"
+          },
+          "pages": {
+            "type": "integer"
+          },
+          "has_next": {
+            "type": "boolean"
+          },
+          "has_prev": {
+            "type": "boolean"
+          },
+          "items_count": {
+            "type": "integer"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Item"
+            }
+          },
+          "filters": {
+            "$ref": "#/components/schemas/SearchResponse_filters"
+          }
+        }
+      },
+      "Vendor": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "site": {
+            "type": "string"
+          },
+          "buskerUri": {
+            "type": "string"
+          },
+          "parameters": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "carProgram": {
+            "type": "boolean"
+          },
+          "truckProgram": {
+            "type": "boolean"
+          },
+          "singleSession": {
+            "type": "boolean"
+          },
+          "checkout": {
+            "type": "boolean"
+          },
+          "synonyms": {
+            "type": "string"
+          },
+          "branches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Vendor_branches"
+            }
+          },
+          "data": {
+            "$ref": "#/components/schemas/Vendor_data"
+          }
+        }
+      },
+      "Vendors": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Vendor"
+        }
+      },
+      "Error": {
+        "required": [
+          "detail"
+        ],
+        "type": "object",
+        "properties": {
+          "detail": {
+            "type": "string"
+          }
+        }
+      },
+      "inline_response_204": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Item_price": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "formatted": {
+            "type": "string"
+          }
+        }
+      },
+      "Item_quantity": {
+        "type": "object",
+        "properties": {
+          "sign": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "multiplicity": {
+            "type": "string"
+          },
+          "formatted": {
+            "type": "string"
+          }
+        }
+      },
+      "Item_info": {
+        "type": "object",
+        "properties": {
+          "supplyPercent": {
+            "type": "string"
+          },
+          "isRefundAvailable": {
+            "type": "string"
+          },
+          "refundDescription": {
+            "type": "string"
+          },
+          "isDealerWarehouse": {
+            "type": "string"
+          },
+          "isUsed": {
+            "type": "string"
+          },
+          "isMarkdown": {
+            "type": "string"
+          },
+          "vendorRating": {
+            "type": "string"
+          }
+        }
+      },
+      "SearchResponse_filters_cities": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      },
+      "SearchResponse_filters": {
+        "type": "object",
+        "properties": {
+          "brands": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "vendors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SearchResponse_filters_cities"
+            }
+          }
+        }
+      },
+      "Vendor_branches": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "site": {
+            "type": "string"
+          }
+        }
+      },
+      "Vendor_data": {
+        "type": "object",
+        "properties": {
+          "delivery": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "forPhysicFaces": {
+            "type": "boolean"
+          },
+          "hasPassengerProgram": {
+            "type": "boolean"
+          },
+          "hasTruckProgram": {
+            "type": "boolean"
+          },
+          "html": {
+            "type": "string"
+          },
+          "juristTitle": {
+            "type": "string"
+          },
+          "marks": {
+            "type": "string"
+          },
+          "officeAddress": {
+            "type": "string"
+          },
+          "parts": {
+            "type": "string"
+          },
+          "payment": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "rating": {
+            "type": "string"
+          },
+          "regions": {
+            "type": "string"
+          },
+          "schedule": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "tutorial": {
+            "type": "string"
+          },
+          "warehouseAddress": {
+            "type": "string"
+          },
+          "website": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
