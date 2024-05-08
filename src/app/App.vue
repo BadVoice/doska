@@ -8,6 +8,7 @@
   import type { Item, SearchPagination, SearchResponseFilters } from '@/shared/api/generated/data-contracts';
   import { getSearchService } from '@/shared/api/api';
 
+
   const route = useRoute();
   const router = useRouter();
 
@@ -219,6 +220,7 @@
 </script>
 
 <template>
+  <NprogressContainer></NprogressContainer>
   <div class="flex flex-row bg-white">
     <div class="flex w-full flex-col items-center sm:max-w-[356px]">
       <Header
