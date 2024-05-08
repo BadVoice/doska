@@ -8,6 +8,7 @@
   import type { Item, SearchPagination, SearchResponseFilters } from '@/shared/api/generated/data-contracts';
   import { getSearchService } from '@/shared/api/api';
 
+
   const route = useRoute();
   const router = useRouter();
 
