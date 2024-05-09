@@ -25,7 +25,7 @@
   }
 
   const searchTerm = ref('');
-  const emit = defineEmits(['submitSearch']);
+  const emit = defineEmits(['submitSearch', 'submitLogin']);
 
   const handleInput = (() => {
     emit('submitSearch', searchTerm.value);
@@ -79,7 +79,7 @@
          variant="ghost">
          <img
            src="./assets/backIcon.svg"
-           class="h-8 w-8 select-none"
+           class="h-6 w-6 select-none"
            alt="arrow" />
        </Button>
      </RouterLink>
@@ -87,7 +87,7 @@
         <Button @click="visibleSearch = true" size="icon" variant="ghost">
           <Search />
         </Button>
-        <Button size="icon" variant="ghost">
+        <Button @click="emit('submitLogin', true)" size="icon" variant="ghost">
           <img src="./assets/login.svg" alt="login" />
         </Button>
         <Button size="icon" variant="ghost">

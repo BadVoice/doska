@@ -7,6 +7,7 @@
   import { Offers } from '@/widgets/offers';
   import type { Item, SearchPagination, SearchResponseFilters } from '@/shared/api/generated/data-contracts';
   import { getSearchService } from '@/shared/api/api';
+  import { Auth } from '@/widgets/auth';
 
 
   const route = useRoute();
@@ -147,6 +148,7 @@
   });
 
   const isMobile = ref(false);
+  const isAuthOpen = ref(false)
   const selectedAdvertisement = ref(false);
 
   defineEmits(['advertisementItems']);
@@ -224,9 +226,9 @@
   <div class="flex flex-row bg-white">
     <div class="flex w-full flex-col items-center sm:max-w-[356px]">
       <Header
-        v-if="!isProductCardOpen && isMobile && !isFilterCardOpen"
+        v-if="!isProductCardOpen && isMobile && !isFilterCardOpen && !isAuthOpen"
         @submitSearch="handleSearchSubmit" />
-      <Header v-if="!isMobile" @submitSearch="handleSearchSubmit" />
+      <Header v-if="!isMobile && !isAuthOpen" @submitSearch="handleSearchSubmit" @submit-login="isAuthOpen = true"  />
       <div v-if="isMobile && selectedAdvertisement" class="w-full">
         <ProductCard
           v-if="productItem"
@@ -260,20 +262,21 @@
           class="flex w-full" />
       </div>
       <router-view
-        v-if="!selectedAdvertisement && !isMobile"
+        v-if="!selectedAdvertisement && !isMobile && !isAuthOpen"
         @advertisementItems="handleAdvertisementItems"
         @advertisementFilters="handleAdvertisementFilters"
         v-model:pagination="pagination" />
       <router-view
-        v-if="!selectedAdvertisement && isMobile"
+        v-if="!selectedAdvertisement && isMobile && !isAuthOpen"
         @advertisementItems="handleAdvertisementItems"
         @advertisementFilters="handleAdvertisementFilters"
         v-model:pagination="pagination" />
       <router-view
-        v-else-if="selectedAdvertisement && !isMobile"
+        v-else-if="selectedAdvertisement && !isMobile && !isAuthOpen"
         @advertisementItems="handleAdvertisementItems"
         @advertisementFilters="handleAdvertisementFilters"
         v-model:pagination="pagination" />
+      <Auth v-if="isAuthOpen" @submit-close-auth="isAuthOpen = false"/>
     </div>
     <div v-if="!isMobile" class="flex-grow bg-[#F9FAFB]">
 
