@@ -25,9 +25,7 @@
   "paths": {
     "/token": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "метод получения токенов",
         "requestBody": {
           "content": {
@@ -65,9 +63,7 @@
     },
     "/token/refresh": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "метод обновления токена",
         "requestBody": {
           "content": {
@@ -105,9 +101,7 @@
     },
     "/token/verify": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "метод проверки токена",
         "requestBody": {
           "content": {
@@ -138,9 +132,7 @@
     },
     "/user": {
       "get": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "метод получения информации о пользователе",
         "operationId": "getUser",
         "responses": {
@@ -172,9 +164,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "метод изменения пользователя",
         "operationId": "updateUser",
         "requestBody": {
@@ -216,9 +206,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "метод создания пользователя",
         "operationId": "createUser",
         "requestBody": {
@@ -257,9 +245,7 @@
     },
     "/companies/": {
       "get": {
-        "tags": [
-          "Companies"
-        ],
+        "tags": ["Companies"],
         "summary": "метод получения списка организаций пользователя",
         "operationId": "getUserCompanies",
         "responses": {
@@ -291,9 +277,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Companies"
-        ],
+        "tags": ["Companies"],
         "summary": "метод создания организации пользователя",
         "operationId": "createUserCompany",
         "requestBody": {
@@ -337,9 +321,7 @@
     },
     "/companies/{company_id}": {
       "get": {
-        "tags": [
-          "Companies"
-        ],
+        "tags": ["Companies"],
         "summary": "метод получения организации пользователя",
         "operationId": "getUserCompany",
         "parameters": [
@@ -384,9 +366,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "Companies"
-        ],
+        "tags": ["Companies"],
         "summary": "метод изменения организации пользователя",
         "operationId": "updateUserCompany",
         "parameters": [
@@ -441,9 +421,7 @@
         ]
       },
       "delete": {
-        "tags": [
-          "Companies"
-        ],
+        "tags": ["Companies"],
         "summary": "метод удаления организации пользователя",
         "operationId": "deleteUserCompany",
         "parameters": [
@@ -490,9 +468,7 @@
     },
     "/categories/": {
       "get": {
-        "tags": [
-          "Categories"
-        ],
+        "tags": ["Categories"],
         "summary": "метод получения списка категорий",
         "operationId": "getCategories",
         "responses": {
@@ -524,9 +500,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Categories"
-        ],
+        "tags": ["Categories"],
         "summary": "метод создания категории",
         "operationId": "createCategory",
         "requestBody": {
@@ -570,9 +544,7 @@
     },
     "/categories/{category_id}": {
       "get": {
-        "tags": [
-          "Categories"
-        ],
+        "tags": ["Categories"],
         "summary": "метод получения категории",
         "operationId": "getCategory",
         "parameters": [
@@ -617,9 +589,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "Categories"
-        ],
+        "tags": ["Categories"],
         "summary": "метод изменения категории",
         "operationId": "updateCategory",
         "parameters": [
@@ -674,9 +644,7 @@
         ]
       },
       "delete": {
-        "tags": [
-          "Categories"
-        ],
+        "tags": ["Categories"],
         "summary": "метод удаления категории",
         "operationId": "deleteCategory",
         "parameters": [
@@ -723,9 +691,7 @@
     },
     "/bids/": {
       "get": {
-        "tags": [
-          "Bids"
-        ],
+        "tags": ["Bids"],
         "summary": "метод получения списка заявок",
         "operationId": "getBids",
         "responses": {
@@ -757,9 +723,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Bids"
-        ],
+        "tags": ["Bids"],
         "summary": "метод создания заявки",
         "operationId": "createBid",
         "requestBody": {
@@ -803,9 +767,7 @@
     },
     "/pre_search": {
       "post": {
-        "tags": [
-          "QWEP"
-        ],
+        "tags": ["QWEP"],
         "summary": "предварительный поиск",
         "operationId": "getPreSearch",
         "requestBody": {
@@ -855,9 +817,7 @@
     },
     "/search": {
       "post": {
-        "tags": [
-          "QWEP"
-        ],
+        "tags": ["QWEP"],
         "summary": "поиск",
         "operationId": "getSearch",
         "requestBody": {
@@ -907,9 +867,7 @@
     },
     "/vendors": {
       "post": {
-        "tags": [
-          "QWEP"
-        ],
+        "tags": ["QWEP"],
         "summary": "метод получения списка поставщиков",
         "operationId": "getVendors",
         "responses": {
@@ -951,10 +909,7 @@
   "components": {
     "schemas": {
       "User": {
-        "required": [
-          "email",
-          "password"
-        ],
+        "required": ["email", "password"],
         "type": "object",
         "properties": {
           "email": {
@@ -982,10 +937,7 @@
         }
       },
       "UserAuth": {
-        "required": [
-          "email",
-          "password"
-        ],
+        "required": ["email", "password"],
         "type": "object",
         "properties": {
           "email": {
@@ -997,9 +949,7 @@
         }
       },
       "UserAuthRefresh": {
-        "required": [
-          "refresh"
-        ],
+        "required": ["refresh"],
         "type": "object",
         "properties": {
           "refresh": {
@@ -1008,9 +958,7 @@
         }
       },
       "UserAuthVerify": {
-        "required": [
-          "token"
-        ],
+        "required": ["token"],
         "type": "object",
         "properties": {
           "token": {
@@ -1080,11 +1028,7 @@
         }
       },
       "Bid": {
-        "required": [
-          "amount",
-          "category",
-          "name"
-        ],
+        "required": ["amount", "category", "name"],
         "type": "object",
         "properties": {
           "id": {
@@ -1101,12 +1045,7 @@
             "type": "integer",
             "description": "dictionary:\n  * 0 Создана\n  * 1 Опубликована\n  * 2 Исполнена\n  * 3 Архивирована\n",
             "default": 0,
-            "enum": [
-              0,
-              1,
-              2,
-              3
-            ]
+            "enum": [0, 1, 2, 3]
           },
           "name": {
             "type": "string"
@@ -1227,10 +1166,7 @@
         }
       },
       "SearchRequest": {
-        "required": [
-          "brand",
-          "search"
-        ],
+        "required": ["brand", "search"],
         "type": "object",
         "properties": {
           "search": {
@@ -1419,9 +1355,7 @@
         }
       },
       "Error": {
-        "required": [
-          "detail"
-        ],
+        "required": ["detail"],
         "type": "object",
         "properties": {
           "detail": {

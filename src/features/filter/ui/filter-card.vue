@@ -7,9 +7,17 @@
   import { getSearchService } from '@/shared/api/api';
   import { useRoute, useRouter } from 'vue-router';
 
-  import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue';
+  import {
+    Listbox,
+    ListboxButton,
+    ListboxOption,
+    ListboxOptions,
+  } from '@headlessui/vue';
 
-  import type { SearchPagination, SearchResponseFilters } from '@/shared/api/generated/data-contracts';
+  import type {
+    SearchPagination,
+    SearchResponseFilters,
+  } from '@/shared/api/generated/data-contracts';
 
   defineProps<{
     isFilterCardOpen: boolean;
@@ -24,8 +32,7 @@
   });
 
   const selectedVendors = ref([] as string[]);
-  const selectedBrands = ref(["none"] as string[]);
-
+  const selectedBrands = ref(['none'] as string[]);
 
   interface City {
     id: number;
@@ -36,7 +43,7 @@
     (newFilter, oldFilter) => {
       filter.value = newFilter;
     },
-    { deep: true }
+    { deep: true },
   );
 
   const selectedCities = ref([] as City[]);
@@ -55,7 +62,11 @@
   const router = useRouter();
   const search = computed(() => route.query.search);
 
-  const emit = defineEmits(['close-filter-card', 'filtered-items-came', 'filterChanged']);
+  const emit = defineEmits([
+    'close-filter-card',
+    'filtered-items-came',
+    'filterChanged',
+  ]);
   function closeFilter() {
     emit('close-filter-card', false);
   }
@@ -93,7 +104,7 @@
     };
     router.replace({ query });
   };
-  
+
   const onSubmit = (event: Event) => {
     event.preventDefault();
     form.validate();
@@ -127,7 +138,7 @@
               brand: brands,
               vendor: vendors,
               city_id: cityIds,
-            }
+            },
           });
           emit('filtered-items-came', items.items);
           pagination.value = {
@@ -144,9 +155,7 @@
     }
   };
 
-
   const resetForm = () => {
-
     selectedVendors.value = [];
     selectedBrands.value = [];
     selectedCities.value = [];
@@ -158,9 +167,9 @@
     form.values.countFrom = '';
     form.values.countTo = '';
 
-    onSubmit(new Event('submit') );
+    onSubmit(new Event('submit'));
     updateUrl({});
-  }
+  };
 
   const showClearButton = computed(() => {
     return (
@@ -170,11 +179,9 @@
       form.values.priceTo !== initialPriceTo.value ||
       form.values.countFrom !== initialCountFrom.value ||
       form.values.countTo !== initialCountTo.value ||
-
       selectedVendors.value.length !== initialVendors.value.length ||
       selectedBrands.value.length !== initialBrands.value.length ||
       selectedCities.value.length !== initialCities.value.length
-
     );
   });
 </script>
@@ -182,23 +189,24 @@
 <template>
   <div
     v-if="isFilterCardOpen"
-    class="flex h-screen w-full flex-col bg-white justify-between  lg:max-w-[355px]">
+    class="flex h-screen w-full flex-col justify-between bg-white lg:max-w-[355px]">
     <div
       @click="closeFilter"
-      class=" flex cursor-pointer justify-between items-center gap-x-2 border-b border-l border-r border-[#D0D4DB] px-2 py-4">
-    <div class="flex group items-center gap-x-2">
-      <Button variant="ghost" size="icon">
-        <X class="h-7 w-7 text-primary group-hover:text-primary/70" />
-      </Button>
-      <p
-        class="text-center text-[17px] text-primary group-hover:text-primary/70">
-        Закрыть
-      </p>
-    </div>
+      class="flex cursor-pointer items-center justify-between gap-x-2 border-b border-l border-r border-[#D0D4DB] px-2 py-4">
+      <div class="group flex items-center gap-x-2">
+        <Button variant="ghost" size="icon">
+          <X class="h-7 w-7 text-primary group-hover:text-primary/70" />
+        </Button>
+        <p
+          class="text-center text-[17px] text-primary group-hover:text-primary/70">
+          Закрыть
+        </p>
+      </div>
       <div>
         <div
-          v-if="showClearButton"  @click="resetForm"
-          class="group flex cursor-pointer items-center gap-x-2  px-2 py-2">
+          v-if="showClearButton"
+          @click="resetForm"
+          class="group flex cursor-pointer items-center gap-x-2 px-2 py-2">
           <p
             class="text-center text-[17px] text-primary group-hover:text-primary/70">
             Очистить
@@ -209,7 +217,7 @@
 
     <form
       @submit="onSubmit"
-      class="flex flex-col h-[calc(100%-64px)] bg-white justify-between border-l border-r border-[#D0D4DB]">
+      class="flex h-[calc(100%-64px)] flex-col justify-between border-l border-r border-[#D0D4DB] bg-white">
       <div class="flex flex-col gap-y-4 p-4">
         <p class="text-[20px] font-semibold text-[#101828]">Фильтр</p>
 
@@ -221,16 +229,35 @@
 
         <div class="relative inline-block text-left">
           <Listbox v-model="selectedCities" multiple>
-            <p class="text-[13px] py-2 font-semibold text-[#101828]">Населенный пункт</p>
-            <ListboxButton class="inline-flex justify-between w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm font-medium  hover:bg-gray-50">
-              <p class=" text-sm text-gray-400 font-normal">Населенный пункт</p>
+            <p class="py-2 text-[13px] font-semibold text-[#101828]">
+              Населенный пункт
+            </p>
+            <ListboxButton
+              class="inline-flex w-full justify-between rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium shadow-sm hover:bg-gray-50">
+              <p class="text-sm font-normal text-gray-400">Населенный пункт</p>
             </ListboxButton>
 
-            <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100" leave-to-class="opacity-0">
-              <ListboxOptions class="absolute z-10 mt-1 w-full shadow-lg max-h-36 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm bg-white">
-                <ListboxOption v-for="item in filters.cities" :key="item.id" :value="item" as="template">
-                  <li class="text-gray-900 cursor-pointer bg-blue-200 rounded hover:bg-blue-100 select-none  my-1 mx-1 py-2 pl-3 pr-9" :class="{ 'text-black bg-gray-50 ': selectedCities.some(city => city.id === item.id)}">
-                    <span class="font-normal block truncate"> {{ item.title }}</span>
+            <transition
+              leave-active-class="transition ease-in duration-100"
+              leave-from-class="opacity-100"
+              leave-to-class="opacity-0">
+              <ListboxOptions
+                class="absolute z-10 mt-1 max-h-36 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                <ListboxOption
+                  v-for="item in filters.cities"
+                  :key="item.id"
+                  :value="item"
+                  as="template">
+                  <li
+                    class="mx-1 my-1 cursor-pointer select-none rounded bg-blue-200 py-2 pl-3 pr-9 text-gray-900 hover:bg-blue-100"
+                    :class="{
+                      'bg-gray-50 text-black ': selectedCities.some(
+                        (city) => city.id === item.id,
+                      ),
+                    }">
+                    <span class="block truncate font-normal">
+                      {{ item.title }}</span
+                    >
                   </li>
                 </ListboxOption>
               </ListboxOptions>
@@ -256,16 +283,31 @@
 
         <div class="relative inline-block text-left">
           <Listbox v-model="selectedVendors" multiple>
-            <p class="text-[13px] py-2 font-semibold text-[#101828]">Поставщик</p>
-            <ListboxButton class="inline-flex justify-between w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm font-medium  hover:bg-gray-50">
-              <p class=" text-sm text-gray-400 font-normal">Поставщик</p>
+            <p class="py-2 text-[13px] font-semibold text-[#101828]">
+              Поставщик
+            </p>
+            <ListboxButton
+              class="inline-flex w-full justify-between rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium shadow-sm hover:bg-gray-50">
+              <p class="text-sm font-normal text-gray-400">Поставщик</p>
             </ListboxButton>
 
-            <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100" leave-to-class="opacity-0">
-              <ListboxOptions class="absolute z-10 mt-1 w-full shadow-lg max-h-36 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm bg-white">
-                <ListboxOption v-for="item in filters.vendors" :key="item" :value="item" as="template">
-                  <li class="text-gray-900 cursor-pointer bg-blue-200 rounded hover:bg-blue-100 select-none  my-1 mx-1 py-2 pl-3 pr-9" :class="{ 'text-black bg-gray-50 ': selectedVendors.includes(item) }">
-                    <span class="font-normal block truncate">{{ item }}</span>
+            <transition
+              leave-active-class="transition ease-in duration-100"
+              leave-from-class="opacity-100"
+              leave-to-class="opacity-0">
+              <ListboxOptions
+                class="absolute z-10 mt-1 max-h-36 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                <ListboxOption
+                  v-for="item in filters.vendors"
+                  :key="item"
+                  :value="item"
+                  as="template">
+                  <li
+                    class="mx-1 my-1 cursor-pointer select-none rounded bg-blue-200 py-2 pl-3 pr-9 text-gray-900 hover:bg-blue-100"
+                    :class="{
+                      'bg-gray-50 text-black ': selectedVendors.includes(item),
+                    }">
+                    <span class="block truncate font-normal">{{ item }}</span>
                   </li>
                 </ListboxOption>
               </ListboxOptions>
@@ -274,25 +316,39 @@
         </div>
 
         <div class="relative inline-block text-left">
-          <Listbox v-model="selectedBrands" multiple >
-            <p class="text-[13px] pb-2 font-semibold text-[#101828]">Бренд</p>
-            <ListboxButton class="inline-flex justify-between w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
-              <p class=" text-sm text-gray-400 font-normal">Бренд</p>
+          <Listbox v-model="selectedBrands" multiple>
+            <p class="pb-2 text-[13px] font-semibold text-[#101828]">Бренд</p>
+            <ListboxButton
+              class="inline-flex w-full justify-between rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none">
+              <p class="text-sm font-normal text-gray-400">Бренд</p>
             </ListboxButton>
-            <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100" leave-to-class="opacity-0">
-              <ListboxOptions class="absolute z-10 mt-1 w-full shadow-lg max-h-36 rounded-md py-1 bg-white text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-                <ListboxOption v-for="item in filters.brands" :key="item" :value="item" as="template">
-                    <li class="text-gray-900 cursor-pointer bg-blue-200 rounded hover:bg-blue-100 select-none  my-1 mx-1 py-2 pl-3 pr-9" :class="{ 'text-black bg-gray-50 ': selectedBrands.includes(item) }">
-                      <span class="font-normal block truncate" >{{ item }}</span>
-                    </li>
+            <transition
+              leave-active-class="transition ease-in duration-100"
+              leave-from-class="opacity-100"
+              leave-to-class="opacity-0">
+              <ListboxOptions
+                class="absolute z-10 mt-1 max-h-36 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                <ListboxOption
+                  v-for="item in filters.brands"
+                  :key="item"
+                  :value="item"
+                  as="template">
+                  <li
+                    class="mx-1 my-1 cursor-pointer select-none rounded bg-blue-200 py-2 pl-3 pr-9 text-gray-900 hover:bg-blue-100"
+                    :class="{
+                      'bg-gray-50 text-black ': selectedBrands.includes(item),
+                    }">
+                    <span class="block truncate font-normal">{{ item }}</span>
+                  </li>
                 </ListboxOption>
               </ListboxOptions>
             </transition>
           </Listbox>
         </div>
-  </div>
+      </div>
 
-      <div class="w-full border-t border-[#CCD0D9] p-4 md:min-w-[305px] bg-[#F9FAFB]">
+      <div
+        class="w-full border-t border-[#CCD0D9] bg-[#F9FAFB] p-4 md:min-w-[305px]">
         <Button class="w-full text-[17px] font-semibold" type="submit">
           Применить фильтр
         </Button>

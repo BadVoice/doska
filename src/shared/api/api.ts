@@ -7,18 +7,23 @@ import type {
 import axios from 'axios';
 import NProgress from 'nprogress';
 
-const $api = axios.create()
+const $api = axios.create();
 
-$api.interceptors.request.use(config => {
-  NProgress.start()
-  return config
-})
+$api.interceptors.request.use((config) => {
+  NProgress.start();
+  return config;
+});
 
-$api.interceptors.response.use(response => {
-  NProgress.done()
-  return response
-})
-
+$api.interceptors.response.use(
+  (response) => {
+    NProgress.done();
+    return response;
+  },
+  (response) => {
+    NProgress.done();
+    return response;
+  },
+);
 
 async function preSearchService(data: PreSearchRequest) {
   try {
@@ -44,7 +49,7 @@ export async function getSearchService(
   try {
     return await $api
       .post<SearchResponse>('/qwep/api/v1/search', data)
-      .then((response) => response.data );
+      .then((response) => response.data);
   } catch (error) {
     console.error(error);
     throw error;

@@ -2,7 +2,10 @@
   import { Button } from '@/shared/ui/button';
 
   import { defineProps, onMounted, onUnmounted, ref } from 'vue';
-  import type { Item, SearchPagination } from '@/shared/api/generated/data-contracts';
+  import type {
+    Item,
+    SearchPagination,
+  } from '@/shared/api/generated/data-contracts';
   import { OfferList } from '@/entities/offer';
   import { useRoute } from 'vue-router';
 
@@ -76,12 +79,15 @@
 
 <template>
   <div class="flex flex-col">
-    <div  v-if="route.path === '/advertisements' && route.query['active-pre-search']" class="w-full min-w-[350px]">
+    <div
+      v-if="
+        route.path === '/advertisements' && route.query['active-pre-search']
+      "
+      class="w-full min-w-[350px]">
       <div
         v-if="route.path === '/advertisements'"
-        class="flex items-center justify-between border-b border-r border-[#D0D4DB] p-4 pr-5 bg-white">
-        <h3
-          class="text-[18px] font-semibold">
+        class="flex items-center justify-between border-b border-r border-[#D0D4DB] bg-white p-4 pr-5">
+        <h3 class="text-[18px] font-semibold">
           {{ getAnnouncementText(pagination.items_count) }}
         </h3>
         <Button
@@ -99,18 +105,25 @@
 
     <div
       v-if="route.path == '/advertisements'"
-      class="custom-scrollbar flex sm:max-h-[calc(100vh-150px)] flex-col items-center gap-4 h-[100vh] overflow-auto bg-[#F9FAFB] p-4">
-      <OfferList class="h-full" v-if="route.path == '/advertisements' && route.query['active-pre-search']" :offers-items="offersItems" @offer-clicked="handleItemClick" />
+      class="custom-scrollbar flex h-[100vh] flex-col items-center gap-4 overflow-auto bg-[#F9FAFB] p-4 sm:max-h-[calc(100vh-150px)]">
+      <OfferList
+        class="h-full"
+        v-if="
+          route.path == '/advertisements' && route.query['active-pre-search']
+        "
+        :offers-items="offersItems"
+        @offer-clicked="handleItemClick" />
     </div>
 
-    <div v-if="route.path === '/advertisements'"  class="flex bg-[#F9FAFB] py-4">
+    <div v-if="route.path === '/advertisements'" class="flex bg-[#F9FAFB] py-4">
       <Pagination
-        v-if="route.path == '/advertisements' && route.query['active-pre-search']"
+        v-if="
+          route.path == '/advertisements' && route.query['active-pre-search']
+        "
         v-slot="{ page }"
         :total="pagination.items_count"
         :sibling-count="1"
         :show-edges="!isMobile"
-
         @update:page="(value) => $emit('page-selected', value)"
         v-model:page="pagination.page"
         class="mx-auto gap-1 sm:-translate-x-1 sm:gap-2">
@@ -137,10 +150,10 @@
       </Pagination>
     </div>
   </div>
-<!--    <div-->
-<!--      v-else-->
-<!--      class="custom-scrollbar h-[calc(100vh-73px)] overflow-auto bg-[#F9FAFB]"></div>-->
-<!--  </div>-->
+  <!--    <div-->
+  <!--      v-else-->
+  <!--      class="custom-scrollbar h-[calc(100vh-73px)] overflow-auto bg-[#F9FAFB]"></div>-->
+  <!--  </div>-->
 </template>
 
 <style scoped>
