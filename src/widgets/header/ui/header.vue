@@ -19,17 +19,17 @@
 
   function handleSubmitSearch(event: Event) {
     event.preventDefault();
-    if(searchTerm.value !== '') {
+    if (searchTerm.value !== '') {
       handleInput();
     }
   }
 
   const searchTerm = ref('');
-  const emit = defineEmits(['submitSearch']);
+  const emit = defineEmits(['submitSearch', 'createClicked']);
 
-  const handleInput = (() => {
+  const handleInput = () => {
     emit('submitSearch', searchTerm.value);
-  });
+  };
 
   function handleWheel(event: WheelEvent) {
     event.preventDefault();
@@ -52,10 +52,8 @@
   });
 
   const activeButton = computed(() => {
-    return buttonList.value.find(button => button.link === route.path);
+    return buttonList.value.find((button) => button.link === route.path);
   });
-
-
 </script>
 
 <template>
@@ -70,19 +68,19 @@
           </RouterLink>
         </div>
       </div>
-     <RouterLink to="/">
-       <Button
-         class="-ml-2"
-         v-if="visibleSearch"
-         @click="visibleSearch = false"
-         size="icon"
-         variant="ghost">
-         <img
-           src="./assets/backIcon.svg"
-           class="h-8 w-8 select-none"
-           alt="arrow" />
-       </Button>
-     </RouterLink>
+      <RouterLink to="/">
+        <Button
+          class="-ml-2"
+          v-if="visibleSearch"
+          @click="visibleSearch = false"
+          size="icon"
+          variant="ghost">
+          <img
+            src="./assets/backIcon.svg"
+            class="h-8 w-8 select-none"
+            alt="arrow" />
+        </Button>
+      </RouterLink>
       <div v-if="!visibleSearch" class="flex items-center gap-0">
         <Button @click="visibleSearch = true" size="icon" variant="ghost">
           <Search />
@@ -90,7 +88,7 @@
         <Button size="icon" variant="ghost">
           <img src="./assets/login.svg" alt="login" />
         </Button>
-        <Button size="icon" variant="ghost">
+        <Button size="icon" variant="ghost" @click="$emit('createClicked')">
           <img src="./assets/create.svg" alt="create" />
         </Button>
       </div>
@@ -112,8 +110,7 @@
           type="text"
           @focus="formFocused = true"
           @blur="formFocused = false"
-          class="border-0 py-0 focus:outline-none"
-          />
+          class="border-0 py-0 focus:outline-none" />
       </form>
     </div>
     <div class="flex w-full items-center justify-between gap-6 py-4 pl-4">
@@ -125,13 +122,14 @@
           v-for="button of buttonList"
           :key="button.label"
           :to="button?.link"
-
           class="mr-4 inline-block focus:outline-none">
           <Button
             variant="outline"
             :class="{
-              'border-[#0017FC] bg-[#1778EA] bg-opacity-10 text-[#0017FC] hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10 hover:text-[#0017FC]': button.link === activeButton?.link,
-              'border-[#D0D4DB] bg-[#F9FAFB] text-[#858FA3] hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10 hover:text-[#0017FC]': button.link !== activeButton?.link
+              'border-[#0017FC] bg-[#1778EA] bg-opacity-10 text-[#0017FC] hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10 hover:text-[#0017FC]':
+                button.link === activeButton?.link,
+              'border-[#D0D4DB] bg-[#F9FAFB] text-[#858FA3] hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10 hover:text-[#0017FC]':
+                button.link !== activeButton?.link,
             }"
             class="max-h-[28px] rounded-lg"
             size="sm">

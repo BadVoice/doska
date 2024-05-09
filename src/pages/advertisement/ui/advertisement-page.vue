@@ -125,7 +125,9 @@
         :search-result="searchResult"
         @advertisementClicked="handleCardClicked" />
     </template>
-    <SearchHistory  class="custom-scrollbar h-full overflow-auto" v-if="route.path === '/search-history'" />
+    <SearchHistory
+      class="custom-scrollbar h-full overflow-auto"
+      v-if="route.path === '/search-history'" />
   </div>
 </template>
 

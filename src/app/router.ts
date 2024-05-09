@@ -21,19 +21,19 @@ const router = createRouter({
       path: '/search-history',
       name: 'search-history',
       component: SearchHistory,
-    }
+    },
   ],
 });
 
 router.beforeResolve((to, from, next) => {
   if (to.name) {
-    NProgress.start()
+    NProgress.start();
   }
-  next()
-})
+  next();
+});
 
 router.afterEach(() => {
-  NProgress.done()
-})
+  NProgress.done();
+});
 
 export default router;

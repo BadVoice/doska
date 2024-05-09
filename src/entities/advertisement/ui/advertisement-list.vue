@@ -1,5 +1,8 @@
 <script setup lang="ts">
-  import type { PreSearchResponse, PreSearchResponses } from '@/shared/api/generated/data-contracts';
+  import type {
+    PreSearchResponse,
+    PreSearchResponses,
+  } from '@/shared/api/generated/data-contracts';
   import { defineProps, ref } from 'vue';
   import { useRoute } from 'vue-router';
   import { cn } from '@/shared/lib';

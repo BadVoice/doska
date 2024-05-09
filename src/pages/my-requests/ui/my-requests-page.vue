@@ -4,20 +4,16 @@
 
   const emit = defineEmits(['open-filter']);
   const handleFilterClick = () => {
-  emit('open-filter');
-};
-
+    emit('open-filter');
+  };
 </script>
 
 <template>
   <div class="w-full">
     <div
       class="flex items-center justify-between border-b border-r border-[#D0D4DB] p-2 pr-5">
-      <h3 class="text-[18px] font-semibold ">Мои заявки</h3>
-      <Button
-        @click="handleFilterClick"
-        size="icon"
-        variant="ghost">
+      <h3 class="text-[18px] font-semibold">Мои заявки</h3>
+      <Button @click="handleFilterClick" size="icon" variant="ghost">
         <img src="../assets/filterIcon.svg" alt="filterIcon" />
       </Button>
     </div>
@@ -39,5 +35,3 @@
     </div>
   </div>
 </template>
-
-<style scoped lang="postcss"></style>
