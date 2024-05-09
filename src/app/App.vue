@@ -11,7 +11,10 @@
     SearchResponseFilters,
   } from '@/shared/api/generated/data-contracts';
   import { getSearchService } from '@/shared/api/api';
+
+  import { Auth } from '@/widgets/auth';
   import { CreateAdvertisement } from '@/features/create-advertisement';
+
 
   const route = useRoute();
   const router = useRouter();
@@ -151,6 +154,7 @@
   });
 
   const isMobile = ref(false);
+  const isAuthOpen = ref(false)
   const selectedAdvertisement = ref(false);
 
   defineEmits(['advertisementItems']);
@@ -227,6 +231,18 @@
   <div class="flex flex-row bg-white">
     <div class="flex w-full flex-col items-center sm:max-w-[356px]">
       <Header
+        v-if="!isProductCardOpen && isMobile && !isFilterCardOpen && !isAuthOpen"
+        @submitSearch="handleSearchSubmit" />
+      <Header v-if="!isMobile && !isAuthOpen" @submitSearch="handleSearchSubmit" @submit-login="isAuthOpen = true"  />
+      <div v-if="isMobile && selectedAdvertisement" class="w-full">
+        <ProductCard
+          v-if="productItem"
+          class="inline-block"
+          :product-item="productItem"
+          :is-product-card-open="isProductCardOpen"
+          @close-product-card="handleCloseProductCard" />
+      </div>
+      <div v-if="isMobile && isFilterCardOpen" class="w-full">
         v-if="!isProductCardOpen && !isFilterCardOpen"
         @submitSearch="handleSearchSubmit"
         @create-clicked="isCreateAdvertisementOpen = true" />
@@ -257,6 +273,21 @@
           class="flex w-full" />
       </div>
       <router-view
+        v-if="!selectedAdvertisement && !isMobile && !isAuthOpen"
+        @advertisementItems="handleAdvertisementItems"
+        @advertisementFilters="handleAdvertisementFilters"
+        v-model:pagination="pagination" />
+      <router-view
+        v-if="!selectedAdvertisement && isMobile && !isAuthOpen"
+        @advertisementItems="handleAdvertisementItems"
+        @advertisementFilters="handleAdvertisementFilters"
+        v-model:pagination="pagination" />
+      <router-view
+        v-else-if="selectedAdvertisement && !isMobile && !isAuthOpen"
+        @advertisementItems="handleAdvertisementItems"
+        @advertisementFilters="handleAdvertisementFilters"
+        v-model:pagination="pagination" />
+      <Auth v-if="isAuthOpen" @submit-close-auth="isAuthOpen = false"/>
         @advertisementItems="handleAdvertisementItems"
         @advertisementFilters="handleAdvertisementFilters"
         v-model:pagination="pagination" />
