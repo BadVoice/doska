@@ -19,17 +19,18 @@
 
   function handleSubmitSearch(event: Event) {
     event.preventDefault();
-    if(searchTerm.value !== '') {
+    if (searchTerm.value !== '') {
       handleInput();
     }
   }
 
   const searchTerm = ref('');
-  const emit = defineEmits(['submitSearch', 'submitLogin']);
 
-  const handleInput = (() => {
+  const emit = defineEmits(['submitSearch', 'submitLogin', 'createClicked']);
+
+  const handleInput = () => {
     emit('submitSearch', searchTerm.value);
-  });
+  };
 
   function handleWheel(event: WheelEvent) {
     event.preventDefault();
@@ -52,10 +53,8 @@
   });
 
   const activeButton = computed(() => {
-    return buttonList.value.find(button => button.link === route.path);
+    return buttonList.value.find((button) => button.link === route.path);
   });
-
-
 </script>
 
 <template>
@@ -90,7 +89,7 @@
         <Button @click="emit('submitLogin', true)" size="icon" variant="ghost">
           <img src="./assets/login.svg" alt="login" />
         </Button>
-        <Button size="icon" variant="ghost">
+        <Button size="icon" variant="ghost" @click="$emit('createClicked')">
           <img src="./assets/create.svg" alt="create" />
         </Button>
       </div>
@@ -112,8 +111,7 @@
           type="text"
           @focus="formFocused = true"
           @blur="formFocused = false"
-          class="border-0 py-0 focus:outline-none"
-          />
+          class="border-0 py-0 focus:outline-none" />
       </form>
     </div>
     <div class="flex w-full items-center justify-between gap-6 py-4 pl-4">
@@ -125,13 +123,14 @@
           v-for="button of buttonList"
           :key="button.label"
           :to="button?.link"
-
           class="mr-4 inline-block focus:outline-none">
           <Button
             variant="outline"
             :class="{
-              'border-[#0017FC] bg-[#1778EA] bg-opacity-10 text-[#0017FC] hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10 hover:text-[#0017FC]': button.link === activeButton?.link,
-              'border-[#D0D4DB] bg-[#F9FAFB] text-[#858FA3] hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10 hover:text-[#0017FC]': button.link !== activeButton?.link
+              'border-[#0017FC] bg-[#1778EA] bg-opacity-10 text-[#0017FC] hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10 hover:text-[#0017FC]':
+                button.link === activeButton?.link,
+              'border-[#D0D4DB] bg-[#F9FAFB] text-[#858FA3] hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10 hover:text-[#0017FC]':
+                button.link !== activeButton?.link,
             }"
             class="max-h-[28px] rounded-lg"
             size="sm">

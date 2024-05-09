@@ -5,9 +5,15 @@
   import { useRoute, useRouter } from 'vue-router';
   import { onMounted, ref, watch } from 'vue';
   import { Offers } from '@/widgets/offers';
-  import type { Item, SearchPagination, SearchResponseFilters } from '@/shared/api/generated/data-contracts';
+  import type {
+    Item,
+    SearchPagination,
+    SearchResponseFilters,
+  } from '@/shared/api/generated/data-contracts';
   import { getSearchService } from '@/shared/api/api';
+
   import { Auth } from '@/widgets/auth';
+  import { CreateAdvertisement } from '@/features/create-advertisement';
 
 
   const route = useRoute();
@@ -89,7 +95,6 @@
     items_count: 0,
   });
 
-
   function handlePageSelected(page: number) {
     const vendorsString = route.query.vendors as string;
     const vendorsArray = vendorsString ? vendorsString.split(',') : [];
@@ -138,6 +143,7 @@
 
   const isProductCardOpen = ref(false);
   const isFilterCardOpen = ref(false);
+  const isCreateAdvertisementOpen = ref(false);
 
   watch([isProductCardOpen, isFilterCardOpen], () => {
     if (isProductCardOpen.value && isFilterCardOpen.value) {
@@ -181,7 +187,7 @@
       query: {
         search: searchTerm,
         'active-pre-search': route.query['active-pre-search'],
-        'active-card': route.query['active-card']
+        'active-card': route.query['active-card'],
       },
     });
   }
@@ -222,7 +228,6 @@
 </script>
 
 <template>
-  <NprogressContainer></NprogressContainer>
   <div class="flex flex-row bg-white">
     <div class="flex w-full flex-col items-center sm:max-w-[356px]">
       <Header
@@ -238,6 +243,12 @@
           @close-product-card="handleCloseProductCard" />
       </div>
       <div v-if="isMobile && isFilterCardOpen" class="w-full">
+        v-if="!isProductCardOpen && !isFilterCardOpen"
+        @submitSearch="handleSearchSubmit"
+        @create-clicked="isCreateAdvertisementOpen = true" />
+      <div
+        v-if="isMobile && (selectedAdvertisement || isFilterCardOpen)"
+        class="w-full">
         <ProductCard
           v-if="productItem"
           class="inline-block"
@@ -277,9 +288,14 @@
         @advertisementFilters="handleAdvertisementFilters"
         v-model:pagination="pagination" />
       <Auth v-if="isAuthOpen" @submit-close-auth="isAuthOpen = false"/>
+        @advertisementItems="handleAdvertisementItems"
+        @advertisementFilters="handleAdvertisementFilters"
+        v-model:pagination="pagination" />
+      <CreateAdvertisement
+        v-if="isCreateAdvertisementOpen"
+        @close="isCreateAdvertisementOpen = false" />
     </div>
     <div v-if="!isMobile" class="flex-grow bg-[#F9FAFB]">
-
       <Offers
         v-model:pagination="pagination"
         @offer-clicked="handleItemClick"
@@ -295,37 +311,45 @@
         @open-filter="isFilterCardOpen = true"
         :offers-items="offersItems"
         @page-selected="handlePageSelected"
-        class="hidden sm:flex w-full lg:hidden" />
+        class="hidden w-full sm:flex lg:hidden" />
 
       <ProductCard
-        v-if="isProductCardOpen && productItem && !isMobile && route.path === '/advertisements' && !isFilterCardOpen"
+        v-if="
+          isProductCardOpen &&
+          productItem &&
+          !isMobile &&
+          route.path === '/advertisements' &&
+          !isFilterCardOpen
+        "
         :product-item="productItem"
         :is-product-card-open="isProductCardOpen"
         @close-product-card="handleCloseProductCard"
-        class="hidden sm:flex lg:hidden"
-      />
+        class="hidden sm:flex lg:hidden" />
 
       <Filter
-        v-if="isFilterCardOpen && !isMobile && route.path === '/advertisements' && !isProductCardOpen"
+        v-if="
+          isFilterCardOpen &&
+          !isMobile &&
+          route.path === '/advertisements' &&
+          !isProductCardOpen
+        "
         v-model:filters="filters"
         @filtered-items-came="handleFilteredItemsCame"
         :is-filter-card-open="isFilterCardOpen"
         v-model:pagination="pagination"
         @close-filter-card="isFilterCardOpen = false"
-        class="hidden sm:inline-block w-full lg:hidden"
-      />
+        class="hidden w-full sm:inline-block lg:hidden" />
     </div>
 
-    <div v-if="!isFilterCardOpen && !isProductCardOpen" class="hidden lg:flex h-screen bg-[#F9FAFB] w-full min-w-[360px] flex-col justify-between border-l border-[#D0D4DB] sm:w-[360px]">
-
-    </div>
+    <div
+      v-if="!isFilterCardOpen && !isProductCardOpen"
+      class="hidden h-screen w-full min-w-[360px] flex-col justify-between border-l border-[#D0D4DB] bg-[#F9FAFB] sm:w-[360px] lg:flex"></div>
     <ProductCard
       v-if="productItem && !isMobile && route.path === '/advertisements'"
       :product-item="productItem"
       :is-product-card-open="isProductCardOpen"
       @close-product-card="handleCloseProductCard"
-      class=" w-full flex sm:hidden lg:flex"
-    />
+      class="flex w-full sm:hidden lg:flex" />
     <Filter
       v-if="!isMobile"
       v-model:filters="filters"
@@ -333,8 +357,7 @@
       :is-filter-card-open="isFilterCardOpen"
       v-model:pagination="pagination"
       @close-filter-card="isFilterCardOpen = false"
-      class=" w-full inline-block sm:hidden lg:flex"
-    />
+      class="inline-block w-full sm:hidden lg:flex" />
   </div>
   <Filter
     v-if="isMobile"
@@ -343,6 +366,5 @@
     :is-filter-card-open="isFilterCardOpen"
     v-model:pagination="pagination"
     @close-filter-card="isFilterCardOpen = false"
-    class="w-full flex sm:hidden lg:inline-block"
-  />
+    class="flex w-full sm:hidden lg:inline-block" />
 </template>

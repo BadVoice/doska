@@ -1,7 +1,12 @@
 <script setup lang="ts">
   import { Button } from '@/shared/ui/button';
   import { X } from 'lucide-vue-next';
-  import { Carousel, type CarouselApi, CarouselContent, CarouselItem } from '@/shared/ui/carousel';
+  import {
+    Carousel,
+    type CarouselApi,
+    CarouselContent,
+    CarouselItem,
+  } from '@/shared/ui/carousel';
   import { defineProps, ref } from 'vue';
   import { watchOnce } from '@vueuse/core';
   import type { Item } from '@/shared/api/generated/data-contracts';
@@ -51,7 +56,7 @@
 <template>
   <div
     v-if="isProductCardOpen"
-    class="flex h-screen w-full min-w-[360px] bg-white flex-col justify-between border-l border-[#D0D4DB] lg:w-[360px] inline-block">
+    class="inline-block flex h-screen w-full min-w-[360px] flex-col justify-between border-l border-[#D0D4DB] bg-white lg:w-[360px]">
     <div class="flex flex-col gap-y-6">
       <div>
         <div
@@ -140,10 +145,8 @@
       </div>
     </div>
 
-
-      <div class="inset-x-0 bottom-0 border-t border-[#CCD0D9] bg-[#F9FAFB] p-4">
-        <Button class="w-full text-[17px] font-semibold">Показать телефон</Button>
-      </div>
-
+    <div class="inset-x-0 bottom-0 border-t border-[#CCD0D9] bg-[#F9FAFB] p-4">
+      <Button class="w-full text-[17px] font-semibold">Показать телефон</Button>
+    </div>
   </div>
 </template>
