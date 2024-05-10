@@ -5,13 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "codegen": "npx swagger-typescript-api -p src/shared/api/swagger.json -o src/shared/api/generated --modular --axios",
+    "codegen": "npx swagger-typescript-api -p src/shared/api/swagger.json -o src/shared/api/generated --axios",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
+    "@farfetched/core": "^0.12.4",
     "@headlessui/vue": "^1.7.20",
     "@vee-validate/zod": "^4.12.6",
     "@vueuse/core": "^10.9.0",

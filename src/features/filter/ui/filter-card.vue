@@ -4,7 +4,7 @@
   import { useFilter } from '../lib/schema';
   import FilterInput from './filter-input.vue';
   import { computed, defineProps, ref, watch } from 'vue';
-  import { getSearchService } from '@/shared/api/api';
+  import { $api } from '@/shared/api/api';
   import { useRoute, useRouter } from 'vue-router';
 
   import {
@@ -13,11 +13,10 @@
     ListboxOption,
     ListboxOptions,
   } from '@headlessui/vue';
-
   import type {
-    SearchPagination,
+    SearchResponse,
     SearchResponseFilters,
-  } from '@/shared/api/generated/data-contracts';
+  } from '@/shared/api/generated/Api';
 
   defineProps<{
     isFilterCardOpen: boolean;
@@ -27,7 +26,12 @@
     required: true,
   });
 
-  const pagination = defineModel<SearchPagination>('pagination', {
+  const pagination = defineModel<
+    Pick<
+      SearchResponse,
+      'has_next' | 'has_prev' | 'page' | 'items' | 'items_count' | 'pages'
+    >
+  >('pagination', {
     required: true,
   });
 
@@ -117,11 +121,12 @@
         try {
           const filterParamsValue = filterParams.value;
           updateUrl(filterParamsValue);
-          const items = await getSearchService({
-            search: search.value?.toString() as string,
+
+          const { data: items } = await $api.search.getSearch({
+            search: search.value?.toString() ?? '',
             page_size: 10,
             page: pagination.value.page,
-            brand: route.query['active-pre-search'] as string,
+            brand: route.query['active-pre-search']?.toString() ?? '',
             filters: {
               name: values.denomination,
               article: values.article,
@@ -140,13 +145,14 @@
               city_id: cityIds,
             },
           });
+
           emit('filtered-items-came', items.items);
           pagination.value = {
-            items_count: items.items_count as number,
-            has_next: items.has_next as boolean,
-            has_prev: items.has_prev as boolean,
-            page: items.page as number,
-            pages: items.pages as number,
+            items_count: items.items_count,
+            has_next: !!items.has_next,
+            has_prev: !!items.has_prev,
+            page: items.page,
+            pages: items.pages,
           };
         } catch (error) {
           console.error(error);

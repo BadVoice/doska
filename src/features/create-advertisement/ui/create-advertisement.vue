@@ -14,6 +14,7 @@
     formClosed,
     formMode,
     formSubmitted,
+    type FormValues,
   } from '../model/create-advertisement';
   import { useUnit } from 'effector-vue/composition';
   import { useCreateAdvertisementForm } from '../lib/create-form';
@@ -29,7 +30,7 @@
 
   const onSubmit = form.handleSubmit((values) => {
     emit('close');
-    formSubmitted(values);
+    formSubmitted(values as FormValues);
   });
 
   function handleClose() {
@@ -131,7 +132,7 @@
               <FormControl>
                 <Input
                   class="h-fit rounded-[8px] border-2 border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
-                  type="text"
+                  type="number"
                   placeholder="Количество"
                   v-bind="componentField" />
               </FormControl>
