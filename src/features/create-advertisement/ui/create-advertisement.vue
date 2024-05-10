@@ -14,6 +14,7 @@
     formClosed,
     formMode,
     formSubmitted,
+    type FormValues,
   } from '../model/create-advertisement';
   import { useUnit } from 'effector-vue/composition';
   import { useCreateAdvertisementForm } from '../lib/create-form';
@@ -29,7 +30,7 @@
 
   const onSubmit = form.handleSubmit((values) => {
     emit('close');
-    formSubmitted(values);
+    formSubmitted(values as FormValues);
   });
 
   function handleClose() {

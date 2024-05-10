@@ -7,12 +7,14 @@
   import { Filter } from '@/features/filter';
   import { Auth } from '@/widgets/auth';
   import { Offers } from '@/widgets/offers';
+  import { CreateAdvertisement } from '@/features/create-advertisement';
   import type {
     Item,
-    SearchPagination,
+    SearchResponse,
     SearchResponseFilters,
-  } from '@/shared/api/generated/data-contracts';
-  import { getSearchService } from '@/shared/api/api';
+  } from '@/shared/api/generated/Api';
+  
+  import { $api } from '@/shared/api';
 
   import { CreateAdvertisement } from '@/features/create-advertisement';
 
@@ -87,7 +89,12 @@
       },
     ],
   });
-  const pagination = ref<SearchPagination>({
+  const pagination = ref<
+    Pick<
+      SearchResponse,
+      'has_next' | 'has_prev' | 'page' | 'items' | 'items_count' | 'pages'
+    >
+  >({
     page: 1,
     pages: 9,
     has_next: true,
@@ -105,38 +112,40 @@
     const citiesString = route.query.cities as string;
     const citiesArray = citiesString ? citiesString.split(',').map(Number) : [];
 
-    getSearchService({
-      filters: {
-        name: route.query?.denomination as string,
-        article: route.query?.article as string,
-        price: {
-          from: Number(route.query?.priceFrom) || 0,
-          to: Number(route.query?.priceTo) || 100000000000,
+    $api.search
+      .getSearch({
+        filters: {
+          name: route.query?.denomination as string,
+          article: route.query?.article as string,
+          price: {
+            from: Number(route.query?.priceFrom) || 0,
+            to: Number(route.query?.priceTo) || 100000000000,
+          },
+          delivery: {
+            from: Number(route.query?.countFrom) || 0,
+            to: Number(route.query?.countTo) || 1000000000000000,
+          },
         },
-        delivery: {
-          from: Number(route.query?.countFrom) || 0,
-          to: Number(route.query?.countTo) || 1000000000000000,
+        exclude: {
+          brand: brandsArray,
+          vendor: vendorsArray,
+          city_id: citiesArray,
         },
-      },
-      exclude: {
-        brand: brandsArray,
-        vendor: vendorsArray,
-        city_id: citiesArray,
-      },
-      search: route.query.search as string,
-      page: page,
-      page_size: 10,
-      brand: route.query['active-pre-search'] as string,
-    }).then((response) => {
-      pagination.value = {
-        items_count: response.items_count as number,
-        has_next: response.has_next as boolean,
-        has_prev: response.has_prev as boolean,
-        page: response.page as number,
-        pages: response.pages as number,
-      };
-      offersItems.value = response.items as Item[];
-    });
+        search: route.query.search as string,
+        page: page,
+        page_size: 10,
+        brand: route.query['active-pre-search'] as string,
+      })
+      .then((response) => {
+        pagination.value = {
+          items_count: response.data.items_count as number,
+          has_next: response.data.has_next as boolean,
+          has_prev: response.data.has_prev as boolean,
+          page: response.data.page as number,
+          pages: response.data.pages as number,
+        };
+        offersItems.value = response.data.items as Item[];
+      });
   }
 
   const productItem = ref<Item>();

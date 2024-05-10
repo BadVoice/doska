@@ -1,1 +1,1 @@
-export { getPreSearch } from './api';
+export { $api } from './api';
