@@ -103,7 +103,7 @@
               <FormLabel>Наименование</FormLabel>
               <FormControl>
                 <Input
-                  class="h-fit rounded-[8px] border-2 border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
+                  class="h-fit rounded-[8px] border border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
                   type="text"
                   placeholder="Наименование"
                   v-bind="componentField" />
@@ -116,7 +116,7 @@
               <FormLabel>Артикул</FormLabel>
               <FormControl>
                 <Input
-                  class="h-fit rounded-[8px] border-2 border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
+                  class="h-fit rounded-[8px] border border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
                   type="text"
                   placeholder="Артикул"
                   v-bind="componentField" />
@@ -130,7 +130,7 @@
 
               <FormControl>
                 <Input
-                  class="h-fit rounded-[8px] border-2 border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
+                  class="h-fit rounded-[8px] border border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
                   type="text"
                   placeholder="Количество"
                   v-bind="componentField" />
@@ -143,7 +143,7 @@
               <FormLabel>Назначение</FormLabel>
               <FormControl>
                 <Input
-                  class="h-fit rounded-[8px] border-2 border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
+                  class="h-fit rounded-[8px] border border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
                   type="text"
                   placeholder="Назначение"
                   v-bind="componentField" />
