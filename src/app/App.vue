@@ -16,8 +16,6 @@
   
   import { $api } from '@/shared/api';
 
-  import { CreateAdvertisement } from '@/features/create-advertisement';
-
   const route = useRoute();
   const router = useRouter();
 

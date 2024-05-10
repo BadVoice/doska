@@ -27,7 +27,6 @@ const registerForm = ref(false)
       <p class="font-semibold text-[18px] cursor-default">Вход</p>
     </div>
   </div>
-
   <div class="bg-[#F9FAFB] w-full h-full border-r border-[#D0D4DB] flex-grow overflow-x-auto">
     <AuthCode @submit-code="submitCode = true" v-if="!submitCode" />
     <AuthDetails @submit-details="authDetails = true" v-if="submitCode && !authDetails" />
