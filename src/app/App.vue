@@ -1,15 +1,18 @@
 <script setup lang="ts">
+  import { useRoute, useRouter } from 'vue-router';
+  import { onMounted, ref, watch } from 'vue';
+
   import { ProductCard } from '@/pages/home';
   import { Header } from '@/widgets/header';
   import { Filter } from '@/features/filter';
-  import { useRoute, useRouter } from 'vue-router';
-  import { onMounted, ref, watch } from 'vue';
+  import { Auth } from '@/widgets/auth';
   import { Offers } from '@/widgets/offers';
   import { CreateAdvertisement } from '@/features/create-advertisement';
   import type {
     Item,
     SearchResponse,
     SearchResponseFilters,
+
   } from '@/shared/api/generated/Api';
   import { $api } from '@/shared/api';
 
@@ -134,13 +137,13 @@
       })
       .then((response) => {
         pagination.value = {
-          items_count: response.items_count as number,
-          has_next: response.has_next as boolean,
-          has_prev: response.has_prev as boolean,
-          page: response.page as number,
-          pages: response.pages as number,
+          items_count: response.data.items_count as number,
+          has_next: response.data.has_next as boolean,
+          has_prev: response.data.has_prev as boolean,
+          page: response.data.page as number,
+          pages: response.data.pages as number,
         };
-        offersItems.value = response.items as Item[];
+        offersItems.value = response.data.items as Item[];
       });
   }
 
@@ -230,26 +233,19 @@
   function handleCloseProductCard() {
     isProductCardOpen.value = false;
   }
+
+  function handleIsAuthOpen() {
+    isAuthOpen.value = true
+  }
 </script>
 
 <template>
   <div class="flex flex-row bg-white">
     <div class="flex w-full flex-col items-center sm:max-w-[356px]">
       <Header
-        v-if="!isProductCardOpen && isMobile && !isFilterCardOpen && !isAuthOpen"
-        @submitSearch="handleSearchSubmit" />
-      <Header v-if="!isMobile && !isAuthOpen" @submitSearch="handleSearchSubmit" @submit-login="isAuthOpen = true"  />
-      <div v-if="isMobile && selectedAdvertisement" class="w-full">
-        <ProductCard
-          v-if="productItem"
-          class="inline-block"
-          :product-item="productItem"
-          :is-product-card-open="isProductCardOpen"
-          @close-product-card="handleCloseProductCard" />
-      </div>
-      <div v-if="isMobile && isFilterCardOpen" class="w-full">
-        v-if="!isProductCardOpen && !isFilterCardOpen"
+        v-if="!isProductCardOpen && !isFilterCardOpen && !isAuthOpen"
         @submitSearch="handleSearchSubmit"
+        @submit-login="isAuthOpen = true"
         @create-clicked="isCreateAdvertisementOpen = true" />
       <div
         v-if="isMobile && (selectedAdvertisement || isFilterCardOpen)"
@@ -278,24 +274,11 @@
           class="flex w-full" />
       </div>
       <router-view
-        v-if="!selectedAdvertisement && !isMobile && !isAuthOpen"
+        v-if="!isAuthOpen"
         @advertisementItems="handleAdvertisementItems"
         @advertisementFilters="handleAdvertisementFilters"
         v-model:pagination="pagination" />
-      <router-view
-        v-if="!selectedAdvertisement && isMobile && !isAuthOpen"
-        @advertisementItems="handleAdvertisementItems"
-        @advertisementFilters="handleAdvertisementFilters"
-        v-model:pagination="pagination" />
-      <router-view
-        v-else-if="selectedAdvertisement && !isMobile && !isAuthOpen"
-        @advertisementItems="handleAdvertisementItems"
-        @advertisementFilters="handleAdvertisementFilters"
-        v-model:pagination="pagination" />
-      <Auth v-if="isAuthOpen" @submit-close-auth="isAuthOpen = false"/>
-        @advertisementItems="handleAdvertisementItems"
-        @advertisementFilters="handleAdvertisementFilters"
-        v-model:pagination="pagination" />
+      <Auth v-if="isAuthOpen"  @submit-close-auth="isAuthOpen = false" />
       <CreateAdvertisement
         v-if="isCreateAdvertisementOpen"
         @close="isCreateAdvertisementOpen = false" />
