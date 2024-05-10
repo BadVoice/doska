@@ -17,10 +17,11 @@
 </script>
 
 <template v-else>
+<div class="flex flex-col justify-between h-full">
   <form
     @submit="onSubmit"
     class="flex w-full flex-col gap-y-4 px-5 mt-4">
-    <p class="text-[18px] font-semibold">Введите код с картинки</p>
+    <p class="text-[18px] font-semibold">Введите номер телефона или почту</p>
     <FormField v-slot="{ componentField }" name="name">
       <FormItem>
         <FormLabel>Телефон или почта</FormLabel>
@@ -35,6 +36,10 @@
       </FormItem>
     </FormField>
   </form>
+  <div  class="inset-x-0 bottom-0 border-t border-[#CCD0D9] bg-white p-4 w-full">
+    <Button @click="$emit('submitCode')" class="w-full text-[17px] font-semibold">Получить код</Button>
+  </div>
+</div>
 </template>
 
 <style scoped lang="postcss">

@@ -12,10 +12,11 @@
     Item,
     SearchResponse,
     SearchResponseFilters,
-
   } from '@/shared/api/generated/Api';
+  
   import { $api } from '@/shared/api';
 
+  import { CreateAdvertisement } from '@/features/create-advertisement';
 
   const route = useRoute();
   const router = useRouter();
