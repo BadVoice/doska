@@ -113,6 +113,45 @@
           <FormMessage />
         </FormItem>
       </FormField>
+      <FormField v-slot="{ componentField }" name="name">
+        <FormItem>
+          <FormLabel>Категория</FormLabel>
+          <FormControl>
+            <Input
+              class="h-fit rounded-[8px] border border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
+              type="text"
+              placeholder="Категория"
+              v-bind="componentField" />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      </FormField>
+      <FormField v-slot="{ componentField }" name="name">
+        <FormItem>
+          <FormLabel>Категория</FormLabel>
+          <FormControl>
+            <Input
+              class="h-fit rounded-[8px] border border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
+              type="text"
+              placeholder="Категория"
+              v-bind="componentField" />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      </FormField>
+      <FormField v-slot="{ componentField }" name="name">
+        <FormItem>
+          <FormLabel>Категория</FormLabel>
+          <FormControl>
+            <Input
+              class="h-fit rounded-[8px] border border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
+              type="text"
+              placeholder="Категория"
+              v-bind="componentField" />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      </FormField>
 
       <div class="relative inline-block text-left">
         <Listbox v-model="categories" multiple>

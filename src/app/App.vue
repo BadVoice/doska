@@ -277,7 +277,7 @@
         @advertisementItems="handleAdvertisementItems"
         @advertisementFilters="handleAdvertisementFilters"
         v-model:pagination="pagination" />
-      <Auth v-if="isAuthOpen"  @submit-close-auth="isAuthOpen = false" />
+      <Auth v-if="isAuthOpen"   @submit-close-auth="isAuthOpen = false" />
       <CreateAdvertisement
         v-if="isCreateAdvertisementOpen"
         @close="isCreateAdvertisementOpen = false" />
