@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { PreSearchResponses } from '@/shared/api/generated/data-contracts';
+  import type { PreSearchResponses } from '@/shared/api/generated/Api';
 
   const props = defineProps<{
     searchResult: PreSearchResponses;

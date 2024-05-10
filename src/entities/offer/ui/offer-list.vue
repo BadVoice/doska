@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { defineProps } from 'vue';
-  import type { Item } from '@/shared/api/generated/data-contracts';
+  import type { Item } from '@/shared/api/generated/Api';
   import { Button } from '@/shared/ui/button';
   import { cn } from '@/shared/lib';
   import { useRoute, useRouter } from 'vue-router';

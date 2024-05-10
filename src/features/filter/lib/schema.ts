@@ -1,7 +1,7 @@
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
 import { type FormContext, useForm } from 'vee-validate';
-import type { SearchResponseFilters } from '@/shared/api/generated/data-contracts';
+import type { SearchResponseFilters } from '@/shared/api/generated/Api';
 
 export function useFilter(filters: SearchResponseFilters): {
   form: FormContext<any, {}>;

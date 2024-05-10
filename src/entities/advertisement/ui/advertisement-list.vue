@@ -2,7 +2,7 @@
   import type {
     PreSearchResponse,
     PreSearchResponses,
-  } from '@/shared/api/generated/data-contracts';
+  } from '@/shared/api/generated/Api';
   import { defineProps, ref } from 'vue';
   import { useRoute } from 'vue-router';
   import { cn } from '@/shared/lib';
