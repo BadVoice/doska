@@ -2,10 +2,7 @@
   import { Button } from '@/shared/ui/button';
 
   import { onMounted, onUnmounted, ref } from 'vue';
-  import type {
-    Item,
-    SearchPagination, SearchResponse,
-  } from '@/shared/api/generated/Api';
+  import type { Item, SearchPagination } from '@/shared/api/generated/Api';
   import { OfferList } from '@/entities/offer';
   import { useRoute } from 'vue-router';
 
@@ -93,7 +90,8 @@
         <Button
           v-if="
             route.path === '/advertisements' &&
-            getAnnouncementText(pagination.items_count ?? 0) !== 'Нет предложений'
+            getAnnouncementText(pagination.items_count ?? 0) !==
+              'Нет предложений'
           "
           @click="handleFilterClick"
           size="icon"
@@ -118,7 +116,9 @@
     <div v-if="route.path === '/advertisements'" class="flex bg-[#F9FAFB] py-4">
       <Pagination
         v-if="
-          route.path == '/advertisements' && route.query['active-pre-search']
+          route.path == '/advertisements' &&
+          route.query['active-pre-search'] &&
+          !!pagination.pages
         "
         v-slot="{ page }"
         :total="pagination.items_count"

@@ -6,6 +6,7 @@
   import Search from './assets/search.vue';
   import { Input } from '@/shared/ui/input';
   import { useRoute, useRouter } from 'vue-router';
+  import { useDebounceFn } from '@vueuse/core';
 
   const route = useRoute();
   const router = useRouter();
@@ -28,9 +29,9 @@
 
   const emit = defineEmits(['submitSearch', 'submitLogin', 'createClicked']);
 
-  const handleInput = () => {
+  const handleInput = useDebounceFn(() => {
     emit('submitSearch', searchTerm.value);
-  };
+  }, 500);
 
   function handleWheel(event: WheelEvent) {
     event.preventDefault();
@@ -69,19 +70,19 @@
           </RouterLink>
         </div>
       </div>
-     <RouterLink to="/">
-       <Button
-         class="-ml-2"
-         v-if="visibleSearch"
-         @click="visibleSearch = false"
-         size="icon"
-         variant="ghost">
-         <img
-           src="./assets/backIcon.svg"
-           class="h-6 w-6 select-none"
-           alt="arrow" />
-       </Button>
-     </RouterLink>
+      <RouterLink to="/">
+        <Button
+          class="-ml-2"
+          v-if="visibleSearch"
+          @click="visibleSearch = false"
+          size="icon"
+          variant="ghost">
+          <img
+            src="./assets/backIcon.svg"
+            class="h-6 w-6 select-none"
+            alt="arrow" />
+        </Button>
+      </RouterLink>
       <div v-if="!visibleSearch" class="flex items-center gap-0">
         <Button @click="visibleSearch = true" size="icon" variant="ghost">
           <Search />
@@ -107,6 +108,7 @@
           :key="visibleSearch ? 'true' : 'false'"
           v-model="searchTerm"
           @keydown.enter="handleSubmitSearch"
+          @input="handleInput"
           id="search"
           type="text"
           @focus="formFocused = true"
