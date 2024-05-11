@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import { defineProps } from 'vue';
   import type { Item } from '@/shared/api/generated/data-contracts';
   import { Button } from '@/shared/ui/button';
   import { cn } from '@/shared/lib';

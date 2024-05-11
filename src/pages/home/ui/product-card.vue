@@ -7,7 +7,7 @@
     CarouselContent,
     CarouselItem,
   } from '@/shared/ui/carousel';
-  import { defineProps, ref } from 'vue';
+  import { ref } from 'vue';
   import { watchOnce } from '@vueuse/core';
   import type { Item } from '@/shared/api/generated/data-contracts';
   import { useRoute, useRouter } from 'vue-router';

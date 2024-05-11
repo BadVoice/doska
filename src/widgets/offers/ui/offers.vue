@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { Button } from '@/shared/ui/button';
 
-  import { defineProps, onMounted, onUnmounted, ref } from 'vue';
+  import { onMounted, onUnmounted, ref } from 'vue';
   import type {
     Item,
     SearchPagination,

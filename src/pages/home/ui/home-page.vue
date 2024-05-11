@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { Button } from '@/shared/ui';
   import { Clipboard, ClipboardCheck } from 'lucide-vue-next';
-  import { defineProps, ref } from 'vue';
+  import { ref } from 'vue';
   import type { SearchPagination } from '@/shared/api/generated/data-contracts';
 
   const copied = ref(false);
