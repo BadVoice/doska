@@ -1,17 +1,20 @@
 <script setup lang="ts">
+  import { useRoute, useRouter } from 'vue-router';
+  import { onMounted, ref, watch } from 'vue';
+
   import { ProductCard } from '@/pages/home';
   import { Header } from '@/widgets/header';
   import { Filter } from '@/features/filter';
-  import { useRoute, useRouter } from 'vue-router';
-  import { onMounted, ref, watch } from 'vue';
+  import { Auth } from '@/widgets/auth';
   import { Offers } from '@/widgets/offers';
+  import { CreateAdvertisement } from '@/features/create-advertisement';
   import type {
     Item,
-    SearchPagination,
+    SearchResponse,
     SearchResponseFilters,
-  } from '@/shared/api/generated/data-contracts';
-  import { getSearchService } from '@/shared/api/api';
-  import { CreateAdvertisement } from '@/features/create-advertisement';
+  } from '@/shared/api/generated/Api';
+  
+  import { $api } from '@/shared/api';
 
   const route = useRoute();
   const router = useRouter();
@@ -84,7 +87,12 @@
       },
     ],
   });
-  const pagination = ref<SearchPagination>({
+  const pagination = ref<
+    Pick<
+      SearchResponse,
+      'has_next' | 'has_prev' | 'page' | 'items' | 'items_count' | 'pages'
+    >
+  >({
     page: 1,
     pages: 9,
     has_next: true,
@@ -102,38 +110,40 @@
     const citiesString = route.query.cities as string;
     const citiesArray = citiesString ? citiesString.split(',').map(Number) : [];
 
-    getSearchService({
-      filters: {
-        name: route.query?.denomination as string,
-        article: route.query?.article as string,
-        price: {
-          from: Number(route.query?.priceFrom) || 0,
-          to: Number(route.query?.priceTo) || 100000000000,
+    $api.search
+      .getSearch({
+        filters: {
+          name: route.query?.denomination as string,
+          article: route.query?.article as string,
+          price: {
+            from: Number(route.query?.priceFrom) || 0,
+            to: Number(route.query?.priceTo) || 100000000000,
+          },
+          delivery: {
+            from: Number(route.query?.countFrom) || 0,
+            to: Number(route.query?.countTo) || 1000000000000000,
+          },
         },
-        delivery: {
-          from: Number(route.query?.countFrom) || 0,
-          to: Number(route.query?.countTo) || 1000000000000000,
+        exclude: {
+          brand: brandsArray,
+          vendor: vendorsArray,
+          city_id: citiesArray,
         },
-      },
-      exclude: {
-        brand: brandsArray,
-        vendor: vendorsArray,
-        city_id: citiesArray,
-      },
-      search: route.query.search as string,
-      page: page,
-      page_size: 10,
-      brand: route.query['active-pre-search'] as string,
-    }).then((response) => {
-      pagination.value = {
-        items_count: response.items_count as number,
-        has_next: response.has_next as boolean,
-        has_prev: response.has_prev as boolean,
-        page: response.page as number,
-        pages: response.pages as number,
-      };
-      offersItems.value = response.items as Item[];
-    });
+        search: route.query.search as string,
+        page: page,
+        page_size: 10,
+        brand: route.query['active-pre-search'] as string,
+      })
+      .then((response) => {
+        pagination.value = {
+          items_count: response.data.items_count as number,
+          has_next: response.data.has_next as boolean,
+          has_prev: response.data.has_prev as boolean,
+          page: response.data.page as number,
+          pages: response.data.pages as number,
+        };
+        offersItems.value = response.data.items as Item[];
+      });
   }
 
   const productItem = ref<Item>();
@@ -151,6 +161,7 @@
   });
 
   const isMobile = ref(false);
+  const isAuthOpen = ref(false)
   const selectedAdvertisement = ref(false);
 
   defineEmits(['advertisementItems']);
@@ -221,14 +232,19 @@
   function handleCloseProductCard() {
     isProductCardOpen.value = false;
   }
+
+  function handleIsAuthOpen() {
+    isAuthOpen.value = true
+  }
 </script>
 
 <template>
   <div class="flex flex-row bg-white">
     <div class="flex w-full flex-col items-center sm:max-w-[356px]">
       <Header
-        v-if="!isProductCardOpen && !isFilterCardOpen"
+        v-if="!isProductCardOpen && !isFilterCardOpen && !isAuthOpen"
         @submitSearch="handleSearchSubmit"
+        @submit-login="isAuthOpen = true"
         @create-clicked="isCreateAdvertisementOpen = true" />
       <div
         v-if="isMobile && (selectedAdvertisement || isFilterCardOpen)"
@@ -257,9 +273,11 @@
           class="flex w-full" />
       </div>
       <router-view
+        v-if="!isAuthOpen"
         @advertisementItems="handleAdvertisementItems"
         @advertisementFilters="handleAdvertisementFilters"
         v-model:pagination="pagination" />
+      <Auth v-if="isAuthOpen"   @submit-close-auth="isAuthOpen = false" />
       <CreateAdvertisement
         v-if="isCreateAdvertisementOpen"
         @close="isCreateAdvertisementOpen = false" />

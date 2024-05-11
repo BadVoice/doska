@@ -25,7 +25,9 @@
   "paths": {
     "/token": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "метод получения токенов",
         "requestBody": {
           "content": {
@@ -63,7 +65,9 @@
     },
     "/token/refresh": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "метод обновления токена",
         "requestBody": {
           "content": {
@@ -101,7 +105,9 @@
     },
     "/token/verify": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "метод проверки токена",
         "requestBody": {
           "content": {
@@ -130,9 +136,42 @@
         }
       }
     },
+    "/site_info": {
+      "get": {
+        "tags": [
+          "SiteInfo"
+        ],
+        "summary": "метод получения информации о сайте",
+        "operationId": "getSiteInfo",
+        "responses": {
+          "200": {
+            "description": "успешный ответ с информацией о сайте",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SiteInfo"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/user": {
       "get": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "summary": "метод получения информации о пользователе",
         "operationId": "getUser",
         "responses": {
@@ -164,7 +203,9 @@
         ]
       },
       "put": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "summary": "метод изменения пользователя",
         "operationId": "updateUser",
         "requestBody": {
@@ -206,7 +247,9 @@
         ]
       },
       "post": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "summary": "метод создания пользователя",
         "operationId": "createUser",
         "requestBody": {
@@ -243,9 +286,244 @@
         }
       }
     },
+    "/profiles/": {
+      "get": {
+        "tags": [
+          "Profiles"
+        ],
+        "summary": "метод получения списка профилей",
+        "operationId": "getProfiles",
+        "responses": {
+          "200": {
+            "description": "успешный ответ со списком профилей",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Profiles"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Profiles"
+        ],
+        "summary": "метод создания профиля",
+        "operationId": "createProfile",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Profile"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "успешный ответ с созданным профилем",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Profile"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/profiles/{profile_id}": {
+      "get": {
+        "tags": [
+          "Profiles"
+        ],
+        "summary": "метод получения профиля",
+        "operationId": "getProfile",
+        "parameters": [
+          {
+            "name": "profile_id",
+            "in": "path",
+            "description": "идентификатор профиля",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "успешный ответ с профилем",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Profile"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Profiles"
+        ],
+        "summary": "метод изменения профиля",
+        "operationId": "updateProfile",
+        "parameters": [
+          {
+            "name": "profile_id",
+            "in": "path",
+            "description": "идентификатор профиля",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Profile"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "успешный ответ с измененным профилем",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Profile"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Profiles"
+        ],
+        "summary": "метод удаления профиля",
+        "operationId": "deleteProfile",
+        "parameters": [
+          {
+            "name": "profile_id",
+            "in": "path",
+            "description": "идентификатор профиля",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_204"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/companies/": {
       "get": {
-        "tags": ["Companies"],
+        "tags": [
+          "Companies"
+        ],
         "summary": "метод получения списка организаций пользователя",
         "operationId": "getUserCompanies",
         "responses": {
@@ -277,7 +555,9 @@
         ]
       },
       "post": {
-        "tags": ["Companies"],
+        "tags": [
+          "Companies"
+        ],
         "summary": "метод создания организации пользователя",
         "operationId": "createUserCompany",
         "requestBody": {
@@ -321,7 +601,9 @@
     },
     "/companies/{company_id}": {
       "get": {
-        "tags": ["Companies"],
+        "tags": [
+          "Companies"
+        ],
         "summary": "метод получения организации пользователя",
         "operationId": "getUserCompany",
         "parameters": [
@@ -366,7 +648,9 @@
         ]
       },
       "put": {
-        "tags": ["Companies"],
+        "tags": [
+          "Companies"
+        ],
         "summary": "метод изменения организации пользователя",
         "operationId": "updateUserCompany",
         "parameters": [
@@ -421,7 +705,9 @@
         ]
       },
       "delete": {
-        "tags": ["Companies"],
+        "tags": [
+          "Companies"
+        ],
         "summary": "метод удаления организации пользователя",
         "operationId": "deleteUserCompany",
         "parameters": [
@@ -468,7 +754,9 @@
     },
     "/categories/": {
       "get": {
-        "tags": ["Categories"],
+        "tags": [
+          "Categories"
+        ],
         "summary": "метод получения списка категорий",
         "operationId": "getCategories",
         "responses": {
@@ -500,7 +788,9 @@
         ]
       },
       "post": {
-        "tags": ["Categories"],
+        "tags": [
+          "Categories"
+        ],
         "summary": "метод создания категории",
         "operationId": "createCategory",
         "requestBody": {
@@ -544,7 +834,9 @@
     },
     "/categories/{category_id}": {
       "get": {
-        "tags": ["Categories"],
+        "tags": [
+          "Categories"
+        ],
         "summary": "метод получения категории",
         "operationId": "getCategory",
         "parameters": [
@@ -589,7 +881,9 @@
         ]
       },
       "put": {
-        "tags": ["Categories"],
+        "tags": [
+          "Categories"
+        ],
         "summary": "метод изменения категории",
         "operationId": "updateCategory",
         "parameters": [
@@ -644,7 +938,9 @@
         ]
       },
       "delete": {
-        "tags": ["Categories"],
+        "tags": [
+          "Categories"
+        ],
         "summary": "метод удаления категории",
         "operationId": "deleteCategory",
         "parameters": [
@@ -689,9 +985,710 @@
         ]
       }
     },
+    "/brands/": {
+      "get": {
+        "tags": [
+          "Brands"
+        ],
+        "summary": "метод получения списка брендов",
+        "operationId": "getBrands",
+        "responses": {
+          "200": {
+            "description": "успешный ответ со списком брендов",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Brands"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Brands"
+        ],
+        "summary": "метод создания бренда",
+        "operationId": "createBrand",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Brand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "успешный ответ с созданным брендом",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Brand"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/brands/{brand_id}": {
+      "get": {
+        "tags": [
+          "Brands"
+        ],
+        "summary": "метод получения бренда",
+        "operationId": "getBrand",
+        "parameters": [
+          {
+            "name": "brand_id",
+            "in": "path",
+            "description": "идентификатор бренда",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "успешный ответ с брендом",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Brand"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Brands"
+        ],
+        "summary": "метод изменения бренда",
+        "operationId": "updateBrand",
+        "parameters": [
+          {
+            "name": "brand_id",
+            "in": "path",
+            "description": "идентификатор бренда",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Brand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "успешный ответ с измененным брендом",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Brand"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Brands"
+        ],
+        "summary": "метод удаления бренда",
+        "operationId": "deleteBrand",
+        "parameters": [
+          {
+            "name": "brand_id",
+            "in": "path",
+            "description": "идентификатор бренда",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_204"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/destinations/": {
+      "get": {
+        "tags": [
+          "Destinations"
+        ],
+        "summary": "метод получения списка назначений",
+        "operationId": "getDestinations",
+        "responses": {
+          "200": {
+            "description": "успешный ответ со списком назначений",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Destinations"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Destinations"
+        ],
+        "summary": "метод создания назначения",
+        "operationId": "createDestination",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Destination"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "успешный ответ с созданным назначением",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Destination"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/destinations/{destination_id}": {
+      "get": {
+        "tags": [
+          "Destinations"
+        ],
+        "summary": "метод получения назначения",
+        "operationId": "getDestination",
+        "parameters": [
+          {
+            "name": "destination_id",
+            "in": "path",
+            "description": "идентификатор назначения",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "успешный ответ с назначением",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Destination"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Destinations"
+        ],
+        "summary": "метод изменения назначения",
+        "operationId": "updateDestination",
+        "parameters": [
+          {
+            "name": "destination_id",
+            "in": "path",
+            "description": "идентификатор назначения",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Destination"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "успешный ответ с измененным назначением",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Destination"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Destinations"
+        ],
+        "summary": "метод удаления назначения",
+        "operationId": "deleteDestination",
+        "parameters": [
+          {
+            "name": "destination_id",
+            "in": "path",
+            "description": "идентификатор назначения",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_204"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/nomenclatures/": {
+      "get": {
+        "tags": [
+          "Nomenclatures"
+        ],
+        "summary": "метод получения списка номенклатур",
+        "operationId": "getNomenclatures",
+        "responses": {
+          "200": {
+            "description": "успешный ответ со списком номенклатур",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Nomenclatures"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Nomenclatures"
+        ],
+        "summary": "метод создания номенклатуры",
+        "operationId": "createNomenclature",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Nomenclature"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "успешный ответ с созданной номенклатурой",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Nomenclature"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/nomenclatures/{nomenclature_id}": {
+      "get": {
+        "tags": [
+          "Nomenclatures"
+        ],
+        "summary": "метод получения номенклатуры",
+        "operationId": "getNomenclature",
+        "parameters": [
+          {
+            "name": "nomenclature_id",
+            "in": "path",
+            "description": "идентификатор номенклатуры",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "успешный ответ с номенклатурой",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Nomenclature"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Nomenclatures"
+        ],
+        "summary": "метод изменения номенклатуры",
+        "operationId": "updateNomenclature",
+        "parameters": [
+          {
+            "name": "nomenclature_id",
+            "in": "path",
+            "description": "идентификатор номенклатуры",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Nomenclature"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "успешный ответ с измененной номенклатурой",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Nomenclature"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Nomenclatures"
+        ],
+        "summary": "метод удаления номенклатуры",
+        "operationId": "deleteNomenclature",
+        "parameters": [
+          {
+            "name": "nomenclature_id",
+            "in": "path",
+            "description": "идентификатор номенклатуры",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_204"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/bids/": {
       "get": {
-        "tags": ["Bids"],
+        "tags": [
+          "Bids"
+        ],
         "summary": "метод получения списка заявок",
         "operationId": "getBids",
         "responses": {
@@ -723,12 +1720,14 @@
         ]
       },
       "post": {
-        "tags": ["Bids"],
+        "tags": [
+          "Bids"
+        ],
         "summary": "метод создания заявки",
         "operationId": "createBid",
         "requestBody": {
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
                 "$ref": "#/components/schemas/Bid"
               }
@@ -765,9 +1764,1096 @@
         ]
       }
     },
+    "/bids/{bid_id}": {
+      "get": {
+        "tags": [
+          "Bids"
+        ],
+        "summary": "метод получения заявки",
+        "operationId": "getBid",
+        "parameters": [
+          {
+            "name": "bid_id",
+            "in": "path",
+            "description": "идентификатор заявки",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "успешный ответ с заявкой",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Bid"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Bids"
+        ],
+        "summary": "метод изменения заявки",
+        "operationId": "updateBid",
+        "parameters": [
+          {
+            "name": "bid_id",
+            "in": "path",
+            "description": "идентификатор заявки",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Bid"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "успешный ответ с измененной заявкой",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Bid"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Bids"
+        ],
+        "summary": "метод удаления заявки",
+        "operationId": "deleteBid",
+        "parameters": [
+          {
+            "name": "bid_id",
+            "in": "path",
+            "description": "идентификатор заявки",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_204"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/offers/": {
+      "get": {
+        "tags": [
+          "Offers"
+        ],
+        "summary": "метод получения списка предложений",
+        "operationId": "getOffers",
+        "responses": {
+          "200": {
+            "description": "успешный ответ со списком предложений",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Offers"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Offers"
+        ],
+        "summary": "метод создания предложения",
+        "operationId": "createOffer",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Offer"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "успешный ответ с созданным предложением",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Offer"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/offers/{offer_id}": {
+      "get": {
+        "tags": [
+          "Offers"
+        ],
+        "summary": "метод получения предложения",
+        "operationId": "getOffer",
+        "parameters": [
+          {
+            "name": "offer_id",
+            "in": "path",
+            "description": "идентификатор предложения",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "успешный ответ с предложением",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Offer"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Offers"
+        ],
+        "summary": "метод изменения предложения",
+        "operationId": "updateOffer",
+        "parameters": [
+          {
+            "name": "offer_id",
+            "in": "path",
+            "description": "идентификатор предложения",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Offer"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "успешный ответ с измененным предложением",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Offer"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Offers"
+        ],
+        "summary": "метод удаления предложения",
+        "operationId": "deleteOffer",
+        "parameters": [
+          {
+            "name": "offer_id",
+            "in": "path",
+            "description": "идентификатор предложения",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_204"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/confirmations/": {
+      "get": {
+        "tags": [
+          "Confirmations"
+        ],
+        "summary": "метод получения списка подтверждений",
+        "operationId": "getConfirmations",
+        "responses": {
+          "200": {
+            "description": "успешный ответ со списком подтверждений",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Confirmations"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Confirmations"
+        ],
+        "summary": "метод создания подтверждения",
+        "operationId": "createConfirmation",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Confirmation"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "успешный ответ с созданным подтверждением",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Confirmation"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/confirmations/{confirmation_id}": {
+      "get": {
+        "tags": [
+          "Confirmations"
+        ],
+        "summary": "метод получения подтверждения",
+        "operationId": "getConfirmation",
+        "parameters": [
+          {
+            "name": "confirmation_id",
+            "in": "path",
+            "description": "идентификатор подтверждения",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "успешный ответ с подтверждением",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Confirmation"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Confirmations"
+        ],
+        "summary": "метод изменения подтверждения",
+        "operationId": "updateConfirmation",
+        "parameters": [
+          {
+            "name": "confirmation_id",
+            "in": "path",
+            "description": "идентификатор подтверждения",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Confirmation"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "успешный ответ с измененным подтверждением",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Confirmation"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Confirmations"
+        ],
+        "summary": "метод удаления подтверждения",
+        "operationId": "deleteConfirmation",
+        "parameters": [
+          {
+            "name": "confirmation_id",
+            "in": "path",
+            "description": "идентификатор подтверждения",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_204"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/orders/": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "метод получения списка заказов",
+        "operationId": "getOrders",
+        "responses": {
+          "200": {
+            "description": "успешный ответ со списком заказов",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Orders"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "метод создания заказа",
+        "operationId": "createOrder",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Order"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "успешный ответ с созданным заказом",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/orders/{order_id}": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "метод получения заказа",
+        "operationId": "getOrder",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "description": "идентификатор заказа",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "успешный ответ с заказом",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "метод изменения заказа",
+        "operationId": "updateOrder",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "description": "идентификатор заказа",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Order"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "успешный ответ с измененным заказом",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "метод удаления заказа",
+        "operationId": "deleteOrder",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "description": "идентификатор заказа",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_204"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/order_returns/": {
+      "get": {
+        "tags": [
+          "OrderReturns"
+        ],
+        "summary": "метод получения списка возвратов",
+        "operationId": "getOrderReturns",
+        "responses": {
+          "200": {
+            "description": "успешный ответ со списком возвратов",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderReturns"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "OrderReturns"
+        ],
+        "summary": "метод создания возврата",
+        "operationId": "createOrderReturn",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderReturn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "успешный ответ с созданным возвратом",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderReturn"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/order_returns/{order_return_id}": {
+      "get": {
+        "tags": [
+          "OrderReturns"
+        ],
+        "summary": "метод получения возврата",
+        "operationId": "getOrderReturn",
+        "parameters": [
+          {
+            "name": "order_return_id",
+            "in": "path",
+            "description": "идентификатор возврата",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "успешный ответ с возвратом",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderReturn"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "OrderReturns"
+        ],
+        "summary": "метод изменения возврата",
+        "operationId": "updateOrderReturn",
+        "parameters": [
+          {
+            "name": "order_return_id",
+            "in": "path",
+            "description": "идентификатор возврата",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderReturn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "успешный ответ с измененным возвратом",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderReturn"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "OrderReturns"
+        ],
+        "summary": "метод удаления возврата",
+        "operationId": "deleteOrderReturn",
+        "parameters": [
+          {
+            "name": "order_return_id",
+            "in": "path",
+            "description": "идентификатор возврата",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_204"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/pre_search": {
       "post": {
-        "tags": ["QWEP"],
+        "tags": [
+          "QWEP"
+        ],
         "summary": "предварительный поиск",
         "operationId": "getPreSearch",
         "requestBody": {
@@ -817,7 +2903,9 @@
     },
     "/search": {
       "post": {
-        "tags": ["QWEP"],
+        "tags": [
+          "QWEP"
+        ],
         "summary": "поиск",
         "operationId": "getSearch",
         "requestBody": {
@@ -867,7 +2955,9 @@
     },
     "/vendors": {
       "post": {
-        "tags": ["QWEP"],
+        "tags": [
+          "QWEP"
+        ],
         "summary": "метод получения списка поставщиков",
         "operationId": "getVendors",
         "responses": {
@@ -908,10 +2998,29 @@
   },
   "components": {
     "schemas": {
-      "User": {
-        "required": ["email", "password"],
+      "SiteInfo": {
         "type": "object",
         "properties": {
+          "recaptcha_site_key": {
+            "type": "string",
+            "readOnly": true
+          }
+        }
+      },
+      "User": {
+        "required": [
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "readOnly": true
+          },
+          "recaptcha": {
+            "type": "string",
+            "writeOnly": true
+          },
           "email": {
             "type": "string",
             "format": "email"
@@ -936,20 +3045,59 @@
           }
         }
       },
-      "UserAuth": {
-        "required": ["email", "password"],
+      "Profile": {
+        "required": [
+          "username"
+        ],
         "type": "object",
         "properties": {
-          "email": {
+          "username": {
             "type": "string"
           },
-          "password": {
+          "user": {
+            "type": "integer",
+            "description": "user_id"
+          },
+          "date_joined": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "example": "2024-04-14T08:12:44.533679Z"
+          },
+          "phone": {
             "type": "string"
           }
         }
       },
+      "Profiles": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Profile"
+        }
+      },
+      "UserAuth": {
+        "required": [
+          "password",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "recaptcha": {
+            "type": "string",
+            "writeOnly": true
+          }
+        }
+      },
       "UserAuthRefresh": {
-        "required": ["refresh"],
+        "required": [
+          "refresh"
+        ],
         "type": "object",
         "properties": {
           "refresh": {
@@ -958,7 +3106,9 @@
         }
       },
       "UserAuthVerify": {
-        "required": ["token"],
+        "required": [
+          "token"
+        ],
         "type": "object",
         "properties": {
           "token": {
@@ -1027,8 +3177,289 @@
           "$ref": "#/components/schemas/Category"
         }
       },
+      "Brand": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "Brands": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Brand"
+        }
+      },
+      "Destination": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "Destinations": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Destination"
+        }
+      },
+      "Nomenclature": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "article": {
+            "type": "string"
+          },
+          "destination": {
+            "type": "integer",
+            "description": "nomenclature_id"
+          }
+        }
+      },
+      "Nomenclatures": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Nomenclature"
+        }
+      },
       "Bid": {
-        "required": ["amount", "category", "name"],
+        "required": [
+          "amount",
+          "category",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "example": "2024-04-14T08:12:44.533679Z"
+          },
+          "image": {
+            "type": "string",
+            "format": "binary",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "description": "dictionary:\n  * 0 Создана\n  * 1 Опубликована\n  * 2 Исполнена\n  * 3 Архивирована\n",
+            "default": 0,
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "article": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "integer"
+          },
+          "delivery_time": {
+            "type": "integer"
+          },
+          "description": {
+            "type": "string"
+          },
+          "company": {
+            "type": "integer",
+            "description": "company_id"
+          },
+          "category": {
+            "type": "integer",
+            "description": "category_id"
+          },
+          "brand": {
+            "type": "integer",
+            "description": "brand_id"
+          },
+          "destinations": {
+            "type": "array",
+            "description": "destination_id",
+            "items": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "Bids": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Bid"
+        }
+      },
+      "Offer": {
+        "required": [
+          "amount",
+          "category",
+          "name",
+          "price"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "example": "2024-04-14T08:12:44.533679Z"
+          },
+          "image": {
+            "type": "string",
+            "format": "binary",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "description": "dictionary:\n  * 0 Создано\n  * 1 Опубликовано\n  * 2 Исполнено\n  * 3 Архивировано\n",
+            "default": 0,
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "article": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          },
+          "amount": {
+            "type": "integer"
+          },
+          "delivery_time": {
+            "type": "integer"
+          },
+          "description": {
+            "type": "string"
+          },
+          "company": {
+            "type": "integer",
+            "description": "company_id"
+          },
+          "category": {
+            "type": "integer",
+            "description": "category_id"
+          },
+          "brand": {
+            "type": "integer",
+            "description": "brand_id"
+          },
+          "city": {
+            "type": "integer",
+            "description": "city_id"
+          },
+          "destinations": {
+            "type": "array",
+            "description": "destination_id",
+            "items": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "Offers": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Offer"
+        }
+      },
+      "Confirmation": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "example": "2024-04-14T08:12:44.533679Z"
+          },
+          "name": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          },
+          "amount": {
+            "type": "integer"
+          },
+          "delivery_time": {
+            "type": "integer"
+          },
+          "company": {
+            "type": "integer",
+            "description": "company_id"
+          },
+          "user": {
+            "type": "integer",
+            "description": "user_id"
+          },
+          "profile": {
+            "type": "integer",
+            "description": "profile_id"
+          },
+          "bid": {
+            "type": "integer",
+            "description": "bid_id"
+          },
+          "offer": {
+            "type": "integer",
+            "description": "offer_id"
+          }
+        }
+      },
+      "Confirmations": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Confirmation"
+        }
+      },
+      "Order": {
+        "required": [
+          "amount",
+          "name",
+          "price"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -1043,14 +3474,23 @@
           },
           "status": {
             "type": "integer",
-            "description": "dictionary:\n  * 0 Создана\n  * 1 Опубликована\n  * 2 Исполнена\n  * 3 Архивирована\n",
+            "description": "dictionary:\n  * 0 Заказан\n  * 1 Исполнен\n",
             "default": 0,
-            "enum": [0, 1, 2, 3]
+            "enum": [
+              0,
+              1
+            ]
           },
           "name": {
             "type": "string"
           },
           "amount": {
+            "type": "integer"
+          },
+          "price": {
+            "type": "number"
+          },
+          "delivery_time": {
             "type": "integer"
           },
           "description": {
@@ -1060,23 +3500,77 @@
             "type": "integer",
             "description": "company_id"
           },
-          "category": {
+          "bid": {
             "type": "integer",
-            "description": "category_id"
+            "description": "bid_id"
+          },
+          "offer": {
+            "type": "integer",
+            "description": "offer_id"
           }
         }
       },
-      "Bids": {
+      "Orders": {
         "type": "array",
         "items": {
-          "$ref": "#/components/schemas/Bid"
+          "$ref": "#/components/schemas/Order"
+        }
+      },
+      "OrderReturn": {
+        "required": [
+          "amount",
+          "order"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "example": "2024-04-14T08:12:44.533679Z"
+          },
+          "status": {
+            "type": "integer",
+            "description": "dictionary:\n  * 0 Возврат\n  * 1 Возвращен\n",
+            "default": 0,
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "amount": {
+            "type": "integer"
+          },
+          "description": {
+            "type": "string"
+          },
+          "order": {
+            "type": "integer",
+            "description": "order_id"
+          }
+        }
+      },
+      "OrderReturns": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/OrderReturn"
         }
       },
       "PreSearchRequest": {
+        "required": [
+          "search"
+        ],
         "type": "object",
         "properties": {
           "search": {
             "type": "string"
+          },
+          "clear_cache": {
+            "type": "boolean"
           }
         }
       },
@@ -1125,6 +3619,17 @@
           }
         }
       },
+      "AmountFilter": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "integer"
+          },
+          "to": {
+            "type": "integer"
+          }
+        }
+      },
       "Filters": {
         "type": "object",
         "properties": {
@@ -1139,6 +3644,9 @@
           },
           "delivery": {
             "$ref": "#/components/schemas/DeliveryFilter"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/AmountFilter"
           }
         }
       },
@@ -1166,7 +3674,10 @@
         }
       },
       "SearchRequest": {
-        "required": ["brand", "search"],
+        "required": [
+          "brand",
+          "search"
+        ],
         "type": "object",
         "properties": {
           "search": {
@@ -1174,6 +3685,9 @@
           },
           "brand": {
             "type": "string"
+          },
+          "clear_cache": {
+            "type": "boolean"
           },
           "page_size": {
             "type": "integer"
@@ -1355,7 +3869,9 @@
         }
       },
       "Error": {
-        "required": ["detail"],
+        "required": [
+          "detail"
+        ],
         "type": "object",
         "properties": {
           "detail": {

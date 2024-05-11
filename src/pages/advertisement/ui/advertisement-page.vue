@@ -1,22 +1,26 @@
 <script setup lang="ts">
-  import { getPreSearch } from '@/shared/api';
+  import { $api } from '@/shared/api';
   import { onMounted, ref, watch } from 'vue';
   import { SearchHistory } from '@/widgets/search-history';
 
   import { type LocationQueryValue, useRoute, useRouter } from 'vue-router';
+  import { AdvertisementList } from '@/entities/advertisement';
   import type {
     Item,
     PreSearchResponse,
     PreSearchResponses,
-    SearchPagination,
-  } from '@/shared/api/generated/data-contracts';
-  import { AdvertisementList } from '@/entities/advertisement';
-  import { getSearchService } from '@/shared/api/api';
+    SearchResponse,
+  } from '@/shared/api/generated/Api';
 
   const route = useRoute();
   const router = useRouter();
 
-  const pagination = defineModel<SearchPagination>('pagination', {
+  const pagination = defineModel<
+    Pick<
+      SearchResponse,
+      'has_next' | 'has_prev' | 'page' | 'items' | 'items_count' | 'pages'
+    >
+  >('pagination', {
     required: true,
   });
 
@@ -31,7 +35,11 @@
     searchParam.value = route.query.search as string;
     try {
       if (searchParam.value) {
-        searchResult.value = await getPreSearch({ search: searchParam.value });
+        searchResult.value = (
+          await $api.preSearch.getPreSearch({
+            search: searchParam.value,
+          })
+        ).data;
         advertisementCount.value = searchResult.value.length;
       }
     } catch (error) {
@@ -74,23 +82,26 @@
         },
       });
       if (data) {
-        await getSearchService({
-          search: article as string,
-          page: pagination.value.page,
-          page_size: 10,
-          brand: brand as string,
-        }).then((response) => {
-          pagination.value = {
-            items_count: response.items_count as number,
-            has_next: response.has_next as boolean,
-            has_prev: response.has_prev as boolean,
-            page: response.page as number,
-            pages: response.pages as number,
-          };
-          emit('advertisementItems', response.items);
-          emit('advertisementFilters', response.filters);
-          return response.items as Item[];
-        });
+        await $api.search
+          .getSearch({
+            search: article as string,
+            page: pagination.value.page,
+            page_size: 10,
+            brand: brand as string,
+          })
+          .then((response) => {
+            const { data: items } = response;
+            pagination.value = {
+              items_count: items.items_count,
+              has_next: !!items.has_next,
+              has_prev: !!items.has_prev,
+              page: items.page,
+              pages: items.pages,
+            };
+            emit('advertisementItems', response.data.items);
+            emit('advertisementFilters', response.data.filters);
+            return response.data.items as Item[];
+          });
       }
     } catch (error) {
       console.log(error);

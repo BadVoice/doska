@@ -14,7 +14,10 @@ export function useCreateAdvertisementForm(): {
         .string({ required_error: 'Введите артикул' })
         .min(1, 'Введите артикул'),
       count: z
-        .string({ required_error: 'Введите количество' })
+        .number({
+          required_error: 'Введите количество',
+          invalid_type_error: 'Введите количество',
+        })
         .min(1, 'Введите количество'),
       assigment: z
         .string({ required_error: 'Выберите назначение' })

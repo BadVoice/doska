@@ -4,8 +4,8 @@
   import { onMounted, onUnmounted, ref } from 'vue';
   import type {
     Item,
-    SearchPagination,
-  } from '@/shared/api/generated/data-contracts';
+    SearchPagination, SearchResponse,
+  } from '@/shared/api/generated/Api';
   import { OfferList } from '@/entities/offer';
   import { useRoute } from 'vue-router';
 
@@ -88,12 +88,12 @@
         v-if="route.path === '/advertisements'"
         class="flex items-center justify-between border-b border-r border-[#D0D4DB] bg-white p-4 pr-5">
         <h3 class="text-[18px] font-semibold">
-          {{ getAnnouncementText(pagination.items_count) }}
+          {{ getAnnouncementText(pagination.items_count ?? 0) }}
         </h3>
         <Button
           v-if="
             route.path === '/advertisements' &&
-            getAnnouncementText(pagination.items_count) !== 'Нет предложений'
+            getAnnouncementText(pagination.items_count ?? 0) !== 'Нет предложений'
           "
           @click="handleFilterClick"
           size="icon"
