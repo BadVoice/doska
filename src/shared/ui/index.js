@@ -5,3 +5,4 @@ export * from './carousel';
 export * from './label';
 export * from './pagination';
 export * from './select';
+export * from './popover';

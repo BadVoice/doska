@@ -1,11 +1,8 @@
 <script setup lang="ts">
   import { Button } from '@/shared/ui/button';
 
-  import { defineProps, onMounted, onUnmounted, ref } from 'vue';
-  import type {
-    Item,
-    SearchPagination, SearchResponse,
-  } from '@/shared/api/generated/Api';
+  import { onMounted, onUnmounted, ref } from 'vue';
+  import type { Item, SearchPagination } from '@/shared/api/generated/Api';
   import { OfferList } from '@/entities/offer';
   import { useRoute } from 'vue-router';
 
@@ -93,7 +90,8 @@
         <Button
           v-if="
             route.path === '/advertisements' &&
-            getAnnouncementText(pagination.items_count ?? 0) !== 'Нет предложений'
+            getAnnouncementText(pagination.items_count ?? 0) !==
+              'Нет предложений'
           "
           @click="handleFilterClick"
           size="icon"
@@ -108,9 +106,7 @@
       class="custom-scrollbar flex h-[100vh] flex-col items-center gap-4 overflow-auto bg-[#F9FAFB] p-4 sm:max-h-[calc(100vh-150px)]">
       <OfferList
         class="h-full"
-        v-if="
-          route.path == '/advertisements' && route.query['active-pre-search']
-        "
+        v-if="route.path == '/advertisements'"
         :offers-items="offersItems"
         @offer-clicked="handleItemClick" />
     </div>
@@ -118,7 +114,9 @@
     <div v-if="route.path === '/advertisements'" class="flex bg-[#F9FAFB] py-4">
       <Pagination
         v-if="
-          route.path == '/advertisements' && route.query['active-pre-search']
+          route.path == '/advertisements' &&
+          route.query['active-pre-search'] &&
+          !!pagination.pages
         "
         v-slot="{ page }"
         :total="pagination.items_count"

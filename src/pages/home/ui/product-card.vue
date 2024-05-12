@@ -7,7 +7,7 @@
     CarouselContent,
     CarouselItem,
   } from '@/shared/ui/carousel';
-  import { defineProps, ref } from 'vue';
+  import { ref } from 'vue';
   import { watchOnce } from '@vueuse/core';
   import type { Item } from '@/shared/api/generated/Api';
   import { useRoute, useRouter } from 'vue-router';
@@ -56,7 +56,7 @@
 <template>
   <div
     v-if="isProductCardOpen"
-    class="inline-block flex h-screen w-full min-w-[360px] flex-col justify-between border-l border-[#D0D4DB] bg-white lg:w-[360px]">
+    class="flex h-screen w-full min-w-[360px] flex-col justify-between border-l border-[#D0D4DB] bg-white lg:w-[360px]">
     <div class="flex flex-col gap-y-6">
       <div>
         <div
@@ -73,7 +73,7 @@
         <Carousel
           @init-api="setApi"
           class="relative ml-[1px]"
-          v-if="productItem.photo">
+          v-if="!!productItem.photo">
           <CarouselContent>
             <CarouselItem class="pl-2">
               <img :src="productItem.photo" alt="product_avatar" />
