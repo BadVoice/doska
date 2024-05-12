@@ -27,6 +27,12 @@ export default defineConfig({
         ws: true,
         rewrite: (path) => path.replace(/^\/qwep\/api\/v1/, '/qwep/api/v1'),
       },
+      '/core/api/v1': {
+        target: 'https://test.qrq.ru',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/core\/api\/v1/, '/core/api/v1'),
+      },
     },
   },
 });

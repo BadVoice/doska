@@ -22,20 +22,20 @@ export const advertisementTypeSelected = createEvent<TAdvertisementType>();
 export const formClosed = createEvent();
 export const formSubmitted = createEvent<FormValues>();
 
-export const advertisementType = createStore<TAdvertisementType | null>(
+export const $advertisementType = createStore<TAdvertisementType | null>(
   null,
 ).reset([formClosed, formSubmitted]);
-export const formMode = createStore<TFormMode>('selectType').reset(formClosed);
+export const $formMode = createStore<TFormMode>('selectType').reset(formClosed);
 
 sample({
   clock: advertisementTypeSelected,
   fn: (clk) => ({
-    advertisementType: clk,
-    formMode: 'form' as const,
+    $advertisementType: clk,
+    $formMode: 'form' as const,
   }),
   target: spread({
-    advertisementType,
-    formMode,
+    $advertisementType,
+    $formMode,
   }),
 });
 

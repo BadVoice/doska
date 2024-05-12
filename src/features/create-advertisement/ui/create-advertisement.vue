@@ -10,9 +10,9 @@
   } from '@/shared/ui';
   import { ChevronLeft, X } from 'lucide-vue-next';
   import {
+    $formMode,
     advertisementTypeSelected,
     formClosed,
-    formMode,
     formSubmitted,
     type FormValues,
   } from '../model/create-advertisement';
@@ -21,10 +21,11 @@
   import { onMounted, onUnmounted } from 'vue';
 
   const emit = defineEmits(['close']);
-  const {
-    advertisementTypeSelected: handleSelectedType,
-    formMode: createFormType,
-  } = useUnit({ advertisementTypeSelected, formMode });
+  const { advertisementTypeSelected: handleSelectedType, $formMode: formMode } =
+    useUnit({
+      advertisementTypeSelected,
+      $formMode,
+    });
 
   const { form } = useCreateAdvertisementForm();
 
@@ -67,7 +68,7 @@
         Размещение заявки
       </p>
       <Button
-        v-if="createFormType === 'form'"
+        v-if="formMode === 'form'"
         variant="ghost"
         size="icon"
         @click="form.resetForm()"
@@ -77,7 +78,7 @@
     </div>
     <div
       class="flex h-full w-full flex-col items-center gap-y-10 bg-[#F9FAFB] pt-20">
-      <template v-if="createFormType === 'selectType'">
+      <template v-if="formMode === 'selectType'">
         <div class="flex flex-col items-center gap-y-4 px-5">
           <img src="./assets/bag.svg" alt="bag" class="h-[60px] w-[60px]" />
           <p class="text-[17px] font-medium">Хотите купить или продать?</p>
@@ -132,7 +133,7 @@
               <FormControl>
                 <Input
                   class="h-fit rounded-[8px] border border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
-                  type="text"
+                  type="number"
                   placeholder="Количество"
                   v-bind="componentField" />
               </FormControl>

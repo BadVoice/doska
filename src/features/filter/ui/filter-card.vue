@@ -4,7 +4,6 @@
   import { useFilter } from '../lib/schema';
   import FilterInput from './filter-input.vue';
   import { computed, defineProps, ref, watch } from 'vue';
-  import { $api } from '@/shared/api/api';
   import { useRoute, useRouter } from 'vue-router';
 
   import {
@@ -17,6 +16,7 @@
     SearchResponse,
     SearchResponseFilters,
   } from '@/shared/api/generated/Api';
+  import { $qwepApi } from '@/shared/api/api';
 
   defineProps<{
     isFilterCardOpen: boolean;
@@ -122,7 +122,7 @@
           const filterParamsValue = filterParams.value;
           updateUrl(filterParamsValue);
 
-          const { data: items } = await $api.search.getSearch({
+          const { data: items } = await $qwepApi.search.getSearch({
             search: search.value?.toString() ?? '',
             page_size: 10,
             page: pagination.value.page,
