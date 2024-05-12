@@ -11,6 +11,7 @@
     PreSearchResponses,
     SearchResponse,
   } from '@/shared/api/generated/Api';
+  import { $qwepApi } from '@/shared/api/api';
 
   const route = useRoute();
   const router = useRouter();
@@ -82,7 +83,7 @@
         },
       });
       if (data) {
-        await $api.search
+        await $qwepApi.search
           .getSearch({
             search: article as string,
             page: pagination.value.page,
