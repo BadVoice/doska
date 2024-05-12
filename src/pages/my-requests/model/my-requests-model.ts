@@ -20,7 +20,7 @@ export const requestClicked = createEvent<Bid>();
 
 export const $filterOpened = createStore(false);
 export const myRequestsQuery = createQuery({
-  handler: async () => (await $api.bids.getBids()).data,
+  handler: async () => (await $qwepApi.bids.getBids()).data,
 });
 
 const deleteRequestMutation = createMutation({
