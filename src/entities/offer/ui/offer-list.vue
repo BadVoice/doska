@@ -2,9 +2,7 @@
   import type { Item } from '@/shared/api/generated/Api';
   import { Button } from '@/shared/ui/button';
   import { cn } from '@/shared/lib';
-  import { useRoute, useRouter } from 'vue-router';
-
-  const router = useRouter();
+  import { useRoute } from 'vue-router';
 
   defineProps<{
     offersItems: Item[];

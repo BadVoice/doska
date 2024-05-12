@@ -13,8 +13,8 @@
     SearchResponse,
     SearchResponseFilters,
   } from '@/shared/api/generated/Api';
-  
-  import { $api } from '@/shared/api';
+
+  import { $qwepApi } from '@/shared/api/api';
 
   const route = useRoute();
   const router = useRouter();
@@ -110,7 +110,7 @@
     const citiesString = route.query.cities as string;
     const citiesArray = citiesString ? citiesString.split(',').map(Number) : [];
 
-    $api.search
+    $qwepApi.search
       .getSearch({
         filters: {
           name: route.query?.denomination as string,
@@ -136,11 +136,11 @@
       })
       .then((response) => {
         pagination.value = {
-          items_count: response.data.items_count as number,
-          has_next: response.data.has_next as boolean,
-          has_prev: response.data.has_prev as boolean,
-          page: response.data.page as number,
-          pages: response.data.pages as number,
+          items_count: response.data.items_count,
+          has_next: !!response.data.has_next,
+          has_prev: !!response.data.has_prev,
+          page: response.data.page,
+          pages: response.data.pages,
         };
         offersItems.value = response.data.items as Item[];
       });
@@ -161,7 +161,7 @@
   });
 
   const isMobile = ref(false);
-  const isAuthOpen = ref(false)
+  const isAuthOpen = ref(false);
   const selectedAdvertisement = ref(false);
 
   defineEmits(['advertisementItems']);
@@ -233,8 +233,18 @@
     isProductCardOpen.value = false;
   }
 
-  function handleIsAuthOpen() {
-    isAuthOpen.value = true
+  function handleRequestsData(data: {
+    list: Item[];
+    filters: SearchResponseFilters;
+    pagination: Pick<
+      SearchResponse,
+      'has_next' | 'has_prev' | 'page' | 'items' | 'items_count' | 'pages'
+    >;
+  }) {
+    console.log(data);
+    offersItems.value = data.list;
+    filters.value = data.filters;
+    pagination.value = data.pagination;
   }
 </script>
 
@@ -274,10 +284,11 @@
       </div>
       <router-view
         v-if="!isAuthOpen"
+        @handle-data="handleRequestsData"
         @advertisementItems="handleAdvertisementItems"
         @advertisementFilters="handleAdvertisementFilters"
         v-model:pagination="pagination" />
-      <Auth v-if="isAuthOpen"   @submit-close-auth="isAuthOpen = false" />
+      <Auth v-if="isAuthOpen" @submit-close-auth="isAuthOpen = false" />
       <CreateAdvertisement
         v-if="isCreateAdvertisementOpen"
         @close="isCreateAdvertisementOpen = false" />

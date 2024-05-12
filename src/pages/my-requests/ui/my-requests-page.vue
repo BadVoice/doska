@@ -6,15 +6,24 @@
     $filterOpened,
     filterVisibilityChanged,
     myRequestsQuery,
+    requestClicked,
+    searchOffersMutation,
   } from '../model/my-requests-model';
   import RequestItem from './request-item.vue';
   import type { Bid } from '@/shared/api/generated/Api';
   import FilterForm from './filter-form.vue';
+  import { useRouter } from 'vue-router';
+
+
+  const emit = defineEmits(['handleData']);
+  const router = useRouter();
 
   const {
     $filterOpened: filterOpened,
     filterVisibilityChanged: changeFilterVisibility,
-  } = useUnit({ $filterOpened, filterVisibilityChanged });
+    requestClicked: fetchOffers,
+  } = useUnit({ $filterOpened, filterVisibilityChanged, requestClicked });
+
   const { start: fetchRequests, data: requests } = useUnit(myRequestsQuery);
 
   onMounted(() => {
@@ -28,8 +37,26 @@
     { color: '#FE2400', text: 'Архивирована' },
   ];
 
+
   onBeforeUnmount(() => {
     filterVisibilityChanged(false);
+  });
+  
+  searchOffersMutation.finished.success.watch(({ result }) => {
+    const { data } = result;
+
+    emit('handleData', {
+      list: data.items,
+      filters: data.filters,
+      pagination: {
+        items_count: data.items_count,
+        has_next: !!data.has_next,
+        has_prev: !!data.has_prev,
+        page: data.page,
+        pages: data.pages,
+      },
+    });
+    router.push('/advertisements');
   });
 </script>
 
@@ -68,7 +95,10 @@
       </div>
       <div v-else class="m-4 flex flex-col gap-y-4">
         <template v-for="item of requests">
-          <RequestItem :item="item as Bid" :status="status" />
+          <RequestItem
+            :item="item as Bid"
+            :status="status"
+            @click="fetchOffers" />
         </template>
       </div>
     </div>

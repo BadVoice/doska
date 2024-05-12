@@ -1,7 +1,9 @@
-import { $api } from '@/shared/api';
 import { createMutation, createQuery } from '@farfetched/core';
 import { createEvent, createStore, sample } from 'effector';
 import { not, spread } from 'patronum';
+import type { Bid } from '@/shared/api/generated/Api';
+
+import { $qwepApi } from '@/shared/api/api';
 
 export interface FormValues {
   name: string;
@@ -14,6 +16,7 @@ export interface FormValues {
 export const deleteRequestClicked = createEvent<string>();
 export const filterVisibilityChanged = createEvent<boolean | void>();
 export const filterSubmitted = createEvent<FormValues>();
+export const requestClicked = createEvent<Bid>();
 
 export const $filterOpened = createStore(false);
 export const myRequestsQuery = createQuery({
@@ -29,6 +32,15 @@ const deleteRequestMutation = createMutation({
 const filterMutation = createMutation({
   handler: async (data) => 'REQUEST HERE',
 });
+
+export const searchOffersMutation = createMutation({
+  handler: async (data: Bid) =>
+    $qwepApi.search.getSearch({
+      search: data.name,
+      brand: data.brand?.toString() ?? '',
+    }),
+});
+
 
 sample({
   clock: deleteRequestClicked,
@@ -49,4 +61,9 @@ sample({
     $filterOpened: false,
   }),
   target: spread({ filterMutation: filterMutation.start, $filterOpened }),
+});
+
+sample({
+  clock: requestClicked,
+  target: searchOffersMutation.start,
 });
