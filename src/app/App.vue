@@ -14,7 +14,7 @@
     SearchResponseFilters,
   } from '@/shared/api/generated/Api';
 
-  import { $api } from '@/shared/api';
+  import { $qwepApi } from '@/shared/api/api';
 
   const route = useRoute();
   const router = useRouter();
@@ -110,7 +110,7 @@
     const citiesString = route.query.cities as string;
     const citiesArray = citiesString ? citiesString.split(',').map(Number) : [];
 
-    $api.search
+    $qwepApi.search
       .getSearch({
         filters: {
           name: route.query?.denomination as string,
