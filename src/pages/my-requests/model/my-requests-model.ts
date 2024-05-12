@@ -3,7 +3,7 @@ import { createEvent, createStore, sample } from 'effector';
 import { not, spread } from 'patronum';
 import type { Bid } from '@/shared/api/generated/Api';
 
-import { $qwepApi } from '@/shared/api/api';
+import { $api, $qwepApi } from '@/shared/api/api';
 
 export interface FormValues {
   name: string;
