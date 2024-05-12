@@ -13,6 +13,7 @@
     SearchResponse,
     SearchResponseFilters,
   } from '@/shared/api/generated/Api';
+
   import { $qwepApi } from '@/shared/api/api';
 
   const route = useRoute();
