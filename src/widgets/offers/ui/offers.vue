@@ -106,9 +106,7 @@
       class="custom-scrollbar flex h-[100vh] flex-col items-center gap-4 overflow-auto bg-[#F9FAFB] p-4 sm:max-h-[calc(100vh-150px)]">
       <OfferList
         class="h-full"
-        v-if="
-          route.path == '/advertisements' && route.query['active-pre-search']
-        "
+        v-if="route.path == '/advertisements'"
         :offers-items="offersItems"
         @offer-clicked="handleItemClick" />
     </div>
