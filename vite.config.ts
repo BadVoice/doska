@@ -31,6 +31,7 @@ export default defineConfig({
         target: 'https://test.qrq.ru',
         changeOrigin: true,
         secure: false,
+        rewrite: (path) => path.replace(/^\/core\/api\/v1/, '/core/api/v1'),
       },
     },
   },

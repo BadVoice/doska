@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import { $api } from '@/shared/api';
   import { onMounted, ref, watch } from 'vue';
   import { SearchHistory } from '@/widgets/search-history';
 
@@ -37,7 +36,7 @@
     try {
       if (searchParam.value) {
         searchResult.value = (
-          await $api.preSearch.getPreSearch({
+          await $qwepApi.preSearch.getPreSearch({
             search: searchParam.value,
           })
         ).data;
