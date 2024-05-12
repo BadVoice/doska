@@ -14,7 +14,8 @@
     SearchResponseFilters,
   } from '@/shared/api/generated/Api';
   
-  import { $api } from '@/shared/api';
+  // import { $api } from '@/shared/api';
+  import {getSearchService} from "@/shared/api/requests";
 
   const route = useRoute();
   const router = useRouter();
@@ -110,8 +111,8 @@
     const citiesString = route.query.cities as string;
     const citiesArray = citiesString ? citiesString.split(',').map(Number) : [];
 
-    $api.search
-      .getSearch({
+
+      getSearchService({
         filters: {
           name: route.query?.denomination as string,
           article: route.query?.article as string,
@@ -136,13 +137,13 @@
       })
       .then((response) => {
         pagination.value = {
-          items_count: response.data.items_count as number,
-          has_next: response.data.has_next as boolean,
-          has_prev: response.data.has_prev as boolean,
-          page: response.data.page as number,
-          pages: response.data.pages as number,
+          items_count: response.items_count as number,
+          has_next: response.has_next as boolean,
+          has_prev: response.has_prev as boolean,
+          page: response.page as number,
+          pages: response.pages as number,
         };
-        offersItems.value = response.data.items as Item[];
+        offersItems.value = response.items as Item[];
       });
   }
 

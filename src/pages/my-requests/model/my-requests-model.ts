@@ -1,9 +1,10 @@
-import { $api } from '@/shared/api';
+
 import { createQuery } from '@farfetched/core';
+import {getBids} from "@/shared/api/requests";
 
 export const myRequestsQuery = createQuery({
   handler: async () => {
-    const response = await $api.bids.getBids();
-    return response.data;
+    const response = await getBids();
+    return response;
   },
 });

@@ -505,7 +505,7 @@ export class HttpClient<SecurityDataType = unknown> {
       ...axiosConfig,
       baseURL:
         axiosConfig.baseURL ||
-        'https://virtserver.swaggerhub.com/riderufa/qrq_core/1.0.0',
+        'https://test.qrq.ru/core/api/v1/',
     });
     this.secure = secure;
     this.format = format;
@@ -1836,7 +1836,7 @@ export class Api<
         path: `/pre_search`,
         method: 'POST',
         body: data,
-        secure: true,
+        secure: false,
         type: ContentType.Json,
         format: 'json',
         ...params,

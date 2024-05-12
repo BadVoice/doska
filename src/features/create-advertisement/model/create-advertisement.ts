@@ -2,7 +2,7 @@ import { createEvent, createStore, sample } from 'effector';
 import { spread } from 'patronum';
 import { createMutation } from '@farfetched/core';
 import type { Bid } from '@/shared/api/generated/Api';
-import { $api } from '@/shared/api';
+import {createBid} from "@/shared/api/requests";
 
 type TFormMode = 'selectType' | 'form';
 type TAdvertisementType = 'buy' | 'sell';
@@ -15,7 +15,7 @@ export interface FormValues {
 }
 
 const createAdvertisementMutation = createMutation({
-  handler: async (data: Bid) => $api.bids.createBid(data),
+  handler: async (data: Bid) => createBid(data),
 });
 
 export const advertisementTypeSelected = createEvent<TAdvertisementType>();

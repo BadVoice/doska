@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { $api } from '@/shared/api';
+import {getPreSearch, getSearchService} from '@/shared/api/requests';
   import { onMounted, ref, watch } from 'vue';
   import { SearchHistory } from '@/widgets/search-history';
 
@@ -36,10 +36,10 @@
     try {
       if (searchParam.value) {
         searchResult.value = (
-          await $api.preSearch.getPreSearch({
+          await getPreSearch({
             search: searchParam.value,
           })
-        ).data;
+        );
         advertisementCount.value = searchResult.value.length;
       }
     } catch (error) {
@@ -82,25 +82,24 @@
         },
       });
       if (data) {
-        await $api.search
-          .getSearch({
+        await
+            getSearchService ({
             search: article as string,
             page: pagination.value.page,
             page_size: 10,
             brand: brand as string,
           })
           .then((response) => {
-            const { data: items } = response;
             pagination.value = {
-              items_count: items.items_count,
-              has_next: !!items.has_next,
-              has_prev: !!items.has_prev,
-              page: items.page,
-              pages: items.pages,
+              items_count: response.items_count,
+              has_next: !!response.has_next,
+              has_prev: !!response.has_prev,
+              page: response.page,
+              pages: response.pages,
             };
-            emit('advertisementItems', response.data.items);
-            emit('advertisementFilters', response.data.filters);
-            return response.data.items as Item[];
+            emit('advertisementItems', response.items);
+            emit('advertisementFilters', response.filters);
+            return response.items as Item[];
           });
       }
     } catch (error) {
