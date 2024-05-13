@@ -14,6 +14,7 @@
   import FilterForm from './filter-form.vue';
   import { useRouter } from 'vue-router';
 
+
   const emit = defineEmits(['handleData']);
   const router = useRouter();
 
@@ -36,10 +37,11 @@
     { color: '#FE2400', text: 'Архивирована' },
   ];
 
+
   onBeforeUnmount(() => {
     filterVisibilityChanged(false);
   });
-
+  
   searchOffersMutation.finished.success.watch(({ result }) => {
     const { data } = result;
 

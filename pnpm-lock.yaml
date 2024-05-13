@@ -5,7 +5,6 @@ settings:
   excludeLinksFromLockfile: false
 
 importers:
-
   .:
     dependencies:
       '@farfetched/core':
@@ -120,6 +119,7 @@ importers:
       vue-tsc:
         specifier: ^2.0.11
         version: 2.0.13(typescript@5.4.5)
+
 
 packages:
 
@@ -614,10 +614,13 @@ packages:
   '@types/nprogress@0.2.3':
     resolution: {integrity: sha512-k7kRA033QNtC+gLc4VPlfnue58CM1iQLgn1IMAU8VPHGOj7oIHPp9UlhedEnD/Gl8evoCjwkZjlBORtZ3JByUA==}
 
-  '@types/vue-the-mask@0.11.5':
+  /@types/vue-the-mask@0.11.5:
     resolution: {integrity: sha512-kO47HeoXxzBgJUK70CihEXgsyPrB1uTinFBc/R2gubD62zMV/dSg7XhFbnEF1zcRKA9MBDGVZm3VicmSFDngdQ==}
+    dependencies:
+      vue: 2.7.16
+    dev: false
 
-  '@types/web-bluetooth@0.0.20':
+  /@types/web-bluetooth@0.0.20:
     resolution: {integrity: sha512-g9gZnnXVq7gM7v3tJCWV/qw7w+KeOlSHAhgF9RytFyifW6AF61hdT2ucrYhPq9hLs5JIryeupHV3qGk95dH9ow==}
 
   '@vee-validate/zod@4.12.6':

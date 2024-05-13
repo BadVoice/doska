@@ -252,10 +252,15 @@
   <div class="flex flex-row bg-white">
     <div class="flex w-full flex-col items-center sm:max-w-[356px]">
       <Header
-        v-if="!isProductCardOpen && !isFilterCardOpen && !isAuthOpen"
+        v-if="isMobile && !isProductCardOpen && !isFilterCardOpen && !isAuthOpen && !isCreateAdvertisementOpen"
         @submitSearch="handleSearchSubmit"
         @submit-login="isAuthOpen = true"
         @create-clicked="isCreateAdvertisementOpen = true" />
+      <Header
+          v-if="!isMobile && !isAuthOpen"
+          @submitSearch="handleSearchSubmit"
+          @submit-login="isAuthOpen = true"
+          @create-clicked="isCreateAdvertisementOpen = true" />
       <div
         v-if="isMobile && (selectedAdvertisement || isFilterCardOpen)"
         class="w-full">
@@ -283,7 +288,7 @@
           class="flex w-full" />
       </div>
       <router-view
-        v-if="!isAuthOpen"
+        v-if="!isAuthOpen  && !isFilterCardOpen"
         @handle-data="handleRequestsData"
         @advertisementItems="handleAdvertisementItems"
         @advertisementFilters="handleAdvertisementFilters"
