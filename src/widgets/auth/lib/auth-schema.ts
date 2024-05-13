@@ -7,24 +7,24 @@ export function useAuthForm(schemaMode: TInputMode): {
   form: FormContext<any, {}>;
 } {
   const schemaWithEmail = toTypedSchema(
-    z.object({
-      name: z.string({ required_error: 'Введите имя' }),
-      email: z
-        .string({ required_error: 'Введите почту' })
-        .email({ message: 'Введите почту' }),
-    }),
+      z.object({
+        name: z.string({ required_error: 'Введите имя' }),
+        email: z
+            .string({ required_error: 'Введите почту' })
+            .email({ message: 'Введите почту' }),
+      }),
   );
 
   const schemaWithPhone = toTypedSchema(
-    z.object({
-      name: z.string({ required_error: 'Введите имя' }),
-      phone: z.string({ required_error: 'Введите номер телефона' }),
-    }),
+      z.object({
+        name: z.string({ required_error: 'Введите имя' }),
+        phone: z.string({ required_error: 'Введите номер телефона' }),
+      }),
   );
 
   const form = useForm({
     validationSchema:
-      schemaMode === 'phone' ? schemaWithEmail : schemaWithPhone,
+        schemaMode === 'phone' ? schemaWithEmail : schemaWithPhone,
   });
 
   return {
@@ -36,22 +36,20 @@ export function usePhoneOrEmailForm(schemaMode: TInputMode): {
   form: FormContext<any, {}>;
 } {
   const schemaWithEmail = toTypedSchema(
-    z.object({
-      value: z
-        .string({ required_error: 'Введите почту' })
-        .email({ message: 'Введите почту' }),
-    }),
+      z.object({
+        value: z.string({ required_error: 'Введите почту' }),
+      }),
   );
 
   const schemaWithPhone = toTypedSchema(
-    z.object({
-      value: z.string({ required_error: 'Введите номер телефона' }),
-    }),
+      z.object({
+        value: z.string({ required_error: 'Введите номер телефона' }),
+      }),
   );
 
   const form = useForm({
     validationSchema:
-      schemaMode === 'email' ? schemaWithEmail : schemaWithPhone,
+        schemaMode === 'email' ? schemaWithEmail : schemaWithPhone,
   });
 
   return {
