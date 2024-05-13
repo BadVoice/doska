@@ -257,7 +257,7 @@
         @submit-login="isAuthOpen = true"
         @create-clicked="isCreateAdvertisementOpen = true" />
       <Header
-          v-if="!isMobile"
+          v-if="!isMobile && !isAuthOpen"
           @submitSearch="handleSearchSubmit"
           @submit-login="isAuthOpen = true"
           @create-clicked="isCreateAdvertisementOpen = true" />
@@ -288,7 +288,7 @@
           class="flex w-full" />
       </div>
       <router-view
-        v-if="!isAuthOpen && !isFilterCardOpen"
+        v-if="!isAuthOpen  && !isFilterCardOpen"
         @handle-data="handleRequestsData"
         @advertisementItems="handleAdvertisementItems"
         @advertisementFilters="handleAdvertisementFilters"
