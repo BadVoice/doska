@@ -41,6 +41,7 @@ export const searchOffersMutation = createMutation({
     }),
 });
 
+
 sample({
   clock: deleteRequestClicked,
   target: deleteRequestMutation.start,
