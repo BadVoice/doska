@@ -14,10 +14,15 @@
     PaginationNext,
     PaginationPrev,
   } from '@/shared/ui/pagination';
+  import { Plus } from 'lucide-vue-next';
+  import { useUnit } from 'effector-vue/composition';
+  import { offerAddButtonClicked } from '@/widgets/offers/model/offers-model';
 
-  const props = defineProps<{
+  defineProps<{
     offersItems: Item[];
   }>();
+
+  const handleAddManuallyClick = useUnit(offerAddButtonClicked);
 
   const route = useRoute();
   const pagination = defineModel<SearchPagination>('pagination', {
@@ -76,13 +81,11 @@
 
 <template>
   <div class="flex flex-col">
-    <div
-      v-if="
-        route.path === '/advertisements' && route.query['active-pre-search']
-      "
-      class="w-full min-w-[350px]">
+    <div v-if="route.path === '/advertisements'" class="w-full min-w-[350px]">
       <div
-        v-if="route.path === '/advertisements'"
+        v-if="
+          route.path === '/advertisements' && route.query['active-pre-search']
+        "
         class="flex items-center justify-between border-b border-r border-[#D0D4DB] bg-white p-4 pr-5">
         <h3 class="text-[18px] font-semibold">
           {{ getAnnouncementText(pagination.items_count ?? 0) }}
@@ -100,6 +103,9 @@
         </Button>
       </div>
     </div>
+    <Button variant="ghost" @click="handleAddManuallyClick()" size="icon">
+      <Plus color="#0017FC" />
+    </Button>
 
     <div
       v-if="route.path == '/advertisements'"
