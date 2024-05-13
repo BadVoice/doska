@@ -1,7 +1,7 @@
-import { createEvent, createStore, sample } from 'effector';
+import { createEvent, createStore, sample, split } from 'effector';
 import { spread } from 'patronum';
 import { createMutation } from '@farfetched/core';
-import type { Bid } from '@/shared/api/generated/Api';
+import type { Bid, Offer } from '@/shared/api/generated/Api';
 import { $api } from '@/shared/api';
 
 type TFormMode = 'selectType' | 'form';
@@ -14,8 +14,12 @@ export interface FormValues {
   assigment: string;
 }
 
-const createAdvertisementMutation = createMutation({
+const createBidMutation = createMutation({
   handler: async (data: Bid) => $api.bids.createBid(data),
+});
+
+const createOfferMutation = createMutation({
+  handler: async (data: Offer) => $api.offers.createOffer(data),
 });
 
 export const advertisementTypeSelected = createEvent<TAdvertisementType>();
@@ -39,13 +43,16 @@ sample({
   }),
 });
 
-sample({
+split({
+  source: $advertisementType,
   clock: formSubmitted,
-  fn: (clk) => ({
-    name: clk.name,
-    article: clk.article,
-    amount: parseInt(clk?.count ?? 1),
-    category: 0,
-  }),
-  target: createAdvertisementMutation.start,
+  match: {
+    buy: (src) => src === 'buy',
+    sell: (src) => src === 'sell',
+  },
+
+  cases: {
+    buy: createBidMutation.start,
+    sell: createOfferMutation.start,
+  },
 });
