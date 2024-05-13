@@ -27,7 +27,7 @@
 
   const searchTerm = ref('');
 
-  const emit = defineEmits(['submitSearch', 'submitLogin', 'createClicked']);
+  const emit = defineEmits(['submitSearch', 'submitLogin', 'createClicked', 'openSidebar']);
 
   const handleInput = useDebounceFn(() => {
     emit('submitSearch', searchTerm.value);
@@ -63,7 +63,7 @@
     class="w-full flex-col items-center justify-between border-b border-r border-[#D0D4DB] md:max-w-[356px]">
     <div class="flex w-full items-center justify-between px-4 pt-4">
       <div v-if="!visibleSearch" class="flex flex-row items-center">
-        <BurgerMenu v-model="isBurgerMenuOpen" />
+        <BurgerMenu @click="emit('openSidebar')" v-model="isBurgerMenuOpen" />
         <div class="ml-4 flex w-[5.75rem] items-center">
           <RouterLink to="/" class="flex w-full items-center">
             <img src="./assets/logo.svg" alt="logo" class="logo w-full" />
