@@ -17,11 +17,13 @@
   import { $qwepApi } from '@/shared/api/api';
   import { useUnit } from 'effector-vue/composition';
   import { $showAddOfferModal } from '@/widgets/offers/model/offers-model';
+  import { $requestHistoryOpened, RequestHistory } from '@/pages/my-requests';
 
   const route = useRoute();
   const router = useRouter();
 
   const showAddOfferModal = useUnit($showAddOfferModal);
+  const showRequestHistory = useUnit($requestHistoryOpened);
 
   const offersItems = ref<Item[]>([]);
   const filters = ref<SearchResponseFilters>({
@@ -308,6 +310,7 @@
         v-if="isCreateAdvertisementOpen"
         @close="isCreateAdvertisementOpen = false" />
     </div>
+
     <div v-if="!isMobile" class="flex-grow bg-[#F9FAFB]">
       <Offers
         v-model:pagination="pagination"
@@ -316,6 +319,8 @@
         :offers-items="offersItems"
         @page-selected="handlePageSelected"
         class="hidden w-full lg:flex" />
+
+      <RequestHistory v-if="showRequestHistory" />
 
       <Offers
         v-if="!isFilterCardOpen && !isProductCardOpen"
