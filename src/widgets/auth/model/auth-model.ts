@@ -31,8 +31,8 @@ export const $inputMode = createStore<TInputMode>('email');
 export const $details = createStore<IDetails | null>(null);
 
 export const $formIndex = createStore<number>(0)
-  .on(formSubmitted, (src) => src + 1)
-  .on(formPrevClicked, (src) => src - 1);
+    .on(formSubmitted, (src) => src + 1)
+    .on(formPrevClicked, (src) => src - 1);
 
 export const detailsEmailInputed = createEvent<string>();
 export const detailsPhoneInputed = createEvent<string>();
@@ -42,20 +42,19 @@ export const $detailsPhone = createStore<string>('');
 
 sample({
   clock: detailsEmailInputed,
-  fn: (value) => value.replace(/\D/g, value),
   target: $detailsEmail,
 });
 
 sample({
   clock: detailsPhoneInputed,
-  fn: (value) => value.replace(/\D/g, value),
+  fn: (value) => value.replace(/\D/g, ''),
   target: $detailsPhone,
 });
 
 export const $formMode = combine({ index: $formIndex }, ({ index }) =>
-  index <= 2
-    ? (['phoneOrEmail', 'details', 'company'] as TFormMode[])[index]
-    : 'company',
+    index <= 2
+        ? (['phoneOrEmail', 'details', 'company'] as TFormMode[])[index]
+        : 'company',
 );
 
 interface SendDetailsParams {
@@ -86,10 +85,10 @@ const sendDetailsFx = createEffect<SendDetailsParams, any, Error>(
 sample({
   clock: detailsFormSubmitted,
   fn: (clk) =>
-    ({
-      name: clk.name,
-      details: clk.phone ?? clk.email,
-    }) as IDetails,
+      ({
+        name: clk.name,
+        details: clk.phone ?? clk.email,
+      }) as IDetails,
   target: $details,
 });
 
@@ -125,9 +124,9 @@ sample({
 sample({
   source: $phoneOrEmail,
   fn: (src) =>
-    src.startsWith('+') || !isNaN(parseInt(src[0]))
-      ? ('phone' as const)
-      : ('email' as const),
+      src.startsWith('+') || !isNaN(parseInt(src[0]))
+          ? ('phone' as const)
+          : ('email' as const),
   target: $inputMode,
 });
 
