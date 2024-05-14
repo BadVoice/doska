@@ -114,7 +114,7 @@
     <div
       class="flex items-center justify-between border-b border-r border-[#D0D4DB] p-4 pr-5">
       <h3
-        v-if="route.path === '/advertisements' && searchParam"
+        v-if="route.path === '/advertisements'"
         class="text-[18px] font-semibold">
         {{ getAnnouncementText(advertisementCount) }}
       </h3>
@@ -122,9 +122,8 @@
     </div>
   </div>
   <div
-    class="h-[calc(100vh-177px)] w-full border-r border-[#D0D4DB] bg-[#F9FAFB]">
+    class="custom-scrollbar h-[calc(100vh-177px)] w-full overflow-auto border-r border-[#D0D4DB] bg-[#F9FAFB]">
     <template
-      class="custom-scrollbar h-full overflow-auto"
       v-if="
         (route.path === '/advertisements' &&
           route.query.article &&
@@ -136,6 +135,7 @@
         :search-result="searchResult"
         @advertisementClicked="handleCardClicked" />
     </template>
+
     <SearchHistory
       class="custom-scrollbar h-full overflow-auto"
       v-if="route.path === '/search-history'" />
