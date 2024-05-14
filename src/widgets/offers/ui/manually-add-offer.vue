@@ -14,8 +14,8 @@
   const handleClose = useUnit(offerAddButtonClicked);
   const handleSubmit = useUnit(formSubmitted);
 
-  const onSubmit = () => {
-    form.validate();
+  const onSubmit = async () => {
+    await form.validate();
     if (Object.keys(form.errors.value).length <= 0) {
       handleSubmit({ ...form.values });
     }
