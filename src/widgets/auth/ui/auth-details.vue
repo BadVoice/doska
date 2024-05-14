@@ -1,50 +1,41 @@
 <script setup lang="ts">
-import {
-  Button,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  Input,
-} from '@/shared/ui';
-import { useUnit } from 'effector-vue/composition';
-import {
-  $detailsEmail, $detailsPhone,
-  $inputMode, detailsEmailInputed,
-  detailsFormSubmitted, detailsPhoneInputed,
-  formSubmitted,
-} from '@/widgets/auth/model/auth-model';
-import { useAuthForm } from '@/widgets/auth/lib/auth-schema';
+  import {
+    Button,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+    Input,
+  } from '@/shared/ui';
+  import { useAuthForm } from '@/widgets/auth/lib/auth-schema';
+  import {
+    $inputMode,
+    detailsFormSubmitted,
+    formSubmitted,
+  } from '@/widgets/auth/model/auth-model';
+  import { useUnit } from 'effector-vue/composition';
 
-const inputMode = useUnit($inputMode);
-const nextModal = useUnit(formSubmitted);
-const handleSubmit = useUnit(detailsFormSubmitted);
+  const inputMode = useUnit($inputMode);
+  const nextModal = useUnit(formSubmitted);
+  const handleSubmit = useUnit(detailsFormSubmitted);
 
-const handleEmailInput = useUnit(detailsEmailInputed);
-const handlePhoneInput = useUnit(detailsPhoneInputed);
-const detailsEmail = useUnit($detailsEmail);
-const detailsPhone = useUnit($detailsPhone);
+  const { form } = useAuthForm(inputMode.value);
 
-const { form } = useAuthForm(inputMode.value);
+  const onSubmit = () => {
+    form.validate();
+    if (Object.keys(form.errors.value).length <= 0) {
+      handleSubmit({
+        ...form.values,
+      });
+      nextModal();
+    }
+  };
 
-
-const onSubmit = () => {
-  form.validate();
-  if (Object.keys(form.errors.value).length <= 0) {
-    handleSubmit({
-      ...form.values,
-      email: detailsEmail.value,
-      phone: detailsPhone.value,
-    });
-    nextModal();
-  }
-};
-
-const label = {
-  email: 'номер телефона',
-  phone: 'почту',
-};
+  const label = {
+    email: 'номер телефона',
+    phone: 'почту',
+  };
 </script>
 
 <template v-else>
@@ -58,29 +49,28 @@ const label = {
           <FormLabel>Имя</FormLabel>
           <FormControl>
             <Input
-                class="h-fit rounded-[8px] border border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
-                type="text"
-                placeholder="Имя"
-                v-bind="componentField" />
+              class="h-fit rounded-[8px] border border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
+              type="text"
+              placeholder="Имя"
+              v-bind="componentField" />
           </FormControl>
           <FormMessage />
         </FormItem>
       </FormField>
 
       <FormField
-          v-slot="{ componentField }"
-          name="email"
-          v-if="inputMode === 'phone'">
+        v-slot="{ componentField }"
+        name="email"
+        v-if="inputMode === 'phone'">
         <FormItem>
           <FormLabel>Электронная почта</FormLabel>
           <FormControl>
             <Input
-                v-if="inputMode === 'phone'"
-                @update:model-value="(payload) => handleEmailInput(payload.toString())"
-                class="h-fit rounded-[8px] border border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
-                type="text"
-                placeholder="Электронная почта"
-                v-bind="componentField" />
+              v-if="inputMode === 'phone'"
+              class="h-fit rounded-[8px] border border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
+              type="text"
+              placeholder="Электронная почта"
+              v-bind="componentField" />
           </FormControl>
           <FormMessage />
         </FormItem>
@@ -91,21 +81,20 @@ const label = {
           <FormLabel>Номер телефона</FormLabel>
           <FormControl>
             <Input
-                v-mask="'+7 (###) ###-##-##'"
-                @update:model-value="(payload) => handlePhoneInput(payload.toString())"
-                class="h-fit rounded-[8px] border border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
-                type="text"
-                placeholder="Номер телефона"
-                v-bind="componentField" />
+              v-mask="'+7 (###) ###-##-##'"
+              class="h-fit rounded-[8px] border border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
+              type="text"
+              placeholder="Номер телефона"
+              v-bind="componentField" />
           </FormControl>
           <FormMessage />
         </FormItem>
       </FormField>
     </form>
     <div
-        class="inset-x-0 bottom-0 w-full border-t border-[#CCD0D9] bg-white p-4">
+      class="inset-x-0 bottom-0 w-full border-t border-[#CCD0D9] bg-white p-4">
       <Button @click="onSubmit" class="w-full text-[17px] font-semibold"
-      >Продолжить</Button
+        >Продолжить</Button
       >
     </div>
   </div>

@@ -1,67 +1,19 @@
-import {combine, createEffect, createEvent, createStore, sample} from 'effector';
-import {$api} from "@/shared/api";
+import { $api } from '@/shared/api';
+import { createMutation } from '@farfetched/core';
+import { createEvent, createStore, sample } from 'effector';
 
 export type TInputMode = 'email' | 'phone';
-type TFormMode = 'phoneOrEmail' | 'details' | 'company';
 
 interface IFormValues {
   name: string;
   phone?: string;
   email?: string;
-  password: string;
 }
 
 interface IAuthFormValues {
-  username: string;
+  value: string;
   password: string;
 }
-
-interface IDetails {
-  name: string;
-  details: string;
-}
-
-export const valueInputed = createEvent<string>();
-export const passwordInputed = createEvent<string>();
-export const formSubmitted = createEvent();
-export const formPrevClicked = createEvent();
-export const detailsFormSubmitted = createEvent<IFormValues>();
-export const authFormSubmitted = createEvent<IAuthFormValues>();
-
-export const $phoneOrEmail = createStore('');
-
-export const $password = createStore<string>('');
-
-export const $inputMode = createStore<TInputMode>('email');
-
-export const $details = createStore<IDetails | null>(null);
-
-export const $formIndex = createStore<number>(0)
-    .on(formSubmitted, (src) => src + 1)
-    .on(formPrevClicked, (src) => src - 1);
-
-export const detailsEmailInputed = createEvent<string>();
-export const detailsPhoneInputed = createEvent<string>();
-
-export const $detailsEmail = createStore<string>('');
-export const $detailsPhone = createStore<string>('');
-
-sample({
-  clock: detailsEmailInputed,
-  target: $detailsEmail,
-});
-
-sample({
-  clock: detailsPhoneInputed,
-  fn: (value) => value.replace(/[^+\d]/g, ''),
-  target: $detailsPhone,
-});
-
-export const $formMode = combine({ index: $formIndex }, ({ index }) =>
-    index <= 2
-        ? (['phoneOrEmail', 'details', 'company'] as TFormMode[])[index]
-        : 'company',
-);
 
 interface SendDetailsParams {
   email: string;
@@ -70,91 +22,68 @@ interface SendDetailsParams {
   first_name?: string;
 }
 
-const registerUser = createEffect<SendDetailsParams, any, Error>(
-    async ({ email, phone, password, first_name }) => {
-      console.log(email, phone, password, first_name);
-      try {
-        const response = await $api.user.createUser({
-          email,
-          password,
-          first_name,
-        });
-        return response.data;
-      } catch (error: any) {
-        console.error('Ошибка отправки данных:', error);
-        throw error;
-      }
-    }
-);
+export const valueInputed = createEvent<string>();
+export const formSubmitted = createEvent();
+export const formPrevClicked = createEvent();
+export const detailsFormSubmitted = createEvent<IFormValues>();
+export const authFormSubmitted = createEvent<IAuthFormValues>();
 
-export const loginUser = createEffect<IAuthFormValues, any, Error>(
-    async ({ password, username }) => {
-      console.log(password, username);
+export const $phoneOrEmail = createStore('');
+export const $authFormValues = createStore<IAuthFormValues | null>(null);
 
-      const response = await $api.token.tokenCreate({
-        username,
-        password,
-      });
+export const $inputMode = createStore<TInputMode>('email');
 
-      if (response.status === 401 || response.status === 429) {
-        return response.data;
-      }
-    }
-  );
+const registerUser = createMutation({
+  handler: async (data: SendDetailsParams) =>
+    $api.user.createUser({
+      email: data.email,
+      phone: data.phone,
+      password: data.password,
+      first_name: data.first_name,
+    }),
+});
 
-sample({
-  clock: detailsFormSubmitted,
-  fn: (clk) =>
-      ({
-        name: clk.name,
-        details: clk.phone ?? clk.email,
-      }) as IDetails,
-  target: $details,
+const loginUser = createMutation({
+  handler: async (data: IAuthFormValues) =>
+    $api.token.tokenCreate({
+      username: data.value,
+      password: data.password,
+    }),
+});
+
+loginUser.finished.success.watch(({ result }) => {
+  if (result.data?.access) {
+    localStorage.setItem('accessToken', result.data?.access);
+  }
 });
 
 sample({
-  clock: valueInputed,
-  target: $phoneOrEmail,
+  clock: detailsFormSubmitted,
+  source: {
+    $inputMode,
+    $authFormValues,
+    $phoneOrEmail,
+  },
+  fn: (src, clk) =>
+    ({
+      email: clk.email ?? src.$phoneOrEmail,
+      phone: clk.phone ?? src.$phoneOrEmail,
+      password: src.$authFormValues?.password,
+      first_name: clk.name,
+    }) as SendDetailsParams,
+  target: registerUser.start,
 });
 
 sample({
   clock: authFormSubmitted,
-  fn: ({username, password}) => ({
-    username,
-    password
-  }),
-  target: loginUser,
-});
-
-sample({
-  clock: detailsFormSubmitted,
-  source: combine({
-    phoneOrEmail: $phoneOrEmail,
-    password: $password,
-    details: $details,
-    inputMode: $inputMode,
-    detailsEmail: $detailsEmail,
-    detailsPhone: $detailsPhone,
-  }),
-  fn: ({ phoneOrEmail, password, details, inputMode, detailsEmail, detailsPhone }) => ({
-    email: inputMode === 'email' ? phoneOrEmail : detailsEmail,
-    phone: inputMode === 'phone' ? phoneOrEmail : detailsPhone,
-    password,
-    first_name: details?.name,
-  }),
-  target: registerUser,
-});
-
-sample({
-  clock: passwordInputed,
-  target: $password,
+  target: [loginUser.start, $authFormValues],
 });
 
 sample({
   source: $phoneOrEmail,
   fn: (src) =>
-      src.startsWith('+') || !isNaN(parseInt(src[0]))
-          ? ('phone' as const)
-          : ('email' as const),
+    src.startsWith('+') || !isNaN(parseInt(src[0]))
+      ? ('phone' as const)
+      : ('email' as const),
   target: $inputMode,
 });

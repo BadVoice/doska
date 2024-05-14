@@ -1,52 +1,35 @@
 <script setup lang="ts">
   import {
-    Button,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-    Input,
-  } from '@/shared/ui';
-  import { useUnit } from 'effector-vue/composition';
-  import {
-    $inputMode,
-    formSubmitted,
-    valueInputed,
-    passwordInputed, $password,
-    authFormSubmitted,
-    loginUser,
-  } from '@/widgets/auth/model/auth-model';
-  import { usePhoneOrEmailForm } from '@/widgets/auth/lib/auth-schema';
-  import {ref} from "vue";
+Button,
+FormControl,
+FormField,
+FormItem,
+FormLabel,
+FormMessage,
+Input,
+} from '@/shared/ui';
+import { usePhoneOrEmailForm } from '@/widgets/auth/lib/auth-schema';
+import {
+$inputMode,
+authFormSubmitted,
+formSubmitted,
+valueInputed,
+} from '@/widgets/auth/model/auth-model';
+import { useUnit } from 'effector-vue/composition';
 
   const nextModal = useUnit(formSubmitted);
   const handleInput = useUnit(valueInputed);
   const inputMode = useUnit($inputMode);
 
-  const handlePasswordInput = useUnit(passwordInputed);
-  const password = useUnit($password);
-
   const { form } = usePhoneOrEmailForm(inputMode.value);
-
-  const emit = defineEmits(['submitCloseAuth']);
 
   const onSubmit = () => {
     form.validate();
     if (Object.keys(form.errors.value).length <= 0) {
-      const username = form.values.value;
-      const password = $password.getState();
-
-      authFormSubmitted({ username, password });
+      authFormSubmitted(form.values);
+      nextModal();
     }
   };
-
-  loginUser.doneData.watch((response) => {
-    localStorage.setItem('accessToken', response.access);
-    console.log(response)
-    emit('submitCloseAuth', false);
-  });
-
 </script>
 
 <template v-else>
@@ -84,21 +67,17 @@
       </FormField>
 
       <FormField v-slot="{ componentField }" name="password">
-      <FormItem>
-        <FormLabel>Пароль</FormLabel>
-        <FormControl>
-          <Input
+        <FormItem>
+          <FormLabel>Пароль</FormLabel>
+          <FormControl>
+            <Input
               autofocus
-              :modelValue="password"
-              @update:modelValue="(payload) => handlePasswordInput(payload.toString())"
-              class="..."
               type="password"
-             placeholder="Ваш пароль"
-              v-bind="componentField"
-          />
-        </FormControl>
-        <FormMessage />
-      </FormItem>
+              placeholder="Ваш пароль"
+              v-bind="componentField" />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
       </FormField>
     </form>
     <div
