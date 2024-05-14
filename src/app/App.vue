@@ -253,6 +253,23 @@
    const siteInfo = await $api.siteInfo.getSiteInfo()
     console.log(siteInfo.data)
   })
+
+  function handleNavigate(destination: string) {
+    if (destination === 'add-company') {
+      isAuthOpen.value = true;
+    } else if (destination === 'my-requests') {
+      router.push('/');
+      isSidebarOpen.value = false;
+
+    }
+    else {
+      router.push('/');
+      isSidebarOpen.value = false;
+      console.log('false')
+    }
+
+
+  }
 </script>
 
 <template>
@@ -303,7 +320,7 @@
         @advertisementFilters="handleAdvertisementFilters"
         v-model:pagination="pagination" />
       <Auth v-if="isAuthOpen" @submit-close-auth="isAuthOpen = false" />
-      <Sidebar v-if="isSidebarOpen" @close-sidebar="isSidebarOpen = false" />
+      <Sidebar v-if="isSidebarOpen" @close-sidebar="isSidebarOpen = false" @navigate="handleNavigate" />
       <CreateAdvertisement
         v-if="isCreateAdvertisementOpen"
         @close="isCreateAdvertisementOpen = false" />
