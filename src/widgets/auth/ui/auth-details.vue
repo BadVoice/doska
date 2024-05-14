@@ -10,8 +10,9 @@
   } from '@/shared/ui';
   import { useUnit } from 'effector-vue/composition';
   import {
-    $inputMode,
-    detailsFormSubmitted,
+    $detailsEmail, $detailsPhone,
+    $inputMode, detailsEmailInputed,
+    detailsFormSubmitted, detailsPhoneInputed,
     formSubmitted,
   } from '@/widgets/auth/model/auth-model';
   import { useAuthForm } from '@/widgets/auth/lib/auth-schema';
@@ -20,12 +21,22 @@
   const nextModal = useUnit(formSubmitted);
   const handleSubmit = useUnit(detailsFormSubmitted);
 
+  const handleEmailInput = useUnit(detailsEmailInputed);
+  const handlePhoneInput = useUnit(detailsPhoneInputed);
+  const detailsEmail = useUnit($detailsEmail);
+  const detailsPhone = useUnit($detailsPhone);
+
   const { form } = useAuthForm(inputMode.value);
+
 
   const onSubmit = () => {
     form.validate();
     if (Object.keys(form.errors.value).length <= 0) {
-      handleSubmit(form.values);
+      handleSubmit({
+        ...form.values,
+        email: detailsEmail.value,
+        phone: detailsPhone.value,
+      });
       nextModal();
     }
   };
@@ -65,6 +76,7 @@
           <FormControl>
             <Input
               v-if="inputMode === 'phone'"
+              @update:model-value="(payload) => handleEmailInput(payload.toString())"
               class="h-fit rounded-[8px] border border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
               type="text"
               placeholder="Электронная почта"
@@ -80,6 +92,7 @@
           <FormControl>
             <Input
               v-mask="'+7 (###) ###-##-##'"
+              @update:model-value="(payload) => handlePhoneInput(payload.toString())"
               class="h-fit rounded-[8px] border border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
               type="text"
               placeholder="Номер телефона"

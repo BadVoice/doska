@@ -2,7 +2,7 @@ import NProgress from 'nprogress';
 import { Api } from '@/shared/api/generated/Api';
 
 export const $api = new Api({
-  baseURL: 'https://virtserver.swaggerhub.com/riderufa/qrq_core/1.0.0',
+  baseURL: '/core/api/v1',
 });
 
 $api.instance.interceptors.request.use((config) => {
@@ -23,7 +23,7 @@ $api.instance.interceptors.response.use(
 );
 
 export const $qwepApi = new Api({
-  baseURL: 'https://virtserver.swaggerhub.com/riderufa/qrq_core/1.0.0',
+  baseURL: '/qwep/api/v1',
 });
 
 $qwepApi.instance.interceptors.request.use((config) => {

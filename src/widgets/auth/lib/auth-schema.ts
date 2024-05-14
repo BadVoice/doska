@@ -38,12 +38,14 @@ export function usePhoneOrEmailForm(schemaMode: TInputMode): {
   const schemaWithEmail = toTypedSchema(
       z.object({
         value: z.string({ required_error: 'Введите почту' }),
+          password: z.string({ required_error: 'Введите пароль' }),
       }),
   );
 
   const schemaWithPhone = toTypedSchema(
       z.object({
         value: z.string({ required_error: 'Введите номер телефона' }),
+          password: z.string({ required_error: 'Введите пароль' }),
       }),
   );
 

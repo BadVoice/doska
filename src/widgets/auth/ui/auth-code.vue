@@ -13,12 +13,16 @@
     $inputMode,
     formSubmitted,
     valueInputed,
+    passwordInputed, $password
   } from '@/widgets/auth/model/auth-model';
   import { usePhoneOrEmailForm } from '@/widgets/auth/lib/auth-schema';
 
   const nextModal = useUnit(formSubmitted);
   const handleInput = useUnit(valueInputed);
   const inputMode = useUnit($inputMode);
+
+  const handlePasswordInput = useUnit(passwordInputed);
+  const password = useUnit($password);
 
   const { form } = usePhoneOrEmailForm(inputMode.value);
 
@@ -62,6 +66,24 @@
           </FormControl>
           <FormMessage />
         </FormItem>
+      </FormField>
+
+      <FormField v-slot="{ componentField }" name="password">
+      <FormItem>
+        <FormLabel>Пароль</FormLabel>
+        <FormControl>
+          <Input
+              autofocus
+              :modelValue="password"
+              @update:modelValue="(payload) => handlePasswordInput(payload.toString())"
+              class="..."
+              type="password"
+             placeholder="Ваш пароль"
+              v-bind="componentField"
+          />
+        </FormControl>
+        <FormMessage />
+      </FormItem>
       </FormField>
     </form>
     <div
