@@ -43,7 +43,7 @@
   </div>
   <div
     class="min-h-[calc(100vh-56px)] w-full flex-grow border-r border-[#D0D4DB] bg-[#F9FAFB]">
-    <AuthCode v-if="formMode === 'phoneOrEmail'" />
+    <AuthCode @submit-close-auth="emit('submitCloseAuth', false)" v-if="formMode === 'phoneOrEmail'" />
     <AuthDetails v-else-if="formMode === 'details'" />
     <CompanyForm v-else />
   </div>

@@ -13,9 +13,12 @@
     $inputMode,
     formSubmitted,
     valueInputed,
-    passwordInputed, $password
+    passwordInputed, $password,
+    authFormSubmitted,
+    loginUser,
   } from '@/widgets/auth/model/auth-model';
   import { usePhoneOrEmailForm } from '@/widgets/auth/lib/auth-schema';
+  import {ref} from "vue";
 
   const nextModal = useUnit(formSubmitted);
   const handleInput = useUnit(valueInputed);
@@ -26,12 +29,24 @@
 
   const { form } = usePhoneOrEmailForm(inputMode.value);
 
+  const emit = defineEmits(['submitCloseAuth']);
+
   const onSubmit = () => {
     form.validate();
     if (Object.keys(form.errors.value).length <= 0) {
-      nextModal();
+      const username = form.values.value;
+      const password = $password.getState();
+
+      authFormSubmitted({ username, password });
     }
   };
+
+  loginUser.doneData.watch((response) => {
+    localStorage.setItem('accessToken', response.access);
+    console.log(response)
+    emit('submitCloseAuth', false);
+  });
+
 </script>
 
 <template v-else>

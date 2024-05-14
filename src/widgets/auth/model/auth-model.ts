@@ -11,6 +11,11 @@ interface IFormValues {
   password: string;
 }
 
+interface IAuthFormValues {
+  username: string;
+  password: string;
+}
+
 interface IDetails {
   name: string;
   details: string;
@@ -21,6 +26,7 @@ export const passwordInputed = createEvent<string>();
 export const formSubmitted = createEvent();
 export const formPrevClicked = createEvent();
 export const detailsFormSubmitted = createEvent<IFormValues>();
+export const authFormSubmitted = createEvent<IAuthFormValues>();
 
 export const $phoneOrEmail = createStore('');
 
@@ -47,7 +53,7 @@ sample({
 
 sample({
   clock: detailsPhoneInputed,
-  fn: (value) => value.replace(/\D/g, ''),
+  fn: (value) => value.replace(/[^+\d]/g, ''),
   target: $detailsPhone,
 });
 
@@ -64,13 +70,12 @@ interface SendDetailsParams {
   first_name?: string;
 }
 
-const sendDetailsFx = createEffect<SendDetailsParams, any, Error>(
+const registerUser = createEffect<SendDetailsParams, any, Error>(
     async ({ email, phone, password, first_name }) => {
       console.log(email, phone, password, first_name);
       try {
         const response = await $api.user.createUser({
           email,
-          phone,
           password,
           first_name,
         });
@@ -81,6 +86,21 @@ const sendDetailsFx = createEffect<SendDetailsParams, any, Error>(
       }
     }
 );
+
+export const loginUser = createEffect<IAuthFormValues, any, Error>(
+    async ({ password, username }) => {
+      console.log(password, username);
+
+      const response = await $api.token.tokenCreate({
+        username,
+        password,
+      });
+
+      if (response.status === 401 || response.status === 429) {
+        return response.data;
+      }
+    }
+  );
 
 sample({
   clock: detailsFormSubmitted,
@@ -95,6 +115,15 @@ sample({
 sample({
   clock: valueInputed,
   target: $phoneOrEmail,
+});
+
+sample({
+  clock: authFormSubmitted,
+  fn: ({username, password}) => ({
+    username,
+    password
+  }),
+  target: loginUser,
 });
 
 sample({
@@ -113,7 +142,7 @@ sample({
     password,
     first_name: details?.name,
   }),
-  target: sendDetailsFx,
+  target: registerUser,
 });
 
 sample({
@@ -129,11 +158,3 @@ sample({
           : ('email' as const),
   target: $inputMode,
 });
-
-sendDetailsFx
-    .doneData
-    .watch((data) => console.log('Данные успешно отправлены:', data));
-
-sendDetailsFx
-    .failData
-    .watch((error) => console.error('Ошибка отправки данных:', error));
