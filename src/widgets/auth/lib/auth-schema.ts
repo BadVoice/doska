@@ -24,7 +24,7 @@ export function useAuthForm(schemaMode: TInputMode): {
 
   const form = useForm({
     validationSchema:
-        schemaMode === 'phone' ? schemaWithEmail : schemaWithPhone,
+      schemaMode === 'phone' ? schemaWithEmail : schemaWithPhone,
   });
 
   return {
