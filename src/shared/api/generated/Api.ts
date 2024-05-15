@@ -60,6 +60,11 @@ export interface UserAuthVerify {
 export interface Token {
   refresh?: string;
   access?: string;
+  detail?: string;
+}
+
+export interface ErrorResponse {
+  detail?: string;
 }
 
 export type SearchPagination = Pick<
