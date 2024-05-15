@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, nextTick, ref, watch } from 'vue';
+import {computed, nextTick, onMounted, ref, watch} from 'vue';
   import { getButtonList } from '../lib/button-list';
   import { Button } from '@/shared/ui/button';
   import BurgerMenu from './burger-menu.vue';
@@ -27,7 +27,7 @@
 
   const searchTerm = ref('');
 
-  const emit = defineEmits(['submitSearch', 'submitLogin', 'createClicked']);
+  const emit = defineEmits(['submitSearch', 'submitLogin', 'createClicked', 'buttonClicked']);
 
   const handleInput = useDebounceFn(() => {
     emit('submitSearch', searchTerm.value);
@@ -53,9 +53,38 @@
     }
   });
 
-  const activeButton = computed(() => {
-    return buttonList.value.find((button) => button.link === route.path);
-  });
+const activeButton = computed(() => {
+  return buttonList.value.find(button => route.path.startsWith(button.link));
+});
+
+const scrollToButton = (index: number) => {
+  if (!scrollableContainer.value) {
+    console.error('scrollableContainer is null!');
+    return;
+  }
+
+  const buttonElement = scrollableContainer.value.children[index];
+  const buttonWidth = buttonElement.offsetWidth;
+  const containerWidth = scrollableContainer.value.offsetWidth;
+  const scrollPosition = scrollableContainer.value.scrollLeft;
+
+  const targetPosition = buttonElement.offsetLeft;
+
+  const offset = 170;
+
+  if (targetPosition < scrollPosition) {
+    scrollableContainer.value.scrollTo({
+      left: targetPosition - offset,
+      behavior: 'smooth'
+    });
+  } else if (targetPosition > scrollPosition + containerWidth - buttonWidth) {
+    scrollableContainer.value.scrollTo({
+      left: targetPosition - containerWidth + buttonWidth + offset,
+      behavior: 'smooth'
+    });
+  }
+};
+
 </script>
 
 <template>
@@ -120,14 +149,16 @@
       <div
         ref="scrollableContainer"
         class="no-scrollbar overflow-x-auto whitespace-nowrap"
-        @wheel="handleWheel">
+       >
         <RouterLink
-          v-for="button of buttonList"
+            v-for="(button, index) in buttonList"
           :key="button.label"
           :to="button?.link"
+          @click="scrollToButton(index)"
           class="mr-4 inline-block focus:outline-none">
           <Button
             variant="outline"
+            @click="emit('buttonClicked', index)"
             :class="{
               'border-[#0017FC] bg-[#1778EA] bg-opacity-10 text-[#0017FC] hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10 hover:text-[#0017FC]':
                 button.link === activeButton?.link,
