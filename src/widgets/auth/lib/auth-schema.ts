@@ -32,27 +32,22 @@ export function useAuthForm(schemaMode: TInputMode): {
   };
 }
 
-export function usePhoneOrEmailForm(schemaMode: TInputMode): {
+export function usePhoneOrEmailForm(): {
   form: FormContext<any, {}>;
 } {
-  const schemaWithEmail = toTypedSchema(
+  const schema = toTypedSchema(
     z.object({
-      value: z.string({ required_error: 'Введите почту' }),
-    }),
-  );
-
-  const schemaWithPhone = toTypedSchema(
-    z.object({
-      value: z.string({ required_error: 'Введите номер телефона' }),
+      value: z.string({ required_error: 'Введите телефон или почту' }),
+      password: z.string({ required_error: 'Введите пароль' }),
     }),
   );
 
   const form = useForm({
-    validationSchema:
-      schemaMode === 'email' ? schemaWithEmail : schemaWithPhone,
+    validationSchema: schema,
   });
 
   return {
     form,
   };
 }
+

@@ -7,5 +7,9 @@ import VueTheMask from 'vue-the-mask';
 
 NProgress.configure({ showSpinner: false });
 
+const app = createApp(App);
+app.use(router);
 // @ts-expect-error seems like bug in VueTheMask types
-const app = createApp(App).use(router).use(VueTheMask).mount('#app');
+app.use(VueTheMask);
+
+app.mount('#app');

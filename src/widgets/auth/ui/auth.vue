@@ -2,11 +2,8 @@
   import { Button } from '@/shared/ui';
   import { AuthCode, AuthDetails, CompanyForm } from '@/widgets/auth';
   import { useUnit } from 'effector-vue/composition';
-  import {
-    $formIndex,
-    $formMode,
-    formPrevClicked,
-  } from '@/widgets/auth/model/auth-model';
+  import { $formIndex, $formMode, formIndexExceded } from '@/widgets/auth/lib/form-mode';
+  import { formPrevClicked } from '../model/auth-model';
 
   const emit = defineEmits(['submitCloseAuth']);
   const formMode = useUnit($formMode);
@@ -21,10 +18,8 @@
     }
   }
 
-  $formIndex.watch((index) => {
-    if (index >= 3) {
-      emit('submitCloseAuth', false);
-    }
+  formIndexExceded.watch(() => {
+    emit('submitCloseAuth', false);
   });
 </script>
 
@@ -43,7 +38,9 @@
   </div>
   <div
     class="min-h-[calc(100vh-56px)] w-full flex-grow border-r border-[#D0D4DB] bg-[#F9FAFB]">
-    <AuthCode v-if="formMode === 'phoneOrEmail'" />
+    <AuthCode
+      @on-login="emit('submitCloseAuth')"
+      v-if="formMode === 'phoneOrEmail'" />
     <AuthDetails v-else-if="formMode === 'details'" />
     <CompanyForm v-else />
   </div>
