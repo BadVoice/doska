@@ -54,8 +54,6 @@
       }
 
       form.setFieldValue('captchaToken', captchaToken.value);
-      console.log(form.values);
-      console.log(captchaToken.value);
       authFormSubmitted(form.values);
     }
   };
