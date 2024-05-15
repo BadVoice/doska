@@ -1,7 +1,6 @@
 import { $api } from '@/shared/api';
 import { createMutation } from '@farfetched/core';
 import { createEvent, createStore, sample } from 'effector';
-import type {ErrorResponse, Token} from "@/shared/api/generated/Api";
 
 export type TInputMode = 'email' | 'phone';
 
@@ -9,7 +8,7 @@ interface IFormValues {
   name: string;
   phone?: string;
   email?: string;
-    captchaToken?: string;
+  captchaToken?: string;
 }
 
 interface IAuthFormValues {
@@ -23,7 +22,7 @@ interface SendDetailsParams {
   phone: string;
   password: string;
   first_name?: string;
-    captchaToken?: string;
+  captchaToken?: string;
 }
 
 export const valueInputed = createEvent<string>();
@@ -32,7 +31,7 @@ export const formPrevClicked = createEvent();
 export const detailsFormSubmitted = createEvent<IFormValues>();
 export const authFormSubmitted = createEvent<IAuthFormValues>();
 
-export const $phoneOrEmail = createStore('');
+export const $phoneOrEmail = createStore('').on(valueInputed, (_, clk) => clk);
 export const $authFormValues = createStore<IAuthFormValues | null>(null);
 
 export const $inputMode = createStore<TInputMode>('email');
@@ -43,7 +42,7 @@ export const registerUser = createMutation({
       email: data.email,
       password: data.password,
       first_name: data.first_name,
-        recaptcha: data.captchaToken
+      recaptcha: data.captchaToken,
     }),
 });
 
@@ -52,7 +51,7 @@ export const loginUser = createMutation({
     $api.token.tokenCreate({
       username: data.value,
       password: data.password,
-        recaptcha: data.captchaToken
+      recaptcha: data.captchaToken,
     }),
 });
 
@@ -64,31 +63,31 @@ sample({
   },
   fn: (src, clk) =>
     ({
-        email: src.$authFormValues?.value,
-        password: src.$authFormValues?.password,
+      email: src.$authFormValues?.value,
+      password: src.$authFormValues?.password,
       first_name: clk.name,
-        captchaToken: clk.captchaToken
+      captchaToken: clk.captchaToken,
     }) as SendDetailsParams,
   target: registerUser.start,
 });
 
 sample({
-    clock: authFormSubmitted,
-    source: $inputMode,
-    fn: (mode, data: IAuthFormValues) => {
-        if (mode === 'email') {
-            return {
-                ...data,
-                value: data.value
-            };
-        } else {
-            return {
-                ...data,
-                value: data.value
-            };
-        }
-    },
-    target: [$authFormValues, loginUser.start],
+  clock: authFormSubmitted,
+  source: $inputMode,
+  fn: (mode, data: IAuthFormValues) => {
+    if (mode === 'email') {
+      return {
+        ...data,
+        value: data.value,
+      };
+    } else {
+      return {
+        ...data,
+        value: data.value,
+      };
+    }
+  },
+  target: [$authFormValues, loginUser.start],
 });
 
 sample({
@@ -99,3 +98,5 @@ sample({
       : ('email' as const),
   target: $inputMode,
 });
+
+$phoneOrEmail.watch((value) => console.log(value));
