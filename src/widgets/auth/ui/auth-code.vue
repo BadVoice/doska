@@ -1,25 +1,30 @@
 <script setup lang="ts">
   import {
-Button,
-FormControl,
-FormField,
-FormItem,
-FormLabel,
-FormMessage,
-Input,
-} from '@/shared/ui';
-import { usePhoneOrEmailForm } from '@/widgets/auth/lib/auth-schema';
-import {
-$inputMode,
-authFormSubmitted,
-formSubmitted,
-valueInputed,
-} from '@/widgets/auth/model/auth-model';
-import { useUnit } from 'effector-vue/composition';
+    Button,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+    Input,
+  } from '@/shared/ui';
+  import { usePhoneOrEmailForm } from '@/widgets/auth/lib/auth-schema';
+  import {
+    $inputMode,
+    authFormSubmitted,
+    formSubmitted,
+    valueInputed,
+    loginUser
+  } from '@/widgets/auth/model/auth-model';
+  import { useUnit } from 'effector-vue/composition';
+  import {ref} from "vue";
 
   const nextModal = useUnit(formSubmitted);
   const handleInput = useUnit(valueInputed);
   const inputMode = useUnit($inputMode);
+  const loginError = ref(false)
+
+  const emit = defineEmits(['onLogin'])
 
   const { form } = usePhoneOrEmailForm(inputMode.value);
 
@@ -27,9 +32,32 @@ import { useUnit } from 'effector-vue/composition';
     form.validate();
     if (Object.keys(form.errors.value).length <= 0) {
       authFormSubmitted(form.values);
+    }
+  };
+
+  const onRegister = () => {
+    form.validate();
+    if (Object.keys(form.errors.value).length <= 0) {
       nextModal();
     }
   };
+
+  const label = {
+    email: 'номер телефона',
+    phone: 'почту',
+  };
+
+  loginUser.finished.success.watch(({ result }) => {
+    if (result.data?.access) {
+      localStorage.setItem('accessToken', result.data?.access);
+      emit('onLogin', true)
+    }
+    else {
+      loginError.value = true
+    }
+
+  });
+
 </script>
 
 <template v-else>
@@ -38,6 +66,7 @@ import { useUnit } from 'effector-vue/composition';
       class="mt-4 flex w-full flex-col gap-y-4 px-5"
       @submit.prevent="onSubmit">
       <p class="text-[18px] font-semibold">Введите номер телефона или почту</p>
+      <p class="text-[14px] text-[#858FA3] font-semibold">Неверные данные, попробуйте еще раз или продолжите регистрацию.</p>
       <FormField v-slot="{ componentField }" name="value">
         <FormItem>
           <FormLabel>Телефон или почта</FormLabel>
@@ -80,10 +109,12 @@ import { useUnit } from 'effector-vue/composition';
         </FormItem>
       </FormField>
     </form>
+
     <div
-      @click="onSubmit"
-      class="inset-x-0 bottom-0 w-full border-t border-[#CCD0D9] bg-white p-4">
-      <Button class="w-full text-[17px] font-semibold">Получить код</Button>
+      class="inset-x-0 bottom-0 w-full border-t border-[#CCD0D9] bg-white p-4 flex flex-col gap-y-3">
+      <Button @click="onSubmit" class="w-full text-[17px] font-semibold">Войти</Button>
+      <Button @click="onRegister" v-if="loginError" class="bg-whhite w-full border border-[#0017FC] text-[17px] font-semibold text-[#0017FC] hover:bg-white">Продолжить регистрацию</Button>
     </div>
+
   </div>
 </template>

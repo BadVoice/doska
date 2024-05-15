@@ -37,13 +37,12 @@ const registerUser = createMutation({
   handler: async (data: SendDetailsParams) =>
     $api.user.createUser({
       email: data.email,
-      phone: data.phone,
       password: data.password,
       first_name: data.first_name,
     }),
 });
 
-const loginUser = createMutation({
+export const loginUser = createMutation({
   handler: async (data: IAuthFormValues) =>
     $api.token.tokenCreate({
       username: data.value,
@@ -51,32 +50,38 @@ const loginUser = createMutation({
     }),
 });
 
-loginUser.finished.success.watch(({ result }) => {
-  if (result.data?.access) {
-    localStorage.setItem('accessToken', result.data?.access);
-  }
-});
-
 sample({
   clock: detailsFormSubmitted,
   source: {
     $inputMode,
     $authFormValues,
-    $phoneOrEmail,
   },
   fn: (src, clk) =>
     ({
-      email: clk.email ?? src.$phoneOrEmail,
-      phone: clk.phone ?? src.$phoneOrEmail,
-      password: src.$authFormValues?.password,
+        email: src.$authFormValues?.value,
+        password: src.$authFormValues?.password,
       first_name: clk.name,
     }) as SendDetailsParams,
   target: registerUser.start,
 });
 
 sample({
-  clock: authFormSubmitted,
-  target: [loginUser.start, $authFormValues],
+    clock: authFormSubmitted,
+    source: $inputMode,
+    fn: (mode, data: IAuthFormValues) => {
+        if (mode === 'email') {
+            return {
+                ...data,
+                value: data.value
+            };
+        } else {
+            return {
+                ...data,
+                value: data.value
+            };
+        }
+    },
+    target: [$authFormValues, loginUser.start],
 });
 
 sample({

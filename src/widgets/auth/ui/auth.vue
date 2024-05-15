@@ -2,7 +2,7 @@
   import { Button } from '@/shared/ui';
   import { AuthCode, AuthDetails, CompanyForm } from '@/widgets/auth';
   import { useUnit } from 'effector-vue/composition';
-  import { $formIndex, $formMode, formIndexExceded } from '../lib/form-mode';
+  import { $formIndex, $formMode, formIndexExceded } from '@/widgets/auth/lib/form-mode';
   import { formPrevClicked } from '../model/auth-model';
 
   const emit = defineEmits(['submitCloseAuth']);
@@ -39,7 +39,7 @@
   <div
     class="min-h-[calc(100vh-56px)] w-full flex-grow border-r border-[#D0D4DB] bg-[#F9FAFB]">
     <AuthCode
-      @submit-close-auth="emit('submitCloseAuth', false)"
+      @on-login="emit('submitCloseAuth')"
       v-if="formMode === 'phoneOrEmail'" />
     <AuthDetails v-else-if="formMode === 'details'" />
     <CompanyForm v-else />
