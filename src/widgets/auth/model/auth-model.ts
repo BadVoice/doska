@@ -9,6 +9,7 @@ interface IFormValues {
   name: string;
   phone?: string;
   email?: string;
+    captchaToken?: string;
 }
 
 interface IAuthFormValues {
@@ -22,6 +23,7 @@ interface SendDetailsParams {
   phone: string;
   password: string;
   first_name?: string;
+    captchaToken?: string;
 }
 
 export const valueInputed = createEvent<string>();
@@ -35,12 +37,13 @@ export const $authFormValues = createStore<IAuthFormValues | null>(null);
 
 export const $inputMode = createStore<TInputMode>('email');
 
-const registerUser = createMutation({
+export const registerUser = createMutation({
   handler: async (data: SendDetailsParams) =>
     $api.user.createUser({
       email: data.email,
       password: data.password,
       first_name: data.first_name,
+        recaptcha: data.captchaToken
     }),
 });
 
@@ -64,6 +67,7 @@ sample({
         email: src.$authFormValues?.value,
         password: src.$authFormValues?.password,
       first_name: clk.name,
+        captchaToken: clk.captchaToken
     }) as SendDetailsParams,
   target: registerUser.start,
 });

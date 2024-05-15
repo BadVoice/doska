@@ -29,7 +29,6 @@
   const captchaToken = ref<string | null>(null);
 
   const handleCaptchaVerified = (response: string) => {
-    console.log(response)
     captchaToken.value = response;
   };
 
@@ -52,9 +51,6 @@
       console.log(form.values);
       console.log(captchaToken.value)
       authFormSubmitted(form.values);
-    }
-    else {
-      console.log(form.errors.value);
     }
   };
 
@@ -81,7 +77,7 @@
 
   loginUser.finished.success.watch(({ result }) => {
     if (result.data?.access) {
-      localStorage.setItem('accessToken', result.data?.access);
+      localStorage.setItem('token', result.data?.access);
       emit('onLogin', true)
     }
     else if ((result as CustomAxiosResponse).response?.status === 429) {
