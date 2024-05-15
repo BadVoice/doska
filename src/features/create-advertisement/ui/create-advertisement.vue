@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { cn } from '@/shared/lib';
   import {
     Button,
     FormControl,
@@ -8,17 +9,25 @@
     FormMessage,
     Input,
   } from '@/shared/ui';
+  import {
+    Listbox,
+    ListboxButton,
+    ListboxOption,
+    ListboxOptions,
+  } from '@headlessui/vue';
+  import { useUnit } from 'effector-vue/composition';
   import { ChevronLeft, X } from 'lucide-vue-next';
+  import { onMounted, onUnmounted } from 'vue';
+  import { useCreateAdvertisementForm } from '../lib/create-form';
   import {
     $formMode,
     advertisementTypeSelected,
+    createAdvertisementMounted,
     formClosed,
     formSubmitted,
     type FormValues,
+    getCategories,
   } from '../model/create-advertisement';
-  import { useUnit } from 'effector-vue/composition';
-  import { useCreateAdvertisementForm } from '../lib/create-form';
-  import { onMounted, onUnmounted } from 'vue';
 
   const emit = defineEmits(['close']);
   const { advertisementTypeSelected: handleSelectedType, $formMode: formMode } =
@@ -27,7 +36,9 @@
       $formMode,
     });
 
-  const { form } = useCreateAdvertisementForm();
+  const { data: categories } = useUnit(getCategories);
+
+  const { form, assigment } = useCreateAdvertisementForm();
 
   const onSubmit = form.handleSubmit((values) => {
     emit('close');
@@ -40,6 +51,7 @@
   }
 
   onMounted(() => {
+    createAdvertisementMounted();
     document.addEventListener('keydown', (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         handleClose();
@@ -140,19 +152,43 @@
               <FormMessage />
             </FormItem>
           </FormField>
-          <FormField v-slot="{ componentField }" name="assigment">
-            <FormItem>
-              <FormLabel>Назначение</FormLabel>
-              <FormControl>
-                <Input
-                  class="h-fit rounded-[8px] border border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
-                  type="text"
-                  placeholder="Назначение"
-                  v-bind="componentField" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          </FormField>
+          <Listbox v-model="assigment">
+            <p class="text-[14px] font-semibold text-[#101828]">
+              Населенный пункт
+            </p>
+            <ListboxButton
+              class="inline-flex py-2.5 -mt-2 w-full justify-between rounded-lg border border-gray-300 bg-white px-3 text-sm font-medium hover:bg-gray-50">
+              <p class="text-[16px] font-normal text-gray-400">
+                Населенный пункт
+              </p>
+            </ListboxButton>
+
+            <transition
+              leave-active-class="transition ease-in duration-100"
+              leave-from-class="opacity-100"
+              leave-to-class="opacity-0">
+              <ListboxOptions
+                class="max-h-36 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                <ListboxOption
+                  v-if="categories?.data"
+                  v-for="item in categories?.data"
+                  :value="item.id">
+                  <li
+                    :class="
+                      cn(
+                        'mx-1 my-1 cursor-pointer select-none rounded py-2 pl-3 pr-9 text-gray-900 hover:bg-opacity-90',
+                        assigment === parseInt(item?.id ?? '0') &&
+                          'bg-gray-200 text-black',
+                      )
+                    ">
+                    <span class="block truncate font-normal">
+                      {{ item.name }}
+                    </span>
+                  </li>
+                </ListboxOption>
+              </ListboxOptions>
+            </transition>
+          </Listbox>
         </form>
         <div
           @click="onSubmit"

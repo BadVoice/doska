@@ -1,5 +1,5 @@
-import NProgress from 'nprogress';
 import { Api } from '@/shared/api/generated/Api';
+import NProgress from 'nprogress';
 
 const token = localStorage.getItem('token');
 export const $api = new Api({

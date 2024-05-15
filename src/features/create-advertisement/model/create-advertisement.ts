@@ -1,8 +1,8 @@
+import { $api } from '@/shared/api';
+import type { Bid, Offer } from '@/shared/api/generated/Api';
+import { createMutation, createQuery } from '@farfetched/core';
 import { createEvent, createStore, sample } from 'effector';
 import { spread } from 'patronum';
-import { createMutation } from '@farfetched/core';
-import type { Bid, Offer } from '@/shared/api/generated/Api';
-import { $api } from '@/shared/api';
 
 type TFormMode = 'selectType' | 'form';
 type TAdvertisementType = 'buy' | 'sell';
@@ -11,20 +11,25 @@ export interface FormValues {
   name: string;
   article: string;
   count: string;
-  assigment: string;
+  assigment: number;
 }
 
 const createOfferMutation = createMutation({
-  handler: async (data: Offer) => $api.offers.createOffer(data),
+  handler: (data: Offer) => $api.offers.createOffer(data),
 });
 
 const createBidMutation = createMutation({
-  handler: async (data: Bid) => $api.bids.createBid(data),
+  handler: (data: Bid) => $api.bids.createBid(data),
+});
+
+export const getCategories = createQuery({
+  handler: () => $api.categories.getCategories(),
 });
 
 export const advertisementTypeSelected = createEvent<TAdvertisementType>();
 export const formClosed = createEvent();
 export const formSubmitted = createEvent<FormValues>();
+export const createAdvertisementMounted = createEvent();
 
 export const $advertisementType = createStore<TAdvertisementType | null>(
   null,
@@ -32,6 +37,11 @@ export const $advertisementType = createStore<TAdvertisementType | null>(
 export const $formMode = createStore<TFormMode>('selectType').reset([
   formClosed,
 ]);
+
+sample({
+  clock: createAdvertisementMounted,
+  target: getCategories.start,
+});
 
 sample({
   clock: advertisementTypeSelected,
@@ -52,8 +62,8 @@ sample({
   fn: (_, clk) => ({
     name: clk.name,
     article: clk.article,
-    amount: parseInt(clk?.count ?? 1),
-    category: 0,
+    amount: parseInt(clk?.count ?? '1'),
+    category: clk.assigment,
   }),
   target: [createBidMutation.start, formClosed],
 });
@@ -65,8 +75,8 @@ sample({
   fn: (_, clk) => ({
     name: clk.name,
     price: 0,
-    amount: parseInt(clk?.count ?? 1),
-    category: 0,
+    amount: parseInt(clk?.count ?? '1'),
+    category: clk.assigment,
   }),
   target: [createOfferMutation.start, formClosed],
 });
