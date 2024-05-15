@@ -1,6 +1,7 @@
 import { $api } from '@/shared/api';
 import { createMutation } from '@farfetched/core';
 import { createEvent, createStore, sample } from 'effector';
+import type {ErrorResponse, Token} from "@/shared/api/generated/Api";
 
 export type TInputMode = 'email' | 'phone';
 
@@ -13,6 +14,7 @@ interface IFormValues {
 interface IAuthFormValues {
   value: string;
   password: string;
+  captchaToken?: string;
 }
 
 interface SendDetailsParams {
@@ -47,6 +49,7 @@ export const loginUser = createMutation({
     $api.token.tokenCreate({
       username: data.value,
       password: data.password,
+        recaptcha: data.captchaToken
     }),
 });
 

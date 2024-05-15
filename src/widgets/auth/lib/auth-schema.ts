@@ -3,8 +3,15 @@ import * as z from 'zod';
 import { type FormContext, useForm } from 'vee-validate';
 import { type TInputMode } from '@/widgets/auth/model/auth-model';
 
+interface IAuthFormValues {
+    name?: string;
+    email?: string;
+    phone?: string;
+    captchaToken?: string;
+}
+
 export function useAuthForm(schemaMode: TInputMode): {
-  form: FormContext<any, {}>;
+  form: FormContext<IAuthFormValues, {}>;
 } {
   const schemaWithEmail = toTypedSchema(
       z.object({
@@ -18,7 +25,7 @@ export function useAuthForm(schemaMode: TInputMode): {
   const schemaWithPhone = toTypedSchema(
       z.object({
         name: z.string({ required_error: 'Введите имя' }),
-        phone: z.string({ required_error: 'Введите номер телефона' }),
+        phone: z.string({ required_error: 'Введите номер телефона' })
       }),
   );
 
