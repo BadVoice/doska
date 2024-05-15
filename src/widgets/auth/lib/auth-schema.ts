@@ -18,13 +18,13 @@ export function useAuthForm(schemaMode: TInputMode): {
   const schemaWithPhone = toTypedSchema(
       z.object({
         name: z.string({ required_error: 'Введите имя' }),
-        phone: z.string({ required_error: 'Введите номер телефона' }),
+        phone: z.string({ required_error: 'Введите номер телефона' })
       }),
   );
 
   const form = useForm({
     validationSchema:
-        schemaMode === 'phone' ? schemaWithEmail : schemaWithPhone,
+      schemaMode === 'phone' ? schemaWithEmail : schemaWithPhone,
   });
 
   return {
@@ -38,12 +38,14 @@ export function usePhoneOrEmailForm(schemaMode: TInputMode): {
   const schemaWithEmail = toTypedSchema(
       z.object({
         value: z.string({ required_error: 'Введите почту' }),
+          password: z.string({ required_error: 'Введите пароль' }),
       }),
   );
 
   const schemaWithPhone = toTypedSchema(
       z.object({
         value: z.string({ required_error: 'Введите номер телефона' }),
+          password: z.string({ required_error: 'Введите пароль' }),
       }),
   );
 

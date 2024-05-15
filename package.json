@@ -14,6 +14,8 @@
   "dependencies": {
     "@farfetched/core": "^0.12.4",
     "@headlessui/vue": "^1.7.20",
+    "@types/grecaptcha": "^3.0.9",
+    "@unhead/vue": "^1.9.10",
     "@vee-validate/zod": "^4.12.6",
     "@vueuse/core": "^10.9.0",
     "axios": "^1.6.8",
@@ -31,6 +33,7 @@
     "tailwindcss-animate": "^1.0.7",
     "vee-validate": "^4.12.6",
     "vue": "^3.4.21",
+    "vue-recaptcha": "3.0.0-alpha.2",
     "vue-router": "^4.3.0",
     "vue-the-mask": "^0.11.1",
     "zod": "^3.22.4"
