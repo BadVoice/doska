@@ -1,1 +1,0 @@
-export { default as ReCaptcha } from './ui/re-captcha.vue';

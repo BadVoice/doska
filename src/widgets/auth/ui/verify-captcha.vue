@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import {onMounted, ref, watch} from 'vue';
+import { onMounted, ref } from 'vue';
+
+declare global {
+  interface Window {
+    grecaptcha: any;
+  }
+}
 
 const siteKey = ref<string>('6LeKHdMpAAAAAAbIOl0SFGZzvsCc3dzik4IKkZyI');
 const recaptchaContainer = ref<HTMLDivElement | null>(null);
