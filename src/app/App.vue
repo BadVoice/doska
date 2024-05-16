@@ -14,10 +14,14 @@
     SearchResponseFilters,
   } from '@/shared/api/generated/Api';
 
-  import { $qwepApi } from '@/shared/api/api';
+
+  import {$api, $qwepApi} from '@/shared/api/api';
+  import {Sidebar} from "@/widgets/sidebar";
+  
   import { useUnit } from 'effector-vue/composition';
   import { $showAddOfferModal } from '@/widgets/offers/model/offers-model';
   import { $requestHistoryOpened, RequestHistory } from '@/pages/my-requests';
+
 
   const route = useRoute();
   const router = useRouter();
@@ -157,6 +161,7 @@
   const isProductCardOpen = ref(false);
   const isFilterCardOpen = ref(false);
   const isCreateAdvertisementOpen = ref(false);
+  const isSidebarOpen = ref(false);
 
   watch([isProductCardOpen, isFilterCardOpen], () => {
     if (isProductCardOpen.value && isFilterCardOpen.value) {
@@ -252,11 +257,33 @@
     filters.value = data.filters;
     pagination.value = data.pagination;
   }
+
+  onMounted(async () => {
+   const siteInfo = await $api.siteInfo.getSiteInfo()
+    console.log(siteInfo.data)
+  })
+
+  function handleNavigate(destination: string) {
+    if (destination === 'add-company') {
+      isAuthOpen.value = true;
+    } else if (destination === 'my-requests') {
+      router.push('/');
+      isSidebarOpen.value = false;
+
+    }
+    else {
+      router.push('/');
+      isSidebarOpen.value = false;
+      console.log('false')
+    }
+
+
+  }
 </script>
 
 <template>
   <div class="flex flex-row bg-white">
-    <div class="flex w-full flex-col items-center sm:max-w-[356px]">
+      <div class="flex w-full flex-col items-center sm:max-w-[356px]">
       <Header
         v-if="
           isMobile &&
@@ -300,12 +327,13 @@
           class="flex w-full" />
       </div>
       <router-view
-        v-if="!isAuthOpen && !isFilterCardOpen"
+        v-if="!isAuthOpen && !isFilterCardOpen && !isSidebarOpen"
         @handle-data="handleRequestsData"
         @advertisementItems="handleAdvertisementItems"
         @advertisementFilters="handleAdvertisementFilters"
         v-model:pagination="pagination" />
       <Auth v-if="isAuthOpen" @submit-close-auth="isAuthOpen = false" />
+      <Sidebar v-if="isSidebarOpen" @close-sidebar="isSidebarOpen = false" @navigate="handleNavigate" />
       <CreateAdvertisement
         v-if="isCreateAdvertisementOpen"
         @close="isCreateAdvertisementOpen = false" />

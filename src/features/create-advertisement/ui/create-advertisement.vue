@@ -74,7 +74,7 @@
     <div
       class="flex w-full items-center justify-start gap-x-2 border-b border-[#D0D4DB] px-4 py-2">
       <Button class="-ml-2" @click="handleClose" size="icon" variant="ghost">
-        <ChevronLeft class="h-7 w-7 select-none" color="#0017FC" />
+        <img src="./assets/backicon.svg" class="h-6 w-6 select-none" alt="arrow" />
       </Button>
       <p class="cursor-default text-[18px] font-semibold leading-3">
         Размещение заявки
