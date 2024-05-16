@@ -21,6 +21,8 @@
   import { useUnit } from 'effector-vue/composition';
   import { $showAddOfferModal } from '@/widgets/offers/model/offers-model';
   import { $requestHistoryOpened, RequestHistory } from '@/pages/my-requests';
+  import {CreateCompany} from "@/features/create-company";
+  import {CompanyForm} from "@/widgets/company-form";
 
 
   const route = useRoute();
@@ -162,6 +164,7 @@
   const isFilterCardOpen = ref(false);
   const isCreateAdvertisementOpen = ref(false);
   const isSidebarOpen = ref(false);
+  const isCompanyOpen = ref(false);
 
   watch([isProductCardOpen, isFilterCardOpen], () => {
     if (isProductCardOpen.value && isFilterCardOpen.value) {
@@ -265,7 +268,7 @@
 
   function handleNavigate(destination: string) {
     if (destination === 'add-company') {
-      isAuthOpen.value = true;
+      isCompanyOpen.value = true;
     } else if (destination === 'my-requests') {
       router.push('/');
       isSidebarOpen.value = false;
@@ -290,15 +293,18 @@
           !isProductCardOpen &&
           !isFilterCardOpen &&
           !isAuthOpen &&
+           !isSidebarOpen &&
           !isCreateAdvertisementOpen
         "
         @submitSearch="handleSearchSubmit"
         @submit-login="isAuthOpen = true"
+        @open-sidebar="isSidebarOpen = true"
         @create-clicked="isCreateAdvertisementOpen = true" />
       <Header
-        v-if="!isMobile && !isAuthOpen"
+        v-if="!isMobile && !isAuthOpen && !isSidebarOpen "
         @submitSearch="handleSearchSubmit"
         @submit-login="isAuthOpen = true"
+        @open-sidebar="isSidebarOpen = true"
         @create-clicked="isCreateAdvertisementOpen = true" />
       <div
         v-if="isMobile && (selectedAdvertisement || isFilterCardOpen)"
@@ -333,6 +339,7 @@
         @advertisementFilters="handleAdvertisementFilters"
         v-model:pagination="pagination" />
       <Auth v-if="isAuthOpen" @submit-close-auth="isAuthOpen = false" />
+        <CompanyForm  v-if="isCompanyOpen" @submit-close-company="isCompanyOpen = false" />
       <Sidebar v-if="isSidebarOpen" @close-sidebar="isSidebarOpen = false" @navigate="handleNavigate" />
       <CreateAdvertisement
         v-if="isCreateAdvertisementOpen"
