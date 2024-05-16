@@ -14,14 +14,13 @@
     SearchResponseFilters,
   } from '@/shared/api/generated/Api';
 
+  import { $api, $qwepApi } from '@/shared/api/api';
+  import { Sidebar } from '@/widgets/sidebar';
 
-  import {$api, $qwepApi} from '@/shared/api/api';
-  import {Sidebar} from "@/widgets/sidebar";
-  
   import { useUnit } from 'effector-vue/composition';
   import { $showAddOfferModal } from '@/widgets/offers/model/offers-model';
   import { $requestHistoryOpened, RequestHistory } from '@/pages/my-requests';
-
+  import { CompanyForm } from '@/widgets/company-form';
 
   const route = useRoute();
   const router = useRouter();
@@ -162,6 +161,7 @@
   const isFilterCardOpen = ref(false);
   const isCreateAdvertisementOpen = ref(false);
   const isSidebarOpen = ref(false);
+  const isCompanyOpen = ref(false);
 
   watch([isProductCardOpen, isFilterCardOpen], () => {
     if (isProductCardOpen.value && isFilterCardOpen.value) {
@@ -252,53 +252,49 @@
       'has_next' | 'has_prev' | 'page' | 'items' | 'items_count' | 'pages'
     >;
   }) {
-    console.log(data);
     offersItems.value = data.list;
     filters.value = data.filters;
     pagination.value = data.pagination;
   }
 
   onMounted(async () => {
-   const siteInfo = await $api.siteInfo.getSiteInfo()
-    console.log(siteInfo.data)
-  })
+    const siteInfo = await $api.siteInfo.getSiteInfo();
+  });
 
   function handleNavigate(destination: string) {
     if (destination === 'add-company') {
-      isAuthOpen.value = true;
+      isCompanyOpen.value = true;
     } else if (destination === 'my-requests') {
       router.push('/');
       isSidebarOpen.value = false;
-
-    }
-    else {
+    } else {
       router.push('/');
       isSidebarOpen.value = false;
-      console.log('false')
     }
-
-
   }
 </script>
 
 <template>
   <div class="flex flex-row bg-white">
-      <div class="flex w-full flex-col items-center sm:max-w-[356px]">
+    <div class="flex w-full flex-col items-center sm:max-w-[356px]">
       <Header
         v-if="
           isMobile &&
           !isProductCardOpen &&
           !isFilterCardOpen &&
           !isAuthOpen &&
+          !isSidebarOpen &&
           !isCreateAdvertisementOpen
         "
         @submitSearch="handleSearchSubmit"
         @submit-login="isAuthOpen = true"
+        @open-sidebar="isSidebarOpen = true"
         @create-clicked="isCreateAdvertisementOpen = true" />
       <Header
-        v-if="!isMobile && !isAuthOpen"
+        v-if="!isMobile && !isAuthOpen && !isSidebarOpen"
         @submitSearch="handleSearchSubmit"
         @submit-login="isAuthOpen = true"
+        @open-sidebar="isSidebarOpen = true"
         @create-clicked="isCreateAdvertisementOpen = true" />
       <div
         v-if="isMobile && (selectedAdvertisement || isFilterCardOpen)"
@@ -333,7 +329,13 @@
         @advertisementFilters="handleAdvertisementFilters"
         v-model:pagination="pagination" />
       <Auth v-if="isAuthOpen" @submit-close-auth="isAuthOpen = false" />
-      <Sidebar v-if="isSidebarOpen" @close-sidebar="isSidebarOpen = false" @navigate="handleNavigate" />
+      <CompanyForm
+        v-if="isCompanyOpen"
+        @submit-close-company="isCompanyOpen = false" />
+      <Sidebar
+        v-if="isSidebarOpen"
+        @close-sidebar="isSidebarOpen = false"
+        @navigate="handleNavigate" />
       <CreateAdvertisement
         v-if="isCreateAdvertisementOpen"
         @close="isCreateAdvertisementOpen = false" />

@@ -63,6 +63,8 @@
     if (Object.keys(form.errors.value).length <= 0) {
       nextModal();
     }
+
+    onSubmit()
   };
 
   const label = {
@@ -145,7 +147,6 @@
       >
       <Button
         @click="onRegister"
-        v-if="loginError"
         class="bg-whhite w-full border border-[#0017FC] text-[17px] font-semibold text-[#0017FC] hover:bg-white"
         >Продолжить регистрацию</Button
       >
