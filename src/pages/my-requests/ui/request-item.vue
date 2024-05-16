@@ -39,7 +39,7 @@
                   popoverOpened && 'text-[#0017FC]',
                 )
               "
-              >...</span
+            >...</span
             >
           </PopoverTrigger>
           <PopoverContent

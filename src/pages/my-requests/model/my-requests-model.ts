@@ -1,9 +1,10 @@
-import { createMutation, createQuery } from '@farfetched/core';
+import { createMutation } from '@farfetched/core';
 import { createEvent, createStore, sample } from 'effector';
 import { not, spread } from 'patronum';
 import type { Bid } from '@/shared/api/generated/Api';
 
-import { $api, $qwepApi } from '@/shared/api/api';
+import { $qwepApi } from '@/shared/api/api';
+import { deleteRequestMutation } from '@/entities/requests';
 
 export interface FormValues {
   name: string;
@@ -18,17 +19,10 @@ export const filterVisibilityChanged = createEvent<boolean | void>();
 export const filterSubmitted = createEvent<FormValues>();
 export const requestClicked = createEvent<Bid>();
 export const requestHistoryClicked = createEvent();
+export const requestHistoryHidden = createEvent();
 
 export const $filterOpened = createStore(false);
 export const $requestHistoryOpened = createStore(false);
-export const myRequestsQuery = createQuery({
-  handler: async () => (await $api.bids.getBids()).data,
-});
-
-const deleteRequestMutation = createMutation({
-  // @ts-expect-error the backend expects a number, but returns a string as the id
-  handler: async (id: string) => $api.bids.deleteBid(id),
-});
 
 // TODO: add filter request
 const filterMutation = createMutation({
@@ -36,7 +30,7 @@ const filterMutation = createMutation({
 });
 
 export const searchOffersMutation = createMutation({
-  handler: async (data: Bid) =>
+  handler: (data: Bid) =>
     $qwepApi.search.getSearch({
       search: data.name,
       brand: data.brand?.toString() ?? '',
@@ -72,5 +66,11 @@ sample({
 sample({
   clock: requestHistoryClicked,
   fn: () => true,
+  target: $requestHistoryOpened,
+});
+
+sample({
+  clock: requestHistoryHidden,
+  fn: () => false,
   target: $requestHistoryOpened,
 });

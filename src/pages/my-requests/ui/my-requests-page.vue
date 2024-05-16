@@ -5,23 +5,24 @@
   import {
     $filterOpened,
     filterVisibilityChanged,
-    myRequestsQuery,
     requestClicked,
+    requestHistoryClicked,
     searchOffersMutation,
   } from '../model/my-requests-model';
   import RequestItem from './request-item.vue';
   import type { Bid } from '@/shared/api/generated/Api';
   import FilterForm from './filter-form.vue';
-  import { useRouter } from 'vue-router';
+  import { myRequestsQuery } from '@/entities/requests';
 
   const emit = defineEmits(['handleData']);
-  const router = useRouter();
 
   const {
     $filterOpened: filterOpened,
     filterVisibilityChanged: changeFilterVisibility,
     requestClicked: fetchOffers,
   } = useUnit({ $filterOpened, filterVisibilityChanged, requestClicked });
+
+  const handleRequestClicked = useUnit(requestHistoryClicked);
 
   const { start: fetchRequests, data: requests } = useUnit(myRequestsQuery);
 
@@ -54,7 +55,8 @@
         pages: data.pages,
       },
     });
-    router.push('/advertisements');
+
+    handleRequestClicked();
   });
 </script>
 
@@ -78,7 +80,7 @@
       class="h-[calc(100vh-177px)] w-full border-r border-[#D0D4DB] bg-[#F9FAFB]">
       <div
         class="mx-auto flex flex-col items-center justify-center gap-y-6 p-4"
-        v-if="!requests?.length">
+        v-if="!requests?.data?.length">
         <img
           src="./assets/interfaceRequestIcon.svg"
           alt="interfaceRequestIcon"
@@ -92,12 +94,11 @@
         </div>
       </div>
       <div v-else class="m-4 flex flex-col gap-y-4">
-        <template v-for="item of requests">
-          <RequestItem
-            :item="item as Bid"
-            :status="status"
-            @click="fetchOffers" />
-        </template>
+        <RequestItem
+          v-for="item of requests?.data"
+          :item="item as Bid"
+          :status="status"
+          @click="fetchOffers" />
       </div>
     </div>
   </template>

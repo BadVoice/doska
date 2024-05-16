@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import { cn } from '@/shared/lib';
   import {
     Button,
     FormControl,
@@ -9,14 +8,8 @@
     FormMessage,
     Input,
   } from '@/shared/ui';
-  import {
-    Listbox,
-    ListboxButton,
-    ListboxOption,
-    ListboxOptions,
-  } from '@headlessui/vue';
+  import { ChevronDown, X } from 'lucide-vue-next';
   import { useUnit } from 'effector-vue/composition';
-  import { ChevronLeft, X } from 'lucide-vue-next';
   import { onMounted, onUnmounted } from 'vue';
   import { useCreateAdvertisementForm } from '../lib/create-form';
   import {
@@ -25,9 +18,16 @@
     createAdvertisementMounted,
     formClosed,
     formSubmitted,
-    type FormValues,
+    getBrands,
     getCategories,
   } from '../model/create-advertisement';
+  import {
+    Listbox,
+    ListboxButton,
+    ListboxOption,
+    ListboxOptions,
+  } from '@headlessui/vue';
+  import { cn } from '@/shared/lib';
 
   const emit = defineEmits(['close']);
   const { advertisementTypeSelected: handleSelectedType, $formMode: formMode } =
@@ -37,13 +37,18 @@
     });
 
   const { data: categories } = useUnit(getCategories);
+  const { data: brands } = useUnit(getBrands);
 
-  const { form, assigment } = useCreateAdvertisementForm();
+  const { form, category, brand } = useCreateAdvertisementForm();
 
-  const onSubmit = form.handleSubmit((values) => {
-    emit('close');
-    formSubmitted(values as FormValues);
-  });
+  const onSubmit = async () => {
+    await form.validate();
+    console.log(form.errors.value);
+    if (Object.keys(form.errors.value).length < 1) {
+      emit('close');
+      formSubmitted(form.values);
+    }
+  };
 
   function handleClose() {
     emit('close');
@@ -74,7 +79,10 @@
     <div
       class="flex w-full items-center justify-start gap-x-2 border-b border-[#D0D4DB] px-4 py-2">
       <Button class="-ml-2" @click="handleClose" size="icon" variant="ghost">
-        <img src="./assets/backicon.svg" class="h-6 w-6 select-none" alt="arrow" />
+        <img
+          src="./assets/backicon.svg"
+          class="h-6 w-6 select-none"
+          alt="arrow" />
       </Button>
       <p class="cursor-default text-[18px] font-semibold leading-3">
         Размещение заявки
@@ -152,15 +160,20 @@
               <FormMessage />
             </FormItem>
           </FormField>
-          <Listbox v-model="assigment">
-            <p class="text-[14px] font-semibold text-[#101828]">
-              Населенный пункт
-            </p>
+          <Listbox v-model="category">
+            <p class="text-[14px] font-semibold text-[#101828]">Категория</p>
             <ListboxButton
-              class="inline-flex py-2.5 -mt-2 w-full justify-between rounded-lg border border-gray-300 bg-white px-3 text-sm font-medium hover:bg-gray-50">
-              <p class="text-[16px] font-normal text-gray-400">
-                Населенный пункт
+              class="inline-flex w-full justify-between rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium hover:bg-gray-50">
+              <p
+                :class="
+                  cn(
+                    'text-[16px] font-normal tracking-wide text-[#858FA3]',
+                    category && 'text-black',
+                  )
+                ">
+                {{ category ?? 'Категория' }}
               </p>
+              <ChevronDown color="#858FA3" class="h-5 w-5" />
             </ListboxButton>
 
             <transition
@@ -177,7 +190,50 @@
                     :class="
                       cn(
                         'mx-1 my-1 cursor-pointer select-none rounded py-2 pl-3 pr-9 text-gray-900 hover:bg-opacity-90',
-                        assigment === parseInt(item?.id ?? '0') &&
+                        category === parseInt(item?.id ?? '0') &&
+                          'bg-gray-200 text-black',
+                      )
+                    ">
+                    <span class="block truncate font-normal">
+                      {{ item.name }}
+                    </span>
+                  </li>
+                </ListboxOption>
+              </ListboxOptions>
+            </transition>
+          </Listbox>
+
+          <Listbox v-model="brand">
+            <p class="text-[14px] font-semibold text-[#101828]">Бренд</p>
+            <ListboxButton
+              class="inline-flex w-full justify-between rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium hover:bg-gray-50">
+              <p
+                :class="
+                  cn(
+                    'text-[16px] font-normal tracking-wide text-[#858FA3]',
+                    brand && 'text-black',
+                  )
+                ">
+                {{ brand ?? 'Бренд' }}
+              </p>
+              <ChevronDown color="#858FA3" class="h-5 w-5" />
+            </ListboxButton>
+
+            <transition
+              leave-active-class="transition ease-in duration-100"
+              leave-from-class="opacity-100"
+              leave-to-class="opacity-0">
+              <ListboxOptions
+                class="max-h-36 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                <ListboxOption
+                  v-if="brands?.data"
+                  v-for="item in brands?.data"
+                  :value="item.id">
+                  <li
+                    :class="
+                      cn(
+                        'mx-1 my-1 cursor-pointer select-none rounded py-2 pl-3 pr-9 text-gray-900 hover:bg-opacity-90',
+                        brand === parseInt(item?.id ?? '0') &&
                           'bg-gray-200 text-black',
                       )
                     ">
@@ -191,9 +247,8 @@
           </Listbox>
         </form>
         <div
-          @click="onSubmit"
           class="mt-auto flex w-full items-center justify-center border-t border-[#D0D4DB] p-4">
-          <Button class="w-full rounded-[9px] text-[16px]">
+          <Button @click="onSubmit" class="w-full rounded-[9px] text-[16px]">
             Опубликовать заявку
           </Button>
         </div>

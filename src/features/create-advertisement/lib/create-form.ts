@@ -5,7 +5,8 @@ import * as z from 'zod';
 
 export function useCreateAdvertisementForm(): {
   form: FormContext<any, {}>;
-  assigment: Ref<number | undefined>;
+  category: Ref<number | undefined>;
+  brand: Ref<number | undefined>;
 } {
   const formSchema = toTypedSchema(
     z.object({
@@ -21,7 +22,8 @@ export function useCreateAdvertisementForm(): {
           invalid_type_error: 'Введите количество',
         })
         .min(1, 'Введите количество'),
-      assigment: z.number({ required_error: 'Выберите назначение' }),
+      category: z.number({ required_error: 'Выберите категорию' }),
+      brand: z.number({ required_error: 'Выберите бренд' }),
     }),
   );
 
@@ -29,10 +31,12 @@ export function useCreateAdvertisementForm(): {
     validationSchema: formSchema,
   });
 
-  const [assigment] = form.defineField('assigment');
+  const [category] = form.defineField('category');
+  const [brand] = form.defineField('brand');
 
   return {
     form,
-    assigment,
+    category,
+    brand,
   };
 }

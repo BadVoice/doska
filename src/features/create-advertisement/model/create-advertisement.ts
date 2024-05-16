@@ -3,6 +3,7 @@ import type { Bid, Offer } from '@/shared/api/generated/Api';
 import { createMutation, createQuery } from '@farfetched/core';
 import { createEvent, createStore, sample } from 'effector';
 import { spread } from 'patronum';
+import { myRequestsQuery } from '@/entities/requests';
 
 type TFormMode = 'selectType' | 'form';
 type TAdvertisementType = 'buy' | 'sell';
@@ -11,7 +12,8 @@ export interface FormValues {
   name: string;
   article: string;
   count: string;
-  assigment: number;
+  category: number;
+  brand: number;
 }
 
 const createOfferMutation = createMutation({
@@ -24,6 +26,9 @@ const createBidMutation = createMutation({
 
 export const getCategories = createQuery({
   handler: () => $api.categories.getCategories(),
+});
+export const getBrands = createQuery({
+  handler: () => $api.brands.getBrands(),
 });
 
 export const advertisementTypeSelected = createEvent<TAdvertisementType>();
@@ -40,7 +45,7 @@ export const $formMode = createStore<TFormMode>('selectType').reset([
 
 sample({
   clock: createAdvertisementMounted,
-  target: getCategories.start,
+  target: [getCategories.start, getBrands.start],
 });
 
 sample({
@@ -63,9 +68,10 @@ sample({
     name: clk.name,
     article: clk.article,
     amount: parseInt(clk?.count ?? '1'),
-    category: clk.assigment,
+    category: clk.category,
+    brand: clk.brand,
   }),
-  target: [createBidMutation.start, formClosed],
+  target: [createBidMutation.start, formClosed, myRequestsQuery.start],
 });
 
 sample({
@@ -76,7 +82,8 @@ sample({
     name: clk.name,
     price: 0,
     amount: parseInt(clk?.count ?? '1'),
-    category: clk.assigment,
+    category: clk.category,
+    brand: clk.brand,
   }),
-  target: [createOfferMutation.start, formClosed],
+  target: [createOfferMutation.start, formClosed, myRequestsQuery.start],
 });

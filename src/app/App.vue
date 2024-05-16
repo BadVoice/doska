@@ -349,7 +349,6 @@
         :offers-items="offersItems"
         @page-selected="handlePageSelected"
         class="hidden w-full lg:flex" />
-
       <RequestHistory v-if="showRequestHistory" />
 
       <Offers
