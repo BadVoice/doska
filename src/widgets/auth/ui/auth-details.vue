@@ -12,25 +12,26 @@
   import {
     $inputMode,
     detailsFormSubmitted,
-    formSubmitted, registerUser,
+    formSubmitted,
+    registerUser,
   } from '@/widgets/auth/model/auth-model';
   import { useUnit } from 'effector-vue/composition';
-  import VerifyCaptcha from "@/widgets/auth/ui/verify-captcha.vue";
-  import {ref} from "vue";
-  import type {AxiosResponse} from "axios";
+  import VerifyCaptcha from '@/widgets/auth/ui/verify-captcha.vue';
+  import { ref } from 'vue';
+  import type { AxiosResponse } from 'axios';
 
   const inputMode = useUnit($inputMode);
   const nextModal = useUnit(formSubmitted);
   const handleSubmit = useUnit(detailsFormSubmitted);
 
   const showCaptcha = ref(false);
-  const registerError = ref(false)
+  const registerError = ref(false);
   const captchaToken = ref<string | null>(null);
 
   const registerStatus = ref<number | null>(null);
 
   const handleCaptchaVerified = (response: string) => {
-    console.log(response)
+    console.log(response);
     captchaToken.value = response;
   };
 
@@ -39,10 +40,9 @@
   const onSubmit = () => {
     form.validate();
     if (Object.keys(form.errors.value).length <= 0) {
-
       if (showCaptcha.value && !captchaToken.value) {
         registerError.value = true;
-        console.error("Пожалуйста, пройдите проверку reCAPTCHA.");
+        console.error('Пожалуйста, пройдите проверку reCAPTCHA.');
         return;
       }
 
@@ -51,11 +51,6 @@
       handleSubmit({
         ...form.values,
       });
-
-      if (registerStatus.value === 201) {
-        nextModal();
-      }
-
     }
   };
 
@@ -67,13 +62,13 @@
   }
 
   registerUser.finished.success.watch(({ result }) => {
-    registerStatus.value = (result as CustomAxiosResponse).response?.status || null;
-    console.log(registerStatus.value)
+    registerStatus.value =
+      (result as CustomAxiosResponse).response?.status || null;
+    console.log(registerStatus.value);
 
     if (registerStatus.value === 201) {
       nextModal();
     } else if (registerStatus.value === 400) {
-      console.log('error', result);
       registerError.value = true;
     } else if (registerStatus.value === 429) {
       showCaptcha.value = true;
@@ -97,7 +92,9 @@
       <p class="text-[18px] font-semibold">
         Укажите ваше имя и {{ label[inputMode] }}
       </p>
-      <p v-if="registerError" class="text-[14px] text-[#858FA3] font-semibold">Произошла ошибка, возможно такие данные уже существуют</p>
+      <p v-if="registerError" class="text-[14px] font-semibold text-[#858FA3]">
+        Произошла ошибка, возможно такие данные уже существуют
+      </p>
       <FormField v-slot="{ componentField }" name="name">
         <FormItem>
           <FormLabel>Имя</FormLabel>
@@ -144,7 +141,9 @@
           <FormMessage />
         </FormItem>
       </FormField>
-      <VerifyCaptcha @captcha-verified="handleCaptchaVerified" v-if="showCaptcha" />
+      <VerifyCaptcha
+        @captcha-verified="handleCaptchaVerified"
+        v-if="showCaptcha" />
     </form>
     <div
       class="inset-x-0 bottom-0 w-full border-t border-[#CCD0D9] bg-white p-4">

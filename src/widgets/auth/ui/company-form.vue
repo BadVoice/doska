@@ -1,23 +1,10 @@
 <script setup lang="ts">
-  import {
-    Button,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-    Input,
-  } from '@/shared/ui';
-  import {
-    Listbox,
-    ListboxButton,
-    ListboxOption,
-    ListboxOptions,
-  } from '@headlessui/vue';
+  import { Button } from '@/shared/ui';
+
   import { ref } from 'vue';
   import { useUnit } from 'effector-vue/composition';
   import { formSubmitted } from '@/widgets/auth/model/auth-model';
-  import {CreateCompany} from "@/features/create-company";
+  import { CreateCompany } from '@/features/create-company';
 
   const emit = defineEmits(['registerCompany', 'skipRegisterCompany']);
   const onSubmit = () => {

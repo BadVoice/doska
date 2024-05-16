@@ -24,3 +24,5 @@ sample({
   fn: (src) => (['phoneOrEmail', 'details', 'company'] as const)[src],
   target: $formMode,
 });
+
+formIndexExceded.watch((value) => console.log(value));
