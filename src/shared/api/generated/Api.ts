@@ -60,12 +60,17 @@ export interface UserAuthVerify {
 export interface Token {
   refresh?: string;
   access?: string;
+  detail?: string;
+}
+
+export interface ErrorResponse {
+  detail?: string;
 }
 
 export type SearchPagination = Pick<
-    SearchResponse,
-    'has_next' | 'has_prev' | 'page' | 'items' | 'items_count' | 'pages'
->
+  SearchResponse,
+  'has_next' | 'has_prev' | 'page' | 'items' | 'items_count' | 'pages'
+>;
 export interface AccessToken {
   access?: string;
 }
@@ -493,14 +498,12 @@ export class HttpClient<SecurityDataType = unknown> {
   private secure?: boolean;
   private format?: ResponseType;
 
-  constructor(
-    {
-      securityWorker,
-      secure,
-      format,
-      ...axiosConfig
-    }: ApiConfig<SecurityDataType> = {},
-  ) {
+  constructor({
+    securityWorker,
+    secure,
+    format,
+    ...axiosConfig
+  }: ApiConfig<SecurityDataType> = {}) {
     this.instance = axios.create({
       ...axiosConfig,
       baseURL:
@@ -564,9 +567,15 @@ export class HttpClient<SecurityDataType = unknown> {
     }, new FormData());
   }
 
-  public request = async <T = any, _E = any>(
-    { secure, path, type, query, format, body, ...params }: FullRequestParams,
-  ): Promise<AxiosResponse<T>> => {
+  public request = async <T = any, _E = any>({
+    secure,
+    path,
+    type,
+    query,
+    format,
+    body,
+    ...params
+  }: FullRequestParams): Promise<AxiosResponse<T>> => {
     const secureParams =
       ((typeof secure === 'boolean' ? secure : this.secure) &&
         this.securityWorker &&

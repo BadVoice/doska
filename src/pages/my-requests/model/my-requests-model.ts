@@ -3,7 +3,7 @@ import { createEvent, createStore, sample } from 'effector';
 import { not, spread } from 'patronum';
 import type { Bid } from '@/shared/api/generated/Api';
 
-import {$api, $qwepApi} from '@/shared/api/api';
+import { $api, $qwepApi } from '@/shared/api/api';
 
 export interface FormValues {
   name: string;
@@ -17,8 +17,10 @@ export const deleteRequestClicked = createEvent<string>();
 export const filterVisibilityChanged = createEvent<boolean | void>();
 export const filterSubmitted = createEvent<FormValues>();
 export const requestClicked = createEvent<Bid>();
+export const requestHistoryClicked = createEvent();
 
 export const $filterOpened = createStore(false);
+export const $requestHistoryOpened = createStore(false);
 export const myRequestsQuery = createQuery({
   handler: async () => (await $api.bids.getBids()).data,
 });
@@ -40,7 +42,6 @@ export const searchOffersMutation = createMutation({
       brand: data.brand?.toString() ?? '',
     }),
 });
-
 
 sample({
   clock: deleteRequestClicked,
@@ -66,4 +67,10 @@ sample({
 sample({
   clock: requestClicked,
   target: searchOffersMutation.start,
+});
+
+sample({
+  clock: requestHistoryClicked,
+  fn: () => true,
+  target: $requestHistoryOpened,
 });

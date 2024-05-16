@@ -6,7 +6,7 @@
   import { Header } from '@/widgets/header';
   import { Filter } from '@/features/filter';
   import { Auth } from '@/widgets/auth';
-  import { Offers } from '@/widgets/offers';
+  import { ManuallyAddOffer, Offers } from '@/widgets/offers';
   import { CreateAdvertisement } from '@/features/create-advertisement';
   import type {
     Item,
@@ -14,11 +14,20 @@
     SearchResponseFilters,
   } from '@/shared/api/generated/Api';
 
+
   import {$api, $qwepApi} from '@/shared/api/api';
   import {Sidebar} from "@/widgets/sidebar";
+  
+  import { useUnit } from 'effector-vue/composition';
+  import { $showAddOfferModal } from '@/widgets/offers/model/offers-model';
+  import { $requestHistoryOpened, RequestHistory } from '@/pages/my-requests';
+
 
   const route = useRoute();
   const router = useRouter();
+
+  const showAddOfferModal = useUnit($showAddOfferModal);
+  const showRequestHistory = useUnit($requestHistoryOpened);
 
   const offersItems = ref<Item[]>([]);
   const filters = ref<SearchResponseFilters>({
@@ -274,19 +283,23 @@
 
 <template>
   <div class="flex flex-row bg-white">
-    <div class="flex w-full flex-col items-center sm:max-w-[356px]">
+      <div class="flex w-full flex-col items-center sm:max-w-[356px]">
       <Header
-        v-if="isMobile && !isProductCardOpen && !isFilterCardOpen && !isAuthOpen && !isCreateAdvertisementOpen && !isSidebarOpen"
+        v-if="
+          isMobile &&
+          !isProductCardOpen &&
+          !isFilterCardOpen &&
+          !isAuthOpen &&
+          !isCreateAdvertisementOpen
+        "
         @submitSearch="handleSearchSubmit"
         @submit-login="isAuthOpen = true"
-        @open-sidebar="isSidebarOpen = true"
         @create-clicked="isCreateAdvertisementOpen = true" />
       <Header
-          v-if="!isMobile && !isSidebarOpen"
-          @submitSearch="handleSearchSubmit"
-          @submit-login="isAuthOpen = true"
-          @open-sidebar="isSidebarOpen = true"
-          @create-clicked="isCreateAdvertisementOpen = true" />
+        v-if="!isMobile && !isAuthOpen"
+        @submitSearch="handleSearchSubmit"
+        @submit-login="isAuthOpen = true"
+        @create-clicked="isCreateAdvertisementOpen = true" />
       <div
         v-if="isMobile && (selectedAdvertisement || isFilterCardOpen)"
         class="w-full">
@@ -325,6 +338,7 @@
         v-if="isCreateAdvertisementOpen"
         @close="isCreateAdvertisementOpen = false" />
     </div>
+
     <div v-if="!isMobile" class="flex-grow bg-[#F9FAFB]">
       <Offers
         v-model:pagination="pagination"
@@ -333,6 +347,8 @@
         :offers-items="offersItems"
         @page-selected="handlePageSelected"
         class="hidden w-full lg:flex" />
+
+      <RequestHistory v-if="showRequestHistory" />
 
       <Offers
         v-if="!isFilterCardOpen && !isProductCardOpen"
@@ -356,6 +372,14 @@
         @close-product-card="handleCloseProductCard"
         class="hidden sm:flex lg:hidden" />
 
+      <ManuallyAddOffer
+        v-if="
+          showAddOfferModal &&
+          !isMobile &&
+          route.path === 'advertisements' &&
+          !isProductCardOpen &&
+          !isFilterCardOpen
+        " />
       <Filter
         v-if="
           isFilterCardOpen &&
@@ -370,18 +394,24 @@
         @close-filter-card="isFilterCardOpen = false"
         class="hidden w-full sm:inline-block lg:hidden" />
     </div>
-
     <div
-      v-if="!isFilterCardOpen && !isProductCardOpen"
+      v-if="!isFilterCardOpen && !isProductCardOpen && !showAddOfferModal"
       class="hidden h-screen w-full min-w-[360px] flex-col justify-between border-l border-[#D0D4DB] bg-[#F9FAFB] sm:w-[360px] lg:flex"></div>
     <ProductCard
-      v-if="productItem && !isMobile && route.path === '/advertisements'"
+      v-if="
+        productItem &&
+        !isMobile &&
+        !showAddOfferModal &&
+        route.path === '/advertisements'
+      "
       :product-item="productItem"
       :is-product-card-open="isProductCardOpen"
       @close-product-card="handleCloseProductCard"
       class="flex w-full sm:hidden lg:flex" />
+
+    <ManuallyAddOffer v-if="!isMobile && showAddOfferModal" />
     <Filter
-      v-if="!isMobile"
+      v-if="!isMobile && !showAddOfferModal"
       v-model:filters="filters"
       @filtered-items-came="handleFilteredItemsCame"
       :is-filter-card-open="isFilterCardOpen"

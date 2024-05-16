@@ -1,9 +1,11 @@
 import { toTypedSchema } from '@vee-validate/zod';
-import * as z from 'zod';
 import { type FormContext, useForm } from 'vee-validate';
+import { type Ref } from 'vue';
+import * as z from 'zod';
 
 export function useCreateAdvertisementForm(): {
   form: FormContext<any, {}>;
+  assigment: Ref<number | undefined>;
 } {
   const formSchema = toTypedSchema(
     z.object({
@@ -19,9 +21,7 @@ export function useCreateAdvertisementForm(): {
           invalid_type_error: 'Введите количество',
         })
         .min(1, 'Введите количество'),
-      assigment: z
-        .string({ required_error: 'Выберите назначение' })
-        .min(1, 'Выберите назначение'),
+      assigment: z.number({ required_error: 'Выберите назначение' }),
     }),
   );
 
@@ -29,7 +29,10 @@ export function useCreateAdvertisementForm(): {
     validationSchema: formSchema,
   });
 
+  const [assigment] = form.defineField('assigment');
+
   return {
     form,
+    assigment,
   };
 }

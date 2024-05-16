@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { HTMLAttributes } from 'vue';
+  import { type HTMLAttributes, onMounted, ref } from 'vue';
   import { useVModel } from '@vueuse/core';
   import { cn } from '@/shared/lib/';
 
@@ -7,6 +7,7 @@
     defaultValue?: string | number;
     modelValue?: string | number;
     class?: HTMLAttributes['class'];
+    autofocus?: boolean;
   }>();
 
   const emits = defineEmits<{
@@ -17,10 +18,19 @@
     passive: true,
     defaultValue: props.defaultValue,
   });
+
+  const inputRef = ref<HTMLInputElement>();
+
+  onMounted(() => {
+    if (props.autofocus) {
+      inputRef.value?.focus();
+    }
+  });
 </script>
 
 <template>
   <input
+    ref="inputRef"
     v-model="modelValue"
     :class="
       cn(

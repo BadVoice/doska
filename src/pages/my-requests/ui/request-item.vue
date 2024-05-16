@@ -4,7 +4,11 @@
   import { cn } from '@/shared/lib';
   import { Button, Popover, PopoverContent, PopoverTrigger } from '@/shared/ui';
   import { PopoverClose } from 'radix-vue';
-  import { deleteRequestClicked } from '@/pages/my-requests/model/my-requests-model';
+  import {
+    deleteRequestClicked,
+    requestHistoryClicked,
+  } from '@/pages/my-requests/model/my-requests-model';
+  import { useUnit } from 'effector-vue/composition';
 
   defineProps<{
     status: { color: string; text: string }[];
@@ -14,6 +18,8 @@
   function renderFile(file: File) {
     return URL.createObjectURL(file);
   }
+
+  const handleHistoryClick = useUnit(requestHistoryClicked);
 
   const popoverOpened = ref(false);
 </script>
@@ -25,7 +31,7 @@
       <div class="flex w-full justify-between">
         <p class="text-sm font-normal text-[#101828]">{{ item.name }}</p>
         <Popover @update:open="(value) => (popoverOpened = value)">
-          <PopoverTrigger>
+          <PopoverTrigger @click.stop>
             <span
               :class="
                 cn(
@@ -40,6 +46,7 @@
             class="flex h-[111px] w-[150px] flex-col justify-center rounded-[10px] border-b-0 border-t-0 p-0">
             <PopoverClose class="flex flex-col gap-y-0">
               <Button
+                @click="handleHistoryClick"
                 variant="ghost"
                 class="rounded-b-0 flex h-full w-full rounded-[8px] border-t-2 border-[#D0D4DB] px-4 py-2 text-start hover:bg-[#F9FAFB]">
                 <p class="w-full text-[14px] font-semibold">История заявки</p>
