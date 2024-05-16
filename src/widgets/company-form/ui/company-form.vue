@@ -14,7 +14,7 @@ const emit = defineEmits(['submitCloseCompany']);
         <img
             src="../assets/backIcon.svg"
             class="h-6 w-6 select-none"
-            alt="arrow" />
+            alt="back icon" />
       </Button>
       <p class="cursor-default text-[18px] font-semibold">Создание компании</p>
     </div>

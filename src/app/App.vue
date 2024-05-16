@@ -323,11 +323,17 @@
           class="flex w-full" />
       </div>
       <router-view
-        v-if="!isAuthOpen && !isFilterCardOpen && !isSidebarOpen"
+        v-if="!isMobile && !isAuthOpen && !isSidebarOpen"
         @handle-data="handleRequestsData"
         @advertisementItems="handleAdvertisementItems"
         @advertisementFilters="handleAdvertisementFilters"
         v-model:pagination="pagination" />
+      <router-view
+          v-if="isMobile && !isAuthOpen && !isFilterCardOpen && !isSidebarOpen"
+          @handle-data="handleRequestsData"
+          @advertisementItems="handleAdvertisementItems"
+          @advertisementFilters="handleAdvertisementFilters"
+          v-model:pagination="pagination" />
       <Auth v-if="isAuthOpen" @submit-close-auth="isAuthOpen = false" />
       <CompanyForm
         v-if="isCompanyOpen"
