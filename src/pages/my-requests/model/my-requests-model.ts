@@ -1,7 +1,6 @@
 import { createMutation } from '@farfetched/core';
 import { createEvent, createStore, sample } from 'effector';
 import { not, spread } from 'patronum';
-import type { Bid } from '@/shared/api/generated/Api';
 
 import { $qwepApi } from '@/shared/api/api';
 import { deleteRequestMutation } from '@/entities/requests';
@@ -12,6 +11,41 @@ export interface FormValues {
   article: string;
   count: string;
   assigment: string;
+}
+
+export interface Bid {
+  id?: string;
+  /**
+   * @format date-time
+   * @example "2024-04-14T08:12:44.533679Z"
+   */
+  created_at?: string;
+  /** @format binary */
+  image?: File | null;
+  /**
+   * dictionary:
+   *   * 0 Создана
+   *   * 1 Опубликована
+   *   * 2 Исполнена
+   *   * 3 Архивирована
+   * @default 0
+   */
+  status?: 0 | 1 | 2 | 3;
+  name: string;
+  article?: string;
+  amount: number;
+  delivery_time?: number;
+  description?: string;
+  /** company_id */
+  company?: number;
+  /** category_id */
+  category: number;
+  /** brand_id */
+  brand?: number;
+  brandName?: string;
+  categoryName?: string;
+  /** destination_id */
+  destinations?: number[];
 }
 
 export const deleteRequestClicked = createEvent<string>();
@@ -32,8 +66,8 @@ const filterMutation = createMutation({
 export const searchOffersMutation = createMutation({
   handler: (data: Bid) =>
     $qwepApi.search.getSearch({
-      search: data.name,
-      brand: data.brand?.toString() ?? '',
+      search: data.name?.toString() ?? '',
+      brand: data.brandName?.toString() ?? '',
     }),
 });
 

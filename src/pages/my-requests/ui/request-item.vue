@@ -1,6 +1,5 @@
 <script lang="ts" setup>
   import { ref } from 'vue';
-  import type { Bid } from '@/shared/api/generated/Api';
   import { cn } from '@/shared/lib';
   import { Button, Popover, PopoverContent, PopoverTrigger } from '@/shared/ui';
   import { PopoverClose } from 'radix-vue';
@@ -9,6 +8,41 @@
     requestHistoryClicked,
   } from '@/pages/my-requests/model/my-requests-model';
   import { useUnit } from 'effector-vue/composition';
+
+  export interface Bid {
+    id?: string;
+    /**
+     * @format date-time
+     * @example "2024-04-14T08:12:44.533679Z"
+     */
+    created_at?: string;
+    /** @format binary */
+    image?: File | null;
+    /**
+     * dictionary:
+     *   * 0 Создана
+     *   * 1 Опубликована
+     *   * 2 Исполнена
+     *   * 3 Архивирована
+     * @default 0
+     */
+    status?: 0 | 1 | 2 | 3;
+    name: string;
+    article?: string;
+    amount: number;
+    delivery_time?: number;
+    description?: string;
+    /** company_id */
+    company?: number;
+    /** category_id */
+    category: number;
+    /** brand_id */
+    brand?: number;
+    brandName?: string;
+    categoryName?: string;
+    /** destination_id */
+    destinations?: number[];
+  }
 
   defineProps<{
     status: { color: string; text: string }[];
@@ -66,11 +100,31 @@
           </PopoverContent>
         </Popover>
       </div>
-      <div class="flex w-full items-center justify-between">
-        <p class="text-xs font-normal text-[#858FA3]">{{ item.brand }}</p>
-        <p class="text-xs font-normal text-[#101828]">{{ item.amount }} шт</p>
+      <div class="flex w-full flex-col items-start justify-between gap-y-1">
+        <div class="flex flex-row justify-between w-full">
+          <div class="flex w-full flex-row gap-x-2">
+            <p class="text-xs font-normal text-[#858FA3]" v-if="item.article">{{ item.article }}</p>
+            <p class="text-xs font-normal text-[#858FA3]" v-else>Не указано</p>
+            <p class="text-xs font-normal text-[#858FA3]" v-if="item.brandName">{{ item.brandName }}</p>
+          </div>
+          <div class="flex gap-x-1">
+            <p class="text-xs font-normal text-[#101828]" v-if="item.amount">{{ item.amount }}</p>
+            <p class="text-xs font-normal text-[#101828]" v-else>Не указано</p>
+            <p class="text-xs font-normal text-[#101828]" v-if="item.amount">шт</p>
+          </div>
+        </div>
+
+        <div class="flex flex-row gap-x-2">
+          <div>
+            <p class="text-xs font-normal text-[#858FA3] min-w-[50px]" v-if="item.categoryName">{{ item.categoryName }}</p>
+          </div>
+          <div>
+            <p class="text-xs font-normal text-[#858FA3]" v-if="item.company">{{ item.company }}</p>
+            <p class="text-xs font-normal text-[#858FA3]" v-else>Не указано</p>
+          </div>
+        </div>
       </div>
-      <p class="text-xs font-normal text-[#858FA3]">{{ item.company }}</p>
+
     </div>
 
     <div class="flex gap-x-2" v-if="item.image">

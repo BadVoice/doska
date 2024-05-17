@@ -19,7 +19,7 @@
   const {
     $filterOpened: filterOpened,
     filterVisibilityChanged: changeFilterVisibility,
-    requestClicked: fetchOffers,
+    requestClicked: handleRequestClick,
   } = useUnit({ $filterOpened, filterVisibilityChanged, requestClicked });
 
   const handleRequestClicked = useUnit(requestHistoryClicked);
@@ -80,7 +80,7 @@
       class="h-[calc(100vh-177px)] w-full border-r border-[#D0D4DB] bg-[#F9FAFB]">
       <div
         class="mx-auto flex flex-col items-center justify-center gap-y-6 p-4"
-        v-if="!requests?.data?.length">
+        v-if="!requests?.length">
         <img
           src="./assets/interfaceRequestIcon.svg"
           alt="interfaceRequestIcon"
@@ -95,10 +95,10 @@
       </div>
       <div v-else class="m-4 flex flex-col gap-y-4">
         <RequestItem
-          v-for="item of requests?.data"
+          v-for="item of requests"
           :item="item as Bid"
           :status="status"
-          @click="fetchOffers" />
+          @click="handleRequestClick" />
       </div>
     </div>
   </template>
