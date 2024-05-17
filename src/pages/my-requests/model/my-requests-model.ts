@@ -3,7 +3,7 @@ import { createEvent, createStore, sample } from 'effector';
 import { not, spread } from 'patronum';
 
 import { $qwepApi } from '@/shared/api/api';
-import { deleteRequestMutation } from '@/entities/requests';
+import {deleteRequestMutation, myRequestsQuery} from '@/entities/requests';
 
 export interface FormValues {
   name: string;
@@ -73,7 +73,7 @@ export const searchOffersMutation = createMutation({
 
 sample({
   clock: deleteRequestClicked,
-  target: deleteRequestMutation.start,
+  target: [deleteRequestMutation.start, myRequestsQuery.start],
 });
 
 sample({
