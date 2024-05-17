@@ -1,18 +1,21 @@
 <script setup lang="ts">
-import { useUnit } from 'effector-vue/composition';
-import {
-  $brandsList, showBrandSelector
-} from "@/features/select-brand/model/brand-model";
-import { requestClicked } from "@/pages/my-requests/model/my-requests-model";
+  import { useUnit } from 'effector-vue/composition';
+  import { $visible, getBrands, mounted } from '../model/brand-model';
+  import { onMounted } from 'vue';
 
+  const isVisible = useUnit($visible);
+  const handleMount = useUnit(mounted);
+  const { data: brands } = useUnit(getBrands);
 
-const brandsList = useUnit($brandsList);
+  onMounted(handleMount);
 </script>
 
 <template>
-    <div v-for="brand in brandsList" :key="brand.id">
-      {{ brand }}
-      dfsgdfhdfh
-    </div>
-
+  <div
+    v-if="isVisible && brands?.data"
+    v-for="brand in brands.data"
+    :key="brand.id">
+    {{ brand }}
+    dfsgdfhdfh
+  </div>
 </template>

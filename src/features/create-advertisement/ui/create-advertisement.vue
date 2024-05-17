@@ -43,7 +43,6 @@
 
   const onSubmit = async () => {
     await form.validate();
-    console.log(form.errors.value);
     if (Object.keys(form.errors.value).length < 1) {
       emit('close');
       formSubmitted(form.values);
@@ -171,7 +170,10 @@
                     category && 'text-black',
                   )
                 ">
-                {{ category ?? 'Категория' }}
+                {{
+                  categories?.data.find((value) => value.id === category)
+                    ?.name ?? 'Категория'
+                }}
               </p>
               <ChevronDown color="#858FA3" class="h-5 w-5" />
             </ListboxButton>
@@ -214,7 +216,9 @@
                     brand && 'text-black',
                   )
                 ">
-                {{ brand ?? 'Бренд' }}
+                {{
+                  brands?.data.find((value) => value.id === brand) ?? 'Бренд'
+                }}
               </p>
               <ChevronDown color="#858FA3" class="h-5 w-5" />
             </ListboxButton>

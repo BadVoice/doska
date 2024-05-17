@@ -98,5 +98,3 @@ sample({
       : ('email' as const),
   target: $inputMode,
 });
-
-$phoneOrEmail.watch((value) => console.log(value));

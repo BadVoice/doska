@@ -21,8 +21,8 @@
   import { $showAddOfferModal } from '@/widgets/offers/model/offers-model';
   import { $requestHistoryOpened, RequestHistory } from '@/pages/my-requests';
   import { CompanyForm } from '@/widgets/company-form';
-  import {$selectBrandOpened} from "@/pages/my-requests/model/my-requests-model";
-  import {SelectBrand} from "@/features/select-brand";
+  import { $selectBrandOpened } from '@/pages/my-requests/model/my-requests-model';
+  import { SelectBrand } from '@/features/select-brand';
 
   const route = useRoute();
   const router = useRouter();
@@ -30,7 +30,6 @@
   const showAddOfferModal = useUnit($showAddOfferModal);
   const showRequestHistory = useUnit($requestHistoryOpened);
   const showSelectBrand = useUnit($selectBrandOpened);
-  console.log(showSelectBrand);
 
   const offersItems = ref<Item[]>([]);
   const filters = ref<SearchResponseFilters>({
@@ -276,10 +275,6 @@
       isSidebarOpen.value = false;
     }
   }
-
-  watch((showSelectBrand), () => {
-    console.log(showSelectBrand)
-  })
 </script>
 
 <template>
@@ -357,6 +352,8 @@
         :offers-items="offersItems"
         @page-selected="handlePageSelected"
         class="hidden w-full lg:flex" />
+
+      <SelectBrand />
       <RequestHistory v-if="showRequestHistory" />
       <SelectBrand v-if="showSelectBrand" />
       <Offers

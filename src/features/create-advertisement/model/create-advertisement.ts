@@ -21,13 +21,14 @@ const createOfferMutation = createMutation({
 });
 
 const createBidMutation = createMutation({
-  handler: (data: Bid) => $api.bids.createBid({
-    name: data.name,
-    article: data.article || 'Не указано',
-    amount: data.amount,
-    category: data.category,
-    status: 0,
-  }),
+  handler: (data: Bid) =>
+    $api.bids.createBid({
+      name: data.name,
+      article: data.article || 'Не указано',
+      amount: data.amount,
+      category: data.category,
+      status: 0,
+    }),
 });
 
 export const getCategories = createQuery({

@@ -1,23 +1,25 @@
 import { $api } from '@/shared/api';
 import { createEvent, createStore, sample } from 'effector';
-import { createMutation } from '@farfetched/core';
-import type {Brand} from "@/shared/api/generated/Api";
+import { createQuery } from '@farfetched/core';
+import { not } from 'patronum';
 
-export const showBrandSelector = createEvent();
-export const $brandsList = createStore<Brand[]>([]);
-export const getBrands = createMutation({
-    handler: async (data) =>
-        $api.brands.getBrands(),
+export const visibilitySelectBrandChanged = createEvent<void | boolean>();
+export const mounted = createEvent();
+
+export const $visible = createStore(false);
+
+export const getBrands = createQuery({
+  handler: async () => $api.brands.getBrands(),
 });
 
 sample({
-    clock: showBrandSelector,
-    target: getBrands.start,
+  clock: mounted,
+  target: getBrands.start,
 });
 
 sample({
-    clock: showBrandSelector,
-    target: getBrands.start,
+  source: not($visible),
+  clock: visibilitySelectBrandChanged,
+  fn: (src, clk) => clk ?? src,
+  target: $visible,
 });
-
-$brandsList.on(getBrands.finished.success, (_, { result: { data } }) => data);

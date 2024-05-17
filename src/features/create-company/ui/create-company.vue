@@ -48,10 +48,10 @@
     if (registerStatus.value === 201) {
       emit('closeRegisterCompany');
     } else if (registerStatus.value === 400) {
-      console.log('error', result);
+      console.error(result);
     } else if (registerStatus.value === 429) {
     } else {
-      console.log('error', result);
+      console.error(result);
     }
   });
 </script>

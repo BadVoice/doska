@@ -3,10 +3,10 @@
   import { Button } from '@/shared/ui';
   import { ScrollArea } from '@/shared/ui/scroll-area';
   import { useUnit } from 'effector-vue/composition';
-  import { requestHistoryHidden } from '../model/my-requests-model';
+  import { requestHistoryVisible } from '../model/my-requests-model';
   import { offerAddButtonClicked } from '@/widgets/offers';
 
-  const handleBack = useUnit(requestHistoryHidden);
+  const historyVisible = useUnit(requestHistoryVisible);
   const handleAddManuallyClick = useUnit(offerAddButtonClicked);
 </script>
 
@@ -15,7 +15,10 @@
     <div
       class="flex items-center justify-between border-b border-[#D0D4DB] px-5 py-3">
       <div class="flex cursor-pointer items-center gap-x-2">
-        <ChevronLeft class="h-7 w-7" color="#0017FC" @click="handleBack()" />
+        <ChevronLeft
+          class="h-7 w-7"
+          color="#0017FC"
+          @click="historyVisible(false)" />
         <p class="text-[17px] font-semibold">История заявки</p>
       </div>
       <div class="flex items-center gap-x-2">

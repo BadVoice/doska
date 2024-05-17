@@ -1,10 +1,14 @@
-import { createMutation } from '@farfetched/core';
-import {createEvent, createStore, forward, sample} from 'effector';
+import { createMutation, keepFresh } from '@farfetched/core';
+import { createEvent, createStore, sample } from 'effector';
 import { not, spread } from 'patronum';
 
 import { $qwepApi } from '@/shared/api/api';
-import {$requests, deleteRequestMutation, myRequestsQuery} from '@/entities/requests';
-import {showBrandSelector} from "@/features/select-brand/model/brand-model";
+import {
+  type BidWithName,
+  deleteRequestMutation,
+  myRequestsQuery,
+} from '@/entities/requests';
+import { visibilitySelectBrandChanged } from '@/features/select-brand';
 
 export interface FormValues {
   name: string;
@@ -14,49 +18,11 @@ export interface FormValues {
   assigment: string;
 }
 
-export interface Bid {
-  id?: string;
-  /**
-   * @format date-time
-   * @example "2024-04-14T08:12:44.533679Z"
-   */
-  created_at?: string;
-  /** @format binary */
-  image?: File | null;
-  /**
-   * dictionary:
-   *   * 0 Создана
-   *   * 1 Опубликована
-   *   * 2 Исполнена
-   *   * 3 Архивирована
-   * @default 0
-   */
-  status?: 0 | 1 | 2 | 3;
-  name: string;
-  article?: string;
-  amount: number;
-  delivery_time?: number;
-  description?: string;
-  /** company_id */
-  company?: number;
-  /** category_id */
-  category: number;
-  /** brand_id */
-  brand?: number;
-  brandName?: string;
-  categoryName?: string;
-  /** destination_id */
-  destinations?: number[];
-}
-
 export const deleteRequestClicked = createEvent<string>();
 export const filterVisibilityChanged = createEvent<boolean | void>();
 export const filterSubmitted = createEvent<FormValues>();
-export const requestClicked = createEvent<Bid>();
-export const requestHistoryClicked = createEvent();
-export const selectBrandHidden = createEvent();
-export const showSelectBrandClicked = createEvent();
-export const requestHistoryHidden = createEvent();
+export const requestClicked = createEvent<BidWithName>();
+export const requestHistoryVisible = createEvent<boolean>();
 
 export const $filterOpened = createStore(false);
 export const $requestHistoryOpened = createStore(false);
@@ -69,7 +35,7 @@ const filterMutation = createMutation({
 });
 
 export const searchOffersMutation = createMutation({
-  handler: (data: Bid) =>
+  handler: (data: BidWithName) =>
     $qwepApi.search.getSearch({
       search: data.name || '',
       brand: data.brandName || '',
@@ -78,7 +44,12 @@ export const searchOffersMutation = createMutation({
 
 sample({
   clock: deleteRequestClicked,
-  target: [deleteRequestMutation.start, myRequestsQuery.start],
+  target: deleteRequestMutation.start,
+});
+
+keepFresh(myRequestsQuery, {
+  automatically: true,
+  triggers: [deleteRequestMutation.finished.success],
 });
 
 sample({
@@ -99,35 +70,10 @@ sample({
 
 sample({
   clock: requestClicked,
-  fn: (cardData) => {
-    console.log('Payload data:', cardData);
-    return {
-      ...cardData,
-    };
-  },
   target: searchOffersMutation.start,
 });
 
-// sample({
-//   clock: requestHistoryClicked,
-//   fn: () => true,
-//   target: $requestHistoryOpened,
-// });
-//
-// sample({
-//   clock: requestHistoryHidden,
-//   fn: () => false,
-//   target: $requestHistoryOpened,
-// });
-
 sample({
-  clock: showSelectBrandClicked,
-  fn: () => true,
-  target: $selectBrandOpened,
-});
-
-sample({
-  clock: selectBrandHidden,
-  fn: () => false,
-  target: $selectBrandOpened,
+  clock: requestHistoryVisible,
+  target: visibilitySelectBrandChanged,
 });
