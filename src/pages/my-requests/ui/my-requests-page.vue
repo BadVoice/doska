@@ -7,6 +7,7 @@
     filterVisibilityChanged,
     requestClicked,
     requestHistoryClicked,
+      showSelectBrandClicked,
     searchOffersMutation,
   } from '../model/my-requests-model';
   import RequestItem from './request-item.vue';
@@ -98,7 +99,7 @@
           v-for="item of requests"
           :item="item as Bid"
           :status="status"
-          @click="handleRequestClick" />
+         />
       </div>
     </div>
   </template>

@@ -1,9 +1,10 @@
 import { createMutation } from '@farfetched/core';
-import { createEvent, createStore, sample } from 'effector';
+import {createEvent, createStore, forward, sample} from 'effector';
 import { not, spread } from 'patronum';
 
 import { $qwepApi } from '@/shared/api/api';
-import {deleteRequestMutation, myRequestsQuery} from '@/entities/requests';
+import {$requests, deleteRequestMutation, myRequestsQuery} from '@/entities/requests';
+import {showBrandSelector} from "@/features/select-brand/model/brand-model";
 
 export interface FormValues {
   name: string;
@@ -53,10 +54,14 @@ export const filterVisibilityChanged = createEvent<boolean | void>();
 export const filterSubmitted = createEvent<FormValues>();
 export const requestClicked = createEvent<Bid>();
 export const requestHistoryClicked = createEvent();
+export const selectBrandHidden = createEvent();
+export const showSelectBrandClicked = createEvent();
 export const requestHistoryHidden = createEvent();
 
 export const $filterOpened = createStore(false);
 export const $requestHistoryOpened = createStore(false);
+
+export const $selectBrandOpened = createStore(false);
 
 // TODO: add filter request
 const filterMutation = createMutation({
@@ -66,8 +71,8 @@ const filterMutation = createMutation({
 export const searchOffersMutation = createMutation({
   handler: (data: Bid) =>
     $qwepApi.search.getSearch({
-      search: data.name?.toString() ?? '',
-      brand: data.brandName?.toString() ?? '',
+      search: data.name || '',
+      brand: data.brandName || '',
     }),
 });
 
@@ -94,17 +99,35 @@ sample({
 
 sample({
   clock: requestClicked,
+  fn: (cardData) => {
+    console.log('Payload data:', cardData);
+    return {
+      ...cardData,
+    };
+  },
   target: searchOffersMutation.start,
 });
 
+// sample({
+//   clock: requestHistoryClicked,
+//   fn: () => true,
+//   target: $requestHistoryOpened,
+// });
+//
+// sample({
+//   clock: requestHistoryHidden,
+//   fn: () => false,
+//   target: $requestHistoryOpened,
+// });
+
 sample({
-  clock: requestHistoryClicked,
+  clock: showSelectBrandClicked,
   fn: () => true,
-  target: $requestHistoryOpened,
+  target: $selectBrandOpened,
 });
 
 sample({
-  clock: requestHistoryHidden,
+  clock: selectBrandHidden,
   fn: () => false,
-  target: $requestHistoryOpened,
+  target: $selectBrandOpened,
 });

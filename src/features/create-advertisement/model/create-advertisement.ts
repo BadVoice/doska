@@ -13,7 +13,7 @@ export interface FormValues {
   article: string;
   count: string;
   category: number;
-  brand: number;
+  brand?: number;
 }
 
 const createOfferMutation = createMutation({
@@ -21,7 +21,13 @@ const createOfferMutation = createMutation({
 });
 
 const createBidMutation = createMutation({
-  handler: (data: Bid) => $api.bids.createBid(data),
+  handler: (data: Bid) => $api.bids.createBid({
+    name: data.name,
+    article: data.article || 'Не указано',
+    amount: data.amount,
+    category: data.category,
+    status: 0,
+  }),
 });
 
 export const getCategories = createQuery({

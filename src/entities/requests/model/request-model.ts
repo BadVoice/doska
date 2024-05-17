@@ -1,5 +1,41 @@
 import { createMutation, createQuery } from '@farfetched/core';
 import { $api } from '@/shared/api';
+import {createStore} from "effector";
+
+export interface Bid {
+  id?: string;
+  /**
+   * @format date-time
+   * @example "2024-04-14T08:12:44.533679Z"
+   */
+  created_at?: string;
+  /** @format binary */
+  image?: File | null;
+  /**
+   * dictionary:
+   *   * 0 Создана
+   *   * 1 Опубликована
+   *   * 2 Исполнена
+   *   * 3 Архивирована
+   * @default 0
+   */
+  status?: 0 | 1 | 2 | 3;
+  name: string;
+  article?: string;
+  amount: number;
+  delivery_time?: number;
+  description?: string;
+  /** company_id */
+  company?: number;
+  /** category_id */
+  category: number;
+  /** brand_id */
+  brand?: number;
+  brandName?: string;
+  categoryName?: string;
+  /** destination_id */
+  destinations?: number[];
+}
 
 export const getBrandsQuery = createQuery({
   handler: () => $api.brands.getBrands(),
@@ -21,6 +57,7 @@ export const myRequestsQuery = createQuery({
 
         return {
         ...bid,
+          article: bid.article || 'Не указано',
         brandName: brand ? brand.name : 'Не указано',
         categoryName: category ? category.name : 'Не указано',
       };
@@ -28,6 +65,11 @@ export const myRequestsQuery = createQuery({
 
     return enrichedBids;
   },
+});
+
+export const $requests = createStore<Bid[]>([]);
+$requests.on(myRequestsQuery.finished.success, (_, {result}) => {
+  return result
 });
 
 export const deleteRequestMutation = createMutation({

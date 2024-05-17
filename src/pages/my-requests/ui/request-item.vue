@@ -4,8 +4,8 @@
   import { Button, Popover, PopoverContent, PopoverTrigger } from '@/shared/ui';
   import { PopoverClose } from 'radix-vue';
   import {
-    deleteRequestClicked,
-    requestHistoryClicked,
+    deleteRequestClicked, requestClicked,
+    requestHistoryClicked, showSelectBrandClicked,
   } from '@/pages/my-requests/model/my-requests-model';
   import { useUnit } from 'effector-vue/composition';
 
@@ -54,8 +54,18 @@
   }
 
   const handleHistoryClick = useUnit(requestHistoryClicked);
+  const handleSelectBrand = useUnit(showSelectBrandClicked);
 
   const popoverOpened = ref(false);
+
+  const handleClick = (item: Bid) => {
+    console.log('Card data:', item);
+    requestClicked(item);
+    if(!item.brandName || item.brandName === 'Не указано') {
+      handleSelectBrand();
+    }
+
+  };
 </script>
 
 <template>
@@ -100,7 +110,7 @@
           </PopoverContent>
         </Popover>
       </div>
-      <div class="flex w-full flex-col items-start justify-between gap-y-1">
+      <div @click="handleClick(item)" class="flex w-full flex-col items-start justify-between gap-y-1">
         <div class="flex flex-row justify-between w-full">
           <div class="flex w-full flex-row gap-x-2">
             <p class="text-xs font-normal text-[#858FA3]" v-if="item.article">{{ item.article }}</p>
