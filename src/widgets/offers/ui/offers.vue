@@ -14,15 +14,10 @@
     PaginationNext,
     PaginationPrev,
   } from '@/shared/ui/pagination';
-  import { Plus } from 'lucide-vue-next';
-  import { useUnit } from 'effector-vue/composition';
-  import { offerAddButtonClicked } from '@/widgets/offers/model/offers-model';
 
   defineProps<{
     offersItems: Item[];
   }>();
-
-  const handleAddManuallyClick = useUnit(offerAddButtonClicked);
 
   const route = useRoute();
   const pagination = defineModel<SearchPagination>('pagination', {
@@ -103,9 +98,6 @@
         </Button>
       </div>
     </div>
-    <Button variant="ghost" @click="handleAddManuallyClick()" size="icon">
-      <Plus color="#0017FC" />
-    </Button>
 
     <div
       v-if="route.path == '/advertisements'"

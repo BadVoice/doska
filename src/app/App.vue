@@ -21,12 +21,15 @@
   import { $showAddOfferModal } from '@/widgets/offers/model/offers-model';
   import { $requestHistoryOpened, RequestHistory } from '@/pages/my-requests';
   import { CompanyForm } from '@/widgets/company-form';
+  import { $selectBrandOpened } from '@/pages/my-requests/model/my-requests-model';
+  import { SelectBrand } from '@/features/select-brand';
 
   const route = useRoute();
   const router = useRouter();
 
   const showAddOfferModal = useUnit($showAddOfferModal);
   const showRequestHistory = useUnit($requestHistoryOpened);
+  const showSelectBrand = useUnit($selectBrandOpened);
 
   const offersItems = ref<Item[]>([]);
   const filters = ref<SearchResponseFilters>({
@@ -356,8 +359,9 @@
         @page-selected="handlePageSelected"
         class="hidden w-full lg:flex" />
 
+      <SelectBrand />
       <RequestHistory v-if="showRequestHistory" />
-
+      <SelectBrand v-if="showSelectBrand" />
       <Offers
         v-if="!isFilterCardOpen && !isProductCardOpen"
         v-model:pagination="pagination"

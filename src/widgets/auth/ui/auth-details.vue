@@ -31,7 +31,6 @@
   const registerStatus = ref<number | null>(null);
 
   const handleCaptchaVerified = (response: string) => {
-    console.log(response);
     captchaToken.value = response;
   };
 
@@ -64,7 +63,6 @@
   registerUser.finished.success.watch(({ result }) => {
     registerStatus.value =
       (result as CustomAxiosResponse).response?.status || null;
-    console.log(registerStatus.value);
 
     if (registerStatus.value === 201) {
       nextModal();

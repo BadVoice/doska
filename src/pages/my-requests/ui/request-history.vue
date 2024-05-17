@@ -1,7 +1,13 @@
 <script lang="ts" setup>
-  import { ChevronLeft, SlidersHorizontal } from 'lucide-vue-next';
+  import { ChevronLeft, Plus, SlidersHorizontal } from 'lucide-vue-next';
   import { Button } from '@/shared/ui';
   import { ScrollArea } from '@/shared/ui/scroll-area';
+  import { useUnit } from 'effector-vue/composition';
+  import { requestHistoryVisible } from '../model/my-requests-model';
+  import { offerAddButtonClicked } from '@/widgets/offers';
+
+  const historyVisible = useUnit(requestHistoryVisible);
+  const handleAddManuallyClick = useUnit(offerAddButtonClicked);
 </script>
 
 <template>
@@ -9,10 +15,18 @@
     <div
       class="flex items-center justify-between border-b border-[#D0D4DB] px-5 py-3">
       <div class="flex cursor-pointer items-center gap-x-2">
-        <ChevronLeft class="h-7 w-7" color="#0017FC" />
+        <ChevronLeft
+          class="h-7 w-7"
+          color="#0017FC"
+          @click="historyVisible(false)" />
         <p class="text-[17px] font-semibold">История заявки</p>
       </div>
-      <SlidersHorizontal color="#0017FC" class="h-5 w-5 cursor-pointer" />
+      <div class="flex items-center gap-x-2">
+        <SlidersHorizontal color="#0017FC" class="h-5 w-5 cursor-pointer" />
+        <Button variant="ghost" @click="handleAddManuallyClick()" size="icon">
+          <Plus color="#0017FC" />
+        </Button>
+      </div>
     </div>
     <ScrollArea class="mx-4 h-[90vh] pb-5">
       <div class="mb-5 flex flex-col gap-y-4">

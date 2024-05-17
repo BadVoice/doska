@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, nextTick, onMounted, ref, watch} from 'vue';
+  import { computed, nextTick, ref, watch } from 'vue';
   import { getButtonList } from '../lib/button-list';
   import { Button } from '@/shared/ui/button';
   import BurgerMenu from './burger-menu.vue';
@@ -27,7 +27,13 @@ import {computed, nextTick, onMounted, ref, watch} from 'vue';
 
   const searchTerm = ref('');
 
-  const emit = defineEmits(['submitSearch', 'submitLogin', 'createClicked', 'openSidebar', 'buttonClicked']);
+  const emit = defineEmits([
+    'submitSearch',
+    'submitLogin',
+    'createClicked',
+    'openSidebar',
+    'buttonClicked',
+  ]);
 
   const handleInput = useDebounceFn(() => {
     emit('submitSearch', searchTerm.value);
@@ -53,38 +59,39 @@ import {computed, nextTick, onMounted, ref, watch} from 'vue';
     }
   });
 
-const activeButton = computed(() => {
-  return buttonList.value.find(button => route.path.startsWith(button.link));
-});
+  const activeButton = computed(() => {
+    return buttonList.value.find((button) =>
+      route.path.startsWith(button.link),
+    );
+  });
 
-const scrollToButton = (index: number) => {
-  if (!scrollableContainer.value) {
-    console.error('scrollableContainer is null!');
-    return;
-  }
+  const scrollToButton = (index: number) => {
+    if (!scrollableContainer.value) {
+      console.error('scrollableContainer is null!');
+      return;
+    }
 
-  const buttonElement = scrollableContainer.value.children[index];
-  const buttonWidth = buttonElement.offsetWidth;
-  const containerWidth = scrollableContainer.value.offsetWidth;
-  const scrollPosition = scrollableContainer.value.scrollLeft;
+    const buttonElement = scrollableContainer.value.children[index];
+    const buttonWidth = buttonElement.offsetWidth;
+    const containerWidth = scrollableContainer.value.offsetWidth;
+    const scrollPosition = scrollableContainer.value.scrollLeft;
 
-  const targetPosition = buttonElement.offsetLeft;
+    const targetPosition = buttonElement.offsetLeft;
 
-  const offset = 170;
+    const offset = 170;
 
-  if (targetPosition < scrollPosition) {
-    scrollableContainer.value.scrollTo({
-      left: targetPosition - offset,
-      behavior: 'smooth'
-    });
-  } else if (targetPosition > scrollPosition + containerWidth - buttonWidth) {
-    scrollableContainer.value.scrollTo({
-      left: targetPosition - containerWidth + buttonWidth + offset,
-      behavior: 'smooth'
-    });
-  }
-};
-
+    if (targetPosition < scrollPosition) {
+      scrollableContainer.value.scrollTo({
+        left: targetPosition - offset,
+        behavior: 'smooth',
+      });
+    } else if (targetPosition > scrollPosition + containerWidth - buttonWidth) {
+      scrollableContainer.value.scrollTo({
+        left: targetPosition - containerWidth + buttonWidth + offset,
+        behavior: 'smooth',
+      });
+    }
+  };
 </script>
 
 <template>
@@ -148,10 +155,9 @@ const scrollToButton = (index: number) => {
     <div class="flex w-full items-center justify-between gap-6 py-4 pl-4">
       <div
         ref="scrollableContainer"
-        class="no-scrollbar overflow-x-auto whitespace-nowrap"
-       >
+        class="no-scrollbar overflow-x-auto whitespace-nowrap">
         <RouterLink
-            v-for="(button, index) in buttonList"
+          v-for="(button, index) in buttonList"
           :key="button.label"
           :to="button?.link"
           @click="scrollToButton(index)"
