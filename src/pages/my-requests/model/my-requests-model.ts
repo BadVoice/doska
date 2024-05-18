@@ -7,7 +7,7 @@ import {
   type BidWithName,
   deleteRequestMutation,
   myRequestsQuery,
-} from '@/entities/requests';
+} from '@/entities/requests'
 
 type TSelectScreenMode = 'selectBrand' | 'history' | null;
 
@@ -50,6 +50,11 @@ sample({
     mutation: deleteRequestMutation.start,
     $requestViewMode,
   }),
+});
+
+keepFresh(myRequestsQuery, {
+  automatically: true,
+  triggers: [deleteRequestMutation.finished.success],
 });
 
 keepFresh(myRequestsQuery, {

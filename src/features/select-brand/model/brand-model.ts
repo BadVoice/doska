@@ -3,7 +3,6 @@ import { createEvent, sample } from 'effector';
 import { createQuery } from '@farfetched/core';
 
 export const mounted = createEvent();
-
 export const getBrands = createQuery({
   handler: async () => $api.brands.getBrands(),
 });
