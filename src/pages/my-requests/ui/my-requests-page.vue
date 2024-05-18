@@ -5,7 +5,6 @@
   import {
     $filterOpened,
     filterVisibilityChanged,
-    requestHistoryVisible,
     searchOffersMutation,
   } from '../model/my-requests-model';
   import RequestItem from './request-item.vue';
@@ -19,8 +18,6 @@
     $filterOpened: filterOpened,
     filterVisibilityChanged: changeFilterVisibility,
   } = useUnit({ $filterOpened, filterVisibilityChanged });
-
-  const handleRequestClicked = useUnit(requestHistoryVisible);
 
   const {
     start: handleMount,
@@ -44,19 +41,19 @@
   searchOffersMutation.finished.success.watch(({ result }) => {
     const { data } = result;
 
-    emit('handleData', {
-      list: data.items,
-      filters: data.filters,
-      pagination: {
-        items_count: data.items_count,
-        has_next: !!data.has_next,
-        has_prev: !!data.has_prev,
-        page: data.page,
-        pages: data.pages,
-      },
-    });
-
-    handleRequestClicked(true);
+    if (data) {
+      emit('handleData', {
+        list: data.items,
+        filters: data.filters,
+        pagination: {
+          items_count: data.items_count,
+          has_next: !!data.has_next,
+          has_prev: !!data.has_prev,
+          page: data.page,
+          pages: data.pages,
+        },
+      });
+    }
   });
 </script>
 

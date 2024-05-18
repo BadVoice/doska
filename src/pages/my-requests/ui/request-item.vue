@@ -6,7 +6,7 @@
   import {
     deleteRequestClicked,
     requestClicked,
-    requestHistoryVisible,
+    requestViewModeChanged,
   } from '@/pages/my-requests/model/my-requests-model';
   import { useUnit } from 'effector-vue/composition';
   import type { BidWithName } from '@/entities/requests';
@@ -20,15 +20,16 @@
     return URL.createObjectURL(file);
   }
 
-  const historyVisible = useUnit(requestHistoryVisible);
+  const changeViewMode = useUnit(requestViewModeChanged);
 
   const popoverOpened = ref(false);
 
   const handleClick = (item: BidWithName) => {
+    changeViewMode('selectBrand');
     requestClicked(item);
-    if (!item.brandName || item.brandName === 'Не указано') {
-      historyVisible(false);
-    }
+    // if (!item.brandName || item.brandName === 'Не указано') {
+    //   changeViewMode(null);
+    // }
   };
 </script>
 
@@ -54,7 +55,7 @@
             class="flex h-[111px] w-[150px] flex-col justify-center rounded-[10px] border-b-0 border-t-0 p-0">
             <PopoverClose class="flex flex-col gap-y-0">
               <Button
-                @click="historyVisible(true)"
+                @click="changeViewMode('history')"
                 variant="ghost"
                 class="rounded-b-0 flex h-full w-full rounded-[8px] border-t-2 border-[#D0D4DB] px-4 py-2 text-start hover:bg-[#F9FAFB]">
                 <p class="w-full text-[14px] font-semibold">История заявки</p>

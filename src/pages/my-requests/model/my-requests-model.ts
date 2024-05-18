@@ -7,8 +7,9 @@ import {
   type BidWithName,
   deleteRequestMutation,
   myRequestsQuery,
-} from '@/entities/requests';
-import { visibilitySelectBrandChanged } from '@/features/select-brand';
+} from '@/entities/requests'
+
+type TSelectScreenMode = 'selectBrand' | 'history' | null;
 
 export interface FormValues {
   name: string;
@@ -22,12 +23,10 @@ export const deleteRequestClicked = createEvent<string>();
 export const filterVisibilityChanged = createEvent<boolean | void>();
 export const filterSubmitted = createEvent<FormValues>();
 export const requestClicked = createEvent<BidWithName>();
-export const requestHistoryVisible = createEvent<boolean>();
+export const requestViewModeChanged = createEvent<TSelectScreenMode>();
 
 export const $filterOpened = createStore(false);
-export const $requestHistoryOpened = createStore(false);
-
-export const $selectBrandOpened = createStore(false);
+export const $requestViewMode = createStore<TSelectScreenMode>(null);
 
 // TODO: add filter request
 const filterMutation = createMutation({
@@ -44,7 +43,18 @@ export const searchOffersMutation = createMutation({
 
 sample({
   clock: deleteRequestClicked,
-  target: deleteRequestMutation.start,
+  fn: () => ({
+    $requestViewMode: null,
+  }),
+  target: spread({
+    mutation: deleteRequestMutation.start,
+    $requestViewMode,
+  }),
+});
+
+keepFresh(myRequestsQuery, {
+  automatically: true,
+  triggers: [deleteRequestMutation.finished.success],
 });
 
 keepFresh(myRequestsQuery, {
@@ -74,6 +84,6 @@ sample({
 });
 
 sample({
-  clock: requestHistoryVisible,
-  target: visibilitySelectBrandChanged,
+  clock: requestViewModeChanged,
+  target: $requestViewMode,
 });
