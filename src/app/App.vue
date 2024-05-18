@@ -19,17 +19,16 @@
 
   import { useUnit } from 'effector-vue/composition';
   import { $showAddOfferModal } from '@/widgets/offers/model/offers-model';
-  import { $requestHistoryOpened, RequestHistory } from '@/pages/my-requests';
+  import { RequestHistory } from '@/pages/my-requests';
   import { CompanyForm } from '@/widgets/company-form';
-  import { $selectBrandOpened } from '@/pages/my-requests/model/my-requests-model';
+  import { $requestViewMode } from '@/pages/my-requests/model/my-requests-model';
   import { SelectBrand } from '@/features/select-brand';
 
   const route = useRoute();
   const router = useRouter();
 
   const showAddOfferModal = useUnit($showAddOfferModal);
-  const showRequestHistory = useUnit($requestHistoryOpened);
-  const showSelectBrand = useUnit($selectBrandOpened);
+  const requestViewMode = useUnit($requestViewMode);
 
   const offersItems = ref<Item[]>([]);
   const filters = ref<SearchResponseFilters>({
@@ -353,9 +352,8 @@
         @page-selected="handlePageSelected"
         class="hidden w-full lg:flex" />
 
-      <SelectBrand />
-      <RequestHistory v-if="showRequestHistory" />
-      <SelectBrand v-if="showSelectBrand" />
+      <RequestHistory v-if="requestViewMode === 'history'" />
+      <SelectBrand v-else-if="requestViewMode === 'selectBrand'" />
       <Offers
         v-if="!isFilterCardOpen && !isProductCardOpen"
         v-model:pagination="pagination"
