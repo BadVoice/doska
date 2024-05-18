@@ -15,7 +15,6 @@
     v-if="isVisible && brands?.data"
     v-for="brand in brands.data"
     :key="brand.id">
-    {{ brand }}
-    dfsgdfhdfh
+    {{ brand.name }}
   </div>
 </template>
