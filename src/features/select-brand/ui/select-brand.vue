@@ -2,7 +2,7 @@
   import { useUnit } from 'effector-vue/composition';
   import { getBrands, mounted } from '../model/brand-model';
   import { onMounted } from 'vue';
-  
+
   const handleMount = useUnit(mounted);
   const { data: brands } = useUnit(getBrands);
 

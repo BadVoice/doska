@@ -40,7 +40,6 @@
     search({
       filters: {
         name: route.query?.denomination?.toString() ?? '',
-        brand: route.query?.['active-pre-search']?.toString() ?? '',
         article: route.query?.article?.toString() ?? '',
         price: {
           from: Number(route.query?.priceFrom) || 0,
