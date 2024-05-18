@@ -3,7 +3,7 @@
   import { X } from 'lucide-vue-next';
   import { useFilter } from '../lib/schema';
   import FilterInput from './filter-input.vue';
-  import { computed, defineProps, ref, watch } from 'vue';
+  import { computed, defineProps, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
 
   import {
@@ -12,28 +12,12 @@
     ListboxOption,
     ListboxOptions,
   } from '@headlessui/vue';
-  import type {
-    SearchResponse,
-    SearchResponseFilters,
-  } from '@/shared/api/generated/Api';
-  import { $qwepApi } from '@/shared/api/api';
+  import { useUnit } from 'effector-vue/composition';
+  import { searchQuery } from '@/entities/offer';
 
   defineProps<{
     isFilterCardOpen: boolean;
   }>();
-
-  const filter = defineModel<SearchResponseFilters>('filters', {
-    required: true,
-  });
-
-  const pagination = defineModel<
-    Pick<
-      SearchResponse,
-      'has_next' | 'has_prev' | 'page' | 'items' | 'items_count' | 'pages'
-    >
-  >('pagination', {
-    required: true,
-  });
 
   const selectedVendors = ref([] as string[]);
   const selectedBrands = ref(['none'] as string[]);
@@ -42,17 +26,11 @@
     id: number;
     title: string;
   }
-  watch(
-    () => filter.value,
-    (newFilter, oldFilter) => {
-      filter.value = newFilter;
-    },
-    { deep: true },
-  );
 
   const selectedCities = ref([] as City[]);
+  const { start: startSearch, data } = useUnit(searchQuery);
 
-  const { form } = useFilter(filter.value);
+  const { form } = useFilter(data?.value?.data.filters as any);
 
   const initialVendors = ref([...selectedVendors.value]);
   const initialBrands = ref([...selectedBrands.value]);
@@ -84,15 +62,15 @@
       }
     }
 
-    if (filter.value.vendors) {
+    if (data?.value?.data.filters?.vendors) {
       params.vendors = selectedVendors.value.join(',');
     }
 
-    if (filter.value.brands) {
+    if (data?.value?.data.filters?.brands) {
       params.brands = selectedBrands.value.join(',');
     }
 
-    if (filter.value.cities) {
+    if (data?.value?.data.filters?.cities) {
       const cityIds = selectedCities.value.map((city) => city.id as number);
       params.cities = cityIds.join(',');
     }
@@ -121,11 +99,9 @@
         try {
           const filterParamsValue = filterParams.value;
           updateUrl(filterParamsValue);
-
-          const { data: items } = await $qwepApi.search.getSearch({
+          startSearch({
             search: search.value?.toString() ?? '',
             page_size: 10,
-            page: pagination.value.page,
             brand: route.query['active-pre-search']?.toString() ?? '',
             filters: {
               name: values.denomination,
@@ -145,15 +121,6 @@
               city_id: cityIds,
             },
           });
-
-          emit('filtered-items-came', items.items);
-          pagination.value = {
-            items_count: items.items_count,
-            has_next: !!items.has_next,
-            has_prev: !!items.has_prev,
-            page: items.page,
-            pages: items.pages,
-          };
         } catch (error) {
           console.error(error);
         }
@@ -250,7 +217,7 @@
               <ListboxOptions
                 class="absolute z-10 mt-1 max-h-36 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                 <ListboxOption
-                  v-for="item in filters.cities"
+                  v-for="item in data?.data?.filters?.cities"
                   :key="item.id"
                   :value="item"
                   as="template">
@@ -304,7 +271,7 @@
               <ListboxOptions
                 class="absolute z-10 mt-1 max-h-36 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                 <ListboxOption
-                  v-for="item in filters.vendors"
+                  v-for="item in data?.data?.filters?.vendors"
                   :key="item"
                   :value="item"
                   as="template">
@@ -335,7 +302,7 @@
               <ListboxOptions
                 class="absolute z-10 mt-1 max-h-36 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                 <ListboxOption
-                  v-for="item in filters.brands"
+                  v-for="item in data?.data?.filters?.brands"
                   :key="item"
                   :value="item"
                   as="template">

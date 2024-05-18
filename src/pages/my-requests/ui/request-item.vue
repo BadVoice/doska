@@ -25,11 +25,12 @@
   const popoverOpened = ref(false);
 
   const handleClick = (item: BidWithName) => {
-    changeViewMode('selectBrand');
     requestClicked(item);
-    // if (!item.brandName || item.brandName === 'Не указано') {
-    //   changeViewMode(null);
-    // }
+    if (!item.brandName || item.brandName === 'Не указано') {
+      changeViewMode('selectBrand');
+    } else {
+      changeViewMode('offers');
+    }
   };
 </script>
 
