@@ -2,11 +2,18 @@
   import { useUnit } from 'effector-vue/composition';
   import { getBrands, mounted } from '../model/brand-model';
   import { onMounted } from 'vue';
-  import {requestViewModeChanged} from "@/pages/my-requests/model/my-requests-model";
+  import {
+    brandClickedOnChange,
+    requestViewModeChanged
+  } from "@/pages/my-requests/model/my-requests-model";
 
   const handleMount = useUnit(mounted);
   const { data: brands } = useUnit(getBrands);
   const changeViewMode = useUnit(requestViewModeChanged);
+
+  const handleClick = (brand: any ) => {
+    brandClickedOnChange(brand);
+  };
 
   onMounted(handleMount);
 </script>
@@ -22,6 +29,7 @@
   </div>
  <div class="mx-4">
    <div
+       @click="handleClick(brand)"
        class="w-full h-full max-h-[68px] rounded-md border-2 group border-[#D0D4DB] px-4 transition-all duration-75 hover:border-[#0017FC] mt-4"
        v-if="brands?.data" v-for="brand in brands.data" :key="brand.id">
      <p class="w-full h-full p-4 text-[14px] font-normal">{{ brand.name }}</p>

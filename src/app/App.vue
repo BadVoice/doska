@@ -13,7 +13,7 @@
 
   import { useUnit } from 'effector-vue/composition';
   import { $showAddOfferModal } from '@/widgets/offers/model/offers-model';
-  import { RequestHistory } from '@/pages/my-requests';
+  import {MyRequestsPage, RequestHistory} from '@/pages/my-requests';
   import { CompanyForm } from '@/widgets/company-form';
   import { $requestViewMode } from '@/pages/my-requests/model/my-requests-model';
   import { SelectBrand } from '@/features/select-brand';
@@ -201,36 +201,28 @@
       <RequestHistory v-if="requestViewMode === 'history'" />
       <SelectBrand v-else-if="requestViewMode === 'selectBrand'" />
       <Offers
-        v-model:pagination="pagination"
-        @offer-clicked="handleItemClick"
-        @open-filter="isFilterCardOpen = true"
-        :offers-items="offersItems"
-        @page-selected="handlePageSelected"
-        class="hidden w-full lg:flex" />
-      <Offers
-        v-model:pagination="pagination"
-        v-if="
+          v-if="
           !isFilterCardOpen &&
           !isProductCardOpen &&
           requestViewMode === 'offers'
         "
-        @offer-clicked="handleItemClick"
-        @open-filter="isFilterCardOpen = true"
-        @page-selected="handlePageSelected"
-        class="hidden w-full sm:flex lg:hidden" />
+          @offer-clicked="handleItemClick"
+          @open-filter="isFilterCardOpen = true"
+          @page-selected="handlePageSelected"
+          class="hidden w-full sm:flex lg:hidden" />
 
       <ProductCard
-        v-if="
+          v-if="
           isProductCardOpen &&
           productItem &&
           !isMobile &&
           route.path === '/advertisements' &&
           !isFilterCardOpen
         "
-        :product-item="productItem"
-        :is-product-card-open="isProductCardOpen"
-        @close-product-card="handleCloseProductCard"
-        class="hidden sm:flex lg:hidden" />
+          :product-item="productItem"
+          :is-product-card-open="isProductCardOpen"
+          @close-product-card="handleCloseProductCard"
+          class="hidden sm:flex lg:hidden" />
 
       <ManuallyAddOffer
         v-if="
