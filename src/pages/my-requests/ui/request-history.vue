@@ -15,9 +15,10 @@
     <div
       class="flex items-center justify-between border-b border-[#D0D4DB] px-5 py-3">
       <div class="flex cursor-pointer items-center gap-x-2">
-        <ChevronLeft
+        <img
           class="h-7 w-7"
-          color="#0017FC"
+          src="../ui/assets/backIcon.svg "
+          alt="Back"
           @click="changeViewMode(null)" />
         <p class="text-[17px] font-semibold">История заявки</p>
       </div>

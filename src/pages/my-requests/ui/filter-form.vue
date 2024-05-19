@@ -88,7 +88,7 @@
         <FormControl>
           <Input
             class="h-fit rounded-[8px] border border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
-            type="text"
+            type="number"
             placeholder="Количество"
             v-bind="componentField" />
         </FormControl>
