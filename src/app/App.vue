@@ -358,9 +358,6 @@
         :offers-items="offersItems"
         @page-selected="handlePageSelected"
         class="hidden w-full lg:flex" />
-
-      <RequestHistory v-if="showRequestHistory" />
-<!--      <SelectBrand v-if="showSelectBrand" />-->
       <Offers
         v-if="!isFilterCardOpen && !isProductCardOpen"
         v-model:pagination="pagination"
