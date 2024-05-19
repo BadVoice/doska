@@ -64,7 +64,7 @@
       nextModal();
     }
 
-    onSubmit()
+    onSubmit();
   };
 
   const label = {

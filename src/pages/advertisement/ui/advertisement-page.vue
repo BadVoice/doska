@@ -5,12 +5,13 @@
   import { type LocationQueryValue, useRoute, useRouter } from 'vue-router';
   import { AdvertisementList } from '@/entities/advertisement';
   import type {
-    Item,
     PreSearchResponse,
     PreSearchResponses,
     SearchResponse,
   } from '@/shared/api/generated/Api';
   import { $qwepApi } from '@/shared/api/api';
+  import { useUnit } from 'effector-vue/composition';
+  import { searchQuery } from '@/entities/offer';
 
   const route = useRoute();
   const router = useRouter();
@@ -27,6 +28,8 @@
   const searchResult = ref<PreSearchResponses>([]);
   const searchParam = ref<string | LocationQueryValue[]>('');
   const advertisementCount = ref<number>(0);
+
+  const { start: search } = useUnit(searchQuery);
 
   onMounted(fetchSearchResult);
   watch(route, fetchSearchResult);
@@ -72,7 +75,7 @@
   ]);
   const handleCardClicked = async (data: PreSearchResponse) => {
     try {
-      const { article, brand, id } = data;
+      const { article, brand } = data;
       await router.push({
         path: '/advertisements',
         query: {
@@ -82,29 +85,15 @@
         },
       });
       if (data) {
-        await $qwepApi.search
-          .getSearch({
-            search: article as string,
-            page: pagination.value.page,
-            page_size: 10,
-            brand: brand as string,
-          })
-          .then((response) => {
-            const { data: items } = response;
-            pagination.value = {
-              items_count: items.items_count,
-              has_next: !!items.has_next,
-              has_prev: !!items.has_prev,
-              page: items.page,
-              pages: items.pages,
-            };
-            emit('advertisementItems', response.data.items);
-            emit('advertisementFilters', response.data.filters);
-            return response.data.items as Item[];
-          });
+        search({
+          search: article?.toString() ?? '',
+          page: pagination.value.page,
+          page_size: 10,
+          brand: brand?.toString() ?? '',
+        });
       }
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
     }
   };
 </script>

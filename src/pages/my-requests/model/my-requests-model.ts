@@ -1,15 +1,14 @@
 import { createMutation, keepFresh } from '@farfetched/core';
 import { createEvent, createStore, sample } from 'effector';
 import { not, spread } from 'patronum';
-
-import { $qwepApi } from '@/shared/api/api';
 import {
   type BidWithName,
   deleteRequestMutation,
   myRequestsQuery,
-} from '@/entities/requests'
+} from '@/entities/requests';
+import { searchQuery } from '@/entities/offer';
 
-type TSelectScreenMode = 'selectBrand' | 'history' | null;
+type TSelectScreenMode = 'offers' | 'selectBrand' | 'history' | null;
 
 export interface FormValues {
   name: string;
@@ -28,17 +27,13 @@ export const requestViewModeChanged = createEvent<TSelectScreenMode>();
 export const $filterOpened = createStore(false);
 export const $requestViewMode = createStore<TSelectScreenMode>(null);
 
+export const $searchQS = createStore<{ search: string; brand: string } | null>(
+  null,
+);
+
 // TODO: add filter request
 const filterMutation = createMutation({
   handler: async (data) => 'REQUEST HERE',
-});
-
-export const searchOffersMutation = createMutation({
-  handler: (data: BidWithName) =>
-    $qwepApi.search.getSearch({
-      search: data.name || '',
-      brand: data.brandName || '',
-    }),
 });
 
 sample({
@@ -80,7 +75,13 @@ sample({
 
 sample({
   clock: requestClicked,
-  target: searchOffersMutation.start,
+  filter: (clk) => !!clk.brandName && clk.brandName !== 'Не указано',
+  fn: (clk) =>
+    ({
+      search: clk.name,
+      brand: clk.brandName ?? '',
+    }) as const,
+  target: [searchQuery.start, $searchQS],
 });
 
 sample({

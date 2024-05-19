@@ -2,9 +2,8 @@
   import { Button } from '@/shared/ui/button';
 
   import { onMounted, onUnmounted, ref } from 'vue';
-  import type { Item, SearchPagination } from '@/shared/api/generated/Api';
-  import { OfferList } from '@/entities/offer';
-  import { useRoute } from 'vue-router';
+  import type { Item } from '@/shared/api/generated/Api';
+  import { OfferList, searchQuery } from '@/entities/offer';
 
   import {
     Pagination,
@@ -14,15 +13,9 @@
     PaginationNext,
     PaginationPrev,
   } from '@/shared/ui/pagination';
+  import { useUnit } from 'effector-vue/composition';
 
-  defineProps<{
-    offersItems: Item[];
-  }>();
-
-  const route = useRoute();
-  const pagination = defineModel<SearchPagination>('pagination', {
-    required: true,
-  });
+  defineProps<{ class: string }>();
 
   const isMobile = ref(false);
 
@@ -45,6 +38,8 @@
   }
 
   const emit = defineEmits(['offerClicked', 'open-filter', 'page-selected']);
+
+  const { data } = useUnit(searchQuery);
 
   const handleItemClick = (item: Item) => {
     if (!item) {
@@ -72,24 +67,22 @@
     checkIsMobile();
     window.addEventListener('resize', checkIsMobile);
   });
+
+  const page = ref(0);
 </script>
 
 <template>
-  <div class="flex flex-col">
-    <div v-if="route.path === '/advertisements'" class="w-full min-w-[350px]">
+  <div class="flex flex-col" v-if="!!data?.data?.items">
+    <div class="w-full min-w-[350px]">
       <div
-        v-if="
-          route.path === '/advertisements' && route.query['active-pre-search']
-        "
         class="flex items-center justify-between border-b border-r border-[#D0D4DB] bg-white p-4 pr-5">
         <h3 class="text-[18px] font-semibold">
-          {{ getAnnouncementText(pagination.items_count ?? 0) }}
+          {{ getAnnouncementText(data?.data.items_count ?? 0) }}
         </h3>
         <Button
           v-if="
-            route.path === '/advertisements' &&
-            getAnnouncementText(pagination.items_count ?? 0) !==
-              'Нет предложений'
+            getAnnouncementText(data?.data.items_count ?? 0) !==
+            'Нет предложений'
           "
           @click="handleFilterClick"
           size="icon"
@@ -100,31 +93,26 @@
     </div>
 
     <div
-      v-if="route.path == '/advertisements'"
+      v-if="data?.data.items"
       class="custom-scrollbar flex h-[100vh] flex-col items-center gap-4 overflow-auto bg-[#F9FAFB] p-4 sm:max-h-[calc(100vh-150px)]">
       <OfferList
         class="h-full"
-        v-if="route.path == '/advertisements'"
-        :offers-items="offersItems"
+        :offers-items="data?.data.items as any"
         @offer-clicked="handleItemClick" />
     </div>
 
-    <div v-if="route.path === '/advertisements'" class="flex bg-[#F9FAFB] py-4">
+    <div class="flex bg-[#F9FAFB] py-4">
       <Pagination
-        v-if="
-          route.path == '/advertisements' &&
-          route.query['active-pre-search'] &&
-          !!pagination.pages
-        "
+        v-if="!!data?.data.pages"
         v-slot="{ page }"
-        :total="pagination.items_count"
+        :total="data?.data.items_count"
         :sibling-count="1"
         :show-edges="!isMobile"
         @update:page="(value) => $emit('page-selected', value)"
-        v-model:page="pagination.page"
+        v-model:page="page"
         class="mx-auto gap-1 sm:-translate-x-1 sm:gap-2">
         <PaginationList v-slot="{ items }" class="flex items-center gap-1">
-          <PaginationPrev v-if="pagination.has_prev" />
+          <PaginationPrev v-if="data?.data.has_prev" />
 
           <template v-for="(item, index) in items">
             <PaginationListItem
@@ -141,7 +129,7 @@
             <PaginationEllipsis v-else :key="item.type" :index="index" />
           </template>
 
-          <PaginationNext v-if="pagination.has_next" />
+          <PaginationNext v-if="data?.data.has_next" />
         </PaginationList>
       </Pagination>
     </div>
