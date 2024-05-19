@@ -69,6 +69,7 @@ sample({
 });
 
 sample({
+  // @ts-expect-error
   clock: filterSubmitted,
   fn: (clk: FormValues) => ({
     filterMutation: {
