@@ -4,23 +4,24 @@
   import { useUnit } from 'effector-vue/composition';
   import {
     $filterOpened,
+    $searchQS,
     filterVisibilityChanged,
-    requestHistoryVisible,
-    searchOffersMutation,
   } from '../model/my-requests-model';
   import RequestItem from './request-item.vue';
   import type { Bid } from '@/shared/api/generated/Api';
   import FilterForm from './filter-form.vue';
   import { myRequestsQuery } from '@/entities/requests';
+  import { ScrollArea } from '@/shared/ui/scroll-area';
+  import { useRoute, useRouter } from 'vue-router';
 
   const emit = defineEmits(['handleData']);
+  const router = useRouter();
+  const route = useRoute();
 
   const {
     $filterOpened: filterOpened,
     filterVisibilityChanged: changeFilterVisibility,
   } = useUnit({ $filterOpened, filterVisibilityChanged });
-
-  const handleRequestClicked = useUnit(requestHistoryVisible);
 
   const {
     start: handleMount,
@@ -41,22 +42,14 @@
     filterVisibilityChanged(false);
   });
 
-  searchOffersMutation.finished.success.watch(({ result }) => {
-    const { data } = result;
-
-    emit('handleData', {
-      list: data.items,
-      filters: data.filters,
-      pagination: {
-        items_count: data.items_count,
-        has_next: !!data.has_next,
-        has_prev: !!data.has_prev,
-        page: data.page,
-        pages: data.pages,
+  $searchQS.watch((value) => {
+    router.push({
+      query: {
+        search: value?.search,
+        'active-pre-search': value?.brand,
+        'active-card': route.query['active-card'],
       },
     });
-
-    handleRequestClicked(true);
   });
 </script>
 
@@ -93,12 +86,15 @@
           </p>
         </div>
       </div>
-      <div v-else-if="!pending" class="m-4 flex flex-col gap-y-4">
-        <RequestItem
-          v-for="item of requests"
-          :item="item as Bid"
-          :status="status" />
-      </div>
+      <ScrollArea v-else-if="!pending" class="h-full">
+        <div class="m-4 flex flex-col gap-y-4">
+          <RequestItem
+            v-for="item of requests"
+            :item="item as Bid"
+            :status="status" />
+        </div>
+      </ScrollArea>
+
       <div
         v-else
         class="flex h-full w-full scale-[2] items-center justify-center">

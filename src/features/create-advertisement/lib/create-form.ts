@@ -13,10 +13,8 @@ export function useCreateAdvertisementForm(): {
       name: z
         .string({ required_error: 'Введите наименование' })
         .min(1, 'Введите наименование'),
-        article: z
-            .string()
-            .optional(),
-        count: z
+      article: z.string().optional(),
+      count: z
         .number({
           required_error: 'Введите количество',
           invalid_type_error: 'Введите количество',

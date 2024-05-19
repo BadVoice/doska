@@ -3,6 +3,7 @@ import { createEvent, createStore, sample } from 'effector';
 import { not, spread } from 'patronum';
 
 import {$api, $qwepApi} from '@/shared/api/api';
+
 import {
   type BidWithName,
   deleteRequestMutation,
@@ -10,6 +11,9 @@ import {
 } from '@/entities/requests';
 import { visibilitySelectBrandChanged } from '@/features/select-brand';
 import type {FullRequestParams, RequestParams} from "@/shared/api/generated/Api";
+import { searchQuery } from '@/entities/offer';
+
+type TSelectScreenMode = 'offers' | 'selectBrand' | 'history' | null;
 
 export interface FormValues {
   name: string;
@@ -23,12 +27,14 @@ export const deleteRequestClicked = createEvent<string>();
 export const filterVisibilityChanged = createEvent<boolean | void>();
 export const filterSubmitted = createEvent<FormValues>();
 export const requestClicked = createEvent<BidWithName>();
-export const requestHistoryVisible = createEvent<boolean>();
+export const requestViewModeChanged = createEvent<TSelectScreenMode>();
 
 export const $filterOpened = createStore(false);
-export const $requestHistoryOpened = createStore(false);
+export const $requestViewMode = createStore<TSelectScreenMode>(null);
 
-export const $selectBrandOpened = createStore(false);
+export const $searchQS = createStore<{ search: string; brand: string } | null>(
+  null,
+);
 
 interface FilterParams {
   amount?: number;
@@ -43,17 +49,20 @@ const filterMutation = createMutation({
   },
   })
 
-export const searchOffersMutation = createMutation({
-  handler: (data: BidWithName) =>
-    $qwepApi.search.getSearch({
-      search: data.name || '',
-      brand: data.brandName || '',
-    }),
-});
-
 sample({
   clock: deleteRequestClicked,
-  target: deleteRequestMutation.start,
+  fn: () => ({
+    $requestViewMode: null,
+  }),
+  target: spread({
+    mutation: deleteRequestMutation.start,
+    $requestViewMode,
+  }),
+});
+
+keepFresh(myRequestsQuery, {
+  automatically: true,
+  triggers: [deleteRequestMutation.finished.success],
 });
 
 keepFresh(myRequestsQuery, {
@@ -89,10 +98,16 @@ sample({
 
 sample({
   clock: requestClicked,
-  target: searchOffersMutation.start,
+  filter: (clk) => !!clk.brandName && clk.brandName !== 'Не указано',
+  fn: (clk) =>
+    ({
+      search: clk.name,
+      brand: clk.brandName ?? '',
+    }) as const,
+  target: [searchQuery.start, $searchQS],
 });
 
 sample({
-  clock: requestHistoryVisible,
-  target: visibilitySelectBrandChanged,
+  clock: requestViewModeChanged,
+  target: $requestViewMode,
 });

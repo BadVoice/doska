@@ -217,7 +217,8 @@
                   )
                 ">
                 {{
-                  brands?.data.find((value) => value.id === brand) ?? 'Бренд'
+                  brands?.data.find((value) => value.id === brand)?.name ??
+                  'Бренд'
                 }}
               </p>
               <ChevronDown color="#858FA3" class="h-5 w-5" />

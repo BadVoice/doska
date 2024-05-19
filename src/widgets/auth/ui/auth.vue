@@ -2,7 +2,11 @@
   import { Button } from '@/shared/ui';
   import { AuthCode, AuthDetails, CompanyForm } from '@/widgets/auth';
   import { useUnit } from 'effector-vue/composition';
-  import { $formIndex, $formMode, formIndexExceded } from '@/widgets/auth/lib/form-mode';
+  import {
+    $formIndex,
+    $formMode,
+    formIndexExceded,
+  } from '@/widgets/auth/lib/form-mode';
   import { formPrevClicked } from '../model/auth-model';
 
   const emit = defineEmits(['submitCloseAuth']);
