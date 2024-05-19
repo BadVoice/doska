@@ -201,6 +201,14 @@
       <RequestHistory v-if="requestViewMode === 'history'" />
       <SelectBrand v-else-if="requestViewMode === 'selectBrand'" />
       <Offers
+        v-model:pagination="pagination"
+        @offer-clicked="handleItemClick"
+        @open-filter="isFilterCardOpen = true"
+        :offers-items="offersItems"
+        @page-selected="handlePageSelected"
+        class="hidden w-full lg:flex" />
+      <Offers
+        v-model:pagination="pagination"
         v-if="
           !isFilterCardOpen &&
           !isProductCardOpen &&

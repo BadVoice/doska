@@ -1,11 +1,16 @@
 import { createMutation, keepFresh } from '@farfetched/core';
 import { createEvent, createStore, sample } from 'effector';
 import { not, spread } from 'patronum';
+
+import {$api, $qwepApi} from '@/shared/api/api';
+
 import {
   type BidWithName,
   deleteRequestMutation,
   myRequestsQuery,
 } from '@/entities/requests';
+import { visibilitySelectBrandChanged } from '@/features/select-brand';
+import type {FullRequestParams, RequestParams} from "@/shared/api/generated/Api";
 import { searchQuery } from '@/entities/offer';
 
 type TSelectScreenMode = 'offers' | 'selectBrand' | 'history' | null;
@@ -31,10 +36,18 @@ export const $searchQS = createStore<{ search: string; brand: string } | null>(
   null,
 );
 
+interface FilterParams {
+  amount?: number;
+}
+
 // TODO: add filter request
 const filterMutation = createMutation({
-  handler: async (data) => 'REQUEST HERE',
-});
+  handler: async (params: FullRequestParams) => {
+    console.log(params)
+    const response = await $api.bids.getBids({...params});
+    return response.data;
+  },
+  })
 
 sample({
   clock: deleteRequestClicked,
@@ -65,9 +78,19 @@ sample({
 });
 
 sample({
+  // @ts-expect-error
   clock: filterSubmitted,
-  fn: (clk) => ({
-    filterMutation: clk,
+  fn: (clk: FormValues) => ({
+    filterMutation: {
+      secure: true,
+      format: 'json',
+      path: '/bids',
+      query: {
+        search: clk.name,
+        amount: clk.count,
+        article: clk.article,
+      }
+    },
     $filterOpened: false,
   }),
   target: spread({ filterMutation: filterMutation.start, $filterOpened }),
