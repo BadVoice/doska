@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-  import { ref } from 'vue';
+import {onMounted, ref, watch} from 'vue';
   import { cn } from '@/shared/lib';
   import { Button, Popover, PopoverContent, PopoverTrigger } from '@/shared/ui';
   import { PopoverClose } from 'radix-vue';
   import {
     deleteRequestClicked,
-    requestClicked,
+    requestClicked, requestClickedOnChange,
     requestViewModeChanged,
   } from '@/pages/my-requests/model/my-requests-model';
   import { useUnit } from 'effector-vue/composition';
@@ -25,10 +25,12 @@
   const popoverOpened = ref(false);
 
   const handleClick = (item: BidWithName) => {
-    requestClicked(item);
+
     if (!item.brandName || item.brandName === 'Не указано') {
+      requestClickedOnChange(item);
       changeViewMode('selectBrand');
     } else {
+      requestClicked(item);
       changeViewMode('offers');
     }
   };
