@@ -1,6 +1,6 @@
 import { createMutation, createQuery } from '@farfetched/core';
 import { $api } from '@/shared/api';
-import type { FullRequestParams } from "@/shared/api/generated/Api";
+import type { FullRequestParams } from '@/shared/api/generated/Api';
 
 export const myRequestsQuery = createQuery({
   handler: async (params?: FullRequestParams) => {
@@ -13,12 +13,12 @@ export const myRequestsQuery = createQuery({
       categories.map((category) => [category.id, category.name]),
     );
 
-    if(params) {
-      const response = await $api.bids.getBids({...params});
-      return response.data
+    if (params) {
+      const response = await $api.bids.getBids({ ...params });
+      return response.data;
     }
 
-    const res =  bids.map((bid) => ({
+    const res = bids.map((bid) => ({
       ...bid,
       article: bid.article || 'Не указано',
       // @ts-expect-error the backend expects a number, but returns a string as the id
@@ -26,13 +26,12 @@ export const myRequestsQuery = createQuery({
       // @ts-expect-error the backend expects a number, but returns a string as the id
       categoryName: categoriesMap.get(bid.category) || 'Не указано',
     }));
-    return res
+
+    console.log(res);
+    return res;
   },
 });
 
 export const deleteRequestMutation = createMutation({
-  handler: async (id: string) => {
-    const res = await $api.bids.deleteBid(parseInt(id, 10))
-    return res
-  },
+  handler: (id: string) => $api.bids.deleteBid(parseInt(id)),
 });
