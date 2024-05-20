@@ -6,10 +6,15 @@
   import Search from './assets/search.vue';
   import { Input } from '@/shared/ui/input';
   import { useRoute, useRouter } from 'vue-router';
-  import { useDebounceFn } from '@vueuse/core';
+  import { useUnit } from 'effector-vue/composition';
+  import { searchTermInputed } from '@/widgets/header/model/header-modal';
 
   const route = useRoute();
   const router = useRouter();
+
+  const searchTerm = ref('');
+
+  const handleSubmit = useUnit(searchTermInputed);
 
   const isBurgerMenuOpen = ref(false);
 
@@ -21,11 +26,9 @@
   function handleSubmitSearch(event: Event) {
     event.preventDefault();
     if (searchTerm.value !== '') {
-      handleInput();
+      handleSubmit(searchTerm.value);
     }
   }
-
-  const searchTerm = ref('');
 
   const emit = defineEmits([
     'submitSearch',
@@ -35,17 +38,13 @@
     'buttonClicked',
   ]);
 
-  const handleInput = useDebounceFn(() => {
-    emit('submitSearch', searchTerm.value);
-  }, 500);
-
-  function handleWheel(event: WheelEvent) {
-    event.preventDefault();
-    scrollableContainer.value.scrollBy({
-      left: event.deltaY < 0 ? 30 : -30,
-      behaviour: 'smooth',
-    });
-  }
+  // function handleWheel(event: WheelEvent) {
+  //   event.preventDefault();
+  //   scrollableContainer.value.scrollBy({
+  //     left: event.deltaY < 0 ? 30 : -30,
+  //     behaviour: 'smooth',
+  //   });
+  // }
 
   watch(visibleSearch, (newValue) => {
     if (newValue) {
@@ -144,7 +143,7 @@
           :key="visibleSearch ? 'true' : 'false'"
           v-model="searchTerm"
           @keydown.enter="handleSubmitSearch"
-          @input="handleInput"
+          @input="handleSubmitSearch"
           id="search"
           type="text"
           @focus="formFocused = true"
