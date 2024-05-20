@@ -62,7 +62,7 @@
   const activeButton = computed(() => {
     const currentButton = buttonList.value.find((button) => {
       const parts = route.path.split('/');
-      return parts[1] === button.link.split('/')[1]; // Сравниваем первые части путей
+      return parts[1] === button.link.split('/')[1];
     });
 
     if (currentButton) {
