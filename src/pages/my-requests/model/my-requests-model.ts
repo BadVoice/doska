@@ -30,6 +30,7 @@ export const requestViewModeChanged = createEvent<TSelectScreenMode>();
 
 export const $filterOpened = createStore(false);
 export const $requestViewMode = createStore<TSelectScreenMode>(null);
+export const resetRequestViewMode = createEvent();
 
 export const $searchQS = createStore<{ search: string; brand: string } | null>(
   null,
@@ -38,6 +39,7 @@ export const $searchQS = createStore<{ search: string; brand: string } | null>(
 interface FilterParams {
   amount?: number;
 }
+$requestViewMode.on(resetRequestViewMode, () => null);
 
 sample({
   clock: deleteRequestClicked,

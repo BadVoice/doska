@@ -65,6 +65,7 @@ import {onMounted, ref, watch} from 'vue';
               </Button>
               <Button
                 variant="ghost"
+                @click="changeViewMode('selectBrand')"
                 class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
                 <p class="w-full text-[14px] font-semibold">Редактировать</p>
               </Button>

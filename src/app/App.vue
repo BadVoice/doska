@@ -170,20 +170,23 @@
         class="w-full flex-grow bg-[#F9FAFB]"
         v-if="
           isMobile &&
-          selectedAdvertisement &&
           !isProductCardOpen &&
           !isFilterCardOpen
         ">
         <Offers
-          v-if="requestViewMode === 'offers'"
+          v-if="requestViewMode === 'offers' && !isFilterCardOpen &&
+          !isProductCardOpen"
           @offer-clicked="handleItemClick"
           @open-filter="isFilterCardOpen = true"
           @page-selected="handlePageSelected"
           class="flex w-full" />
       </div>
-      <router-view v-if="!isMobile && !isAuthOpen && !isSidebarOpen" />
+      <router-view v-if="!isMobile && !isAuthOpen && !isSidebarOpen && requestViewMode === null"  />
+      <router-view v-if="!isMobile && requestViewMode && !isAuthOpen && !isSidebarOpen" />
+<!--      <router-view v-if="!isMobile && requestViewMode === 'offers' || requestViewMode === 'history' || requestViewMode === 'selectBrand'"  />-->
       <router-view
-        v-if="isMobile && !isAuthOpen && !isFilterCardOpen && !isSidebarOpen" />
+        v-if="isMobile && !isAuthOpen && !isFilterCardOpen && !isSidebarOpen && !requestViewMode" />
+      <SelectBrand v-if="isMobile && requestViewMode === 'selectBrand'" />
       <Auth v-if="isAuthOpen" @submit-close-auth="isAuthOpen = false" />
       <CompanyForm
         v-if="isCompanyOpen"
@@ -202,8 +205,7 @@
       <SelectBrand v-else-if="requestViewMode === 'selectBrand'" />
       <Offers
           v-if="
-          !isFilterCardOpen &&
-          !isProductCardOpen &&
+
           requestViewMode === 'offers'
         "
           @offer-clicked="handleItemClick"

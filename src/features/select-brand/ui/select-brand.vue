@@ -27,7 +27,7 @@
         @click="changeViewMode(null)" />
     <p>Выбор бренда по заявке</p>
   </div>
- <div class="mx-4">
+ <div class=" w-full p-4 text-center flex flex-col">
    <div
        @click="handleClick(brand)"
        class="w-full h-full max-h-[68px] rounded-md border-2 group border-[#D0D4DB] px-4 transition-all duration-75 hover:border-[#0017FC] mt-4"
