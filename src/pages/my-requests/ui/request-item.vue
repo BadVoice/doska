@@ -10,11 +10,14 @@ import {onMounted, ref, watch} from 'vue';
   } from '@/pages/my-requests/model/my-requests-model';
   import { useUnit } from 'effector-vue/composition';
   import type { BidWithName } from '@/entities/requests';
+import {useRoute} from "vue-router";
 
   defineProps<{
     status: { color: string; text: string }[];
     item: BidWithName;
   }>();
+
+  const route = useRoute();
 
   function renderFile(file: File) {
     return URL.createObjectURL(file);
@@ -38,8 +41,15 @@ import {onMounted, ref, watch} from 'vue';
 
 <template>
   <div
-    class="group flex w-full flex-col gap-y-2 rounded-md border-2 border-[#D0D4DB] px-4 py-3 transition-all duration-75 hover:border-[#0017FC]">
-    <div class="flex flex-col">
+      :class="
+            cn(
+              'flex flex-col items-start justify-between rounded-lg border-2 gap-y-1 bg-white p-4 pr-5 duration-200 hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10',
+              route.query['search'] === item.name &&  route.query['active-pre-search'] === item.brandName &&
+                'border-[#0017FC] bg-[#1778EA] bg-opacity-10',
+            )
+          "
+    class=" px-4 py-3 transition-all duration-75 hover:border-[#0017FC]">
+    <div class="flex flex-col w-full gap-y-1" >
       <div class="flex w-full justify-between">
         <p class="text-sm font-normal text-[#101828]">{{ item.name }}</p>
         <Popover @update:open="(value) => (popoverOpened = value)">
@@ -81,7 +91,9 @@ import {onMounted, ref, watch} from 'vue';
       </div>
       <div
         @click="handleClick(item)"
-        class="flex w-full flex-col items-start justify-between gap-y-1">
+        class="flex w-full flex-col items-start justify-between gap-y-1"
+
+      >
         <div class="flex w-full flex-row justify-between">
           <div class="flex w-full flex-row gap-x-2">
             <p class="text-xs font-normal text-[#858FA3]" v-if="item.article">
@@ -121,7 +133,7 @@ import {onMounted, ref, watch} from 'vue';
       </div>
     </div>
 
-    <div class="flex gap-x-2" v-if="item.image">
+    <div class="flex gap-x-2 "  v-if="item.image" >
       <img
         :src="renderFile(item.image)"
         alt="attachment"
