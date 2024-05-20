@@ -14,8 +14,7 @@
     PaginationPrev,
   } from '@/shared/ui/pagination';
   import { useUnit } from 'effector-vue/composition';
-  import router from "@/app/router";
-  import {$requestViewMode, resetRequestViewMode} from "@/pages/my-requests/model/my-requests-model";
+  import { resetRequestViewMode } from '@/pages/my-requests/model/my-requests-model';
 
   defineProps<{ class: string }>();
 
@@ -72,36 +71,39 @@
     checkIsMobile();
     window.addEventListener('resize', checkIsMobile);
   });
-
 </script>
 
 <template>
   <div class="flex flex-col" v-if="!!data?.data?.items">
     <div class="w-full min-w-[350px]">
       <div
-        class="flex items-center  border-b border-r border-[#D0D4DB] bg-white p-4 pr-5">
-        <Button  class="-ml-2 sm:hidden" @click="requestViewMode" size="icon" variant="ghost">
+        class="flex items-center border-b border-r border-[#D0D4DB] bg-white p-4 pr-5">
+        <Button
+          class="-ml-2 sm:hidden"
+          @click="requestViewMode"
+          size="icon"
+          variant="ghost">
           <img
-              src="../assets/backicon.svg"
-              class="h-6 w-6 select-none"
-              alt="arrow" />
+            src="./assets/backIcon.svg"
+            class="h-6 w-6 select-none"
+            alt="arrow" />
         </Button>
 
-       <div class="flex justify-between w-full items-center">
-         <h3 class="text-[18px] font-semibold">
-           {{ getAnnouncementText(data?.data.items_count ?? 0) }}
-         </h3>
-         <Button
-             v-if="
-            getAnnouncementText(data?.data.items_count ?? 0) !==
-            'Нет предложений'
-          "
-             @click="handleFilterClick"
-             size="icon"
-             variant="ghost">
-           <img src="../assets/filterIcon.svg" alt="filterIcon" />
-         </Button>
-       </div>
+        <div class="flex w-full items-center justify-between">
+          <h3 class="text-[18px] font-semibold">
+            {{ getAnnouncementText(data?.data.items_count ?? 0) }}
+          </h3>
+          <Button
+            v-if="
+              getAnnouncementText(data?.data.items_count ?? 0) !==
+              'Нет предложений'
+            "
+            @click="handleFilterClick"
+            size="icon"
+            variant="ghost">
+            <img src="./assets/filterIcon.svg" alt="filterIcon" />
+          </Button>
+        </div>
       </div>
     </div>
 
