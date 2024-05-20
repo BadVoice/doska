@@ -1,16 +1,16 @@
 <script lang="ts" setup>
-import {onMounted, ref, watch} from 'vue';
+  import { ref } from 'vue';
   import { cn } from '@/shared/lib';
   import { Button, Popover, PopoverContent, PopoverTrigger } from '@/shared/ui';
   import { PopoverClose } from 'radix-vue';
   import {
     deleteRequestClicked,
-    requestClicked, requestClickedOnChange,
+    requestClicked,
     requestViewModeChanged,
   } from '@/pages/my-requests/model/my-requests-model';
   import { useUnit } from 'effector-vue/composition';
   import type { BidWithName } from '@/entities/requests';
-import {useRoute} from "vue-router";
+  import { useRoute } from 'vue-router';
 
   defineProps<{
     status: { color: string; text: string }[];
@@ -23,12 +23,13 @@ import {useRoute} from "vue-router";
     return URL.createObjectURL(file);
   }
 
+  const handleRequestClicked = useUnit(requestClicked);
   const changeViewMode = useUnit(requestViewModeChanged);
 
   const popoverOpened = ref(false);
 
   const handleClick = (item: BidWithName) => {
-    requestClicked(item);
+    handleRequestClicked(item);
     changeViewMode('offers');
     // if (!item.brandName || item.brandName === 'Не указано') {
     //   requestClickedOnChange(item);
@@ -38,25 +39,25 @@ import {useRoute} from "vue-router";
     //   changeViewMode('offers');
     // }
   };
-const handleClickOnChange = (item: BidWithName) => {
-    requestClickedOnChange(item);
+  const handleClickOnChange = (item: BidWithName) => {
+    handleRequestClicked(item);
     changeViewMode('selectBrand');
-
-};
+  };
 </script>
 
 <template>
   <div
-      @click="handleClick(item)"
-      :class="
-            cn(
-              'flex flex-col items-start justify-between rounded-lg border-2 gap-y-1 bg-white p-4 pr-5 duration-200 hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10',
-              route.query['search'] === item.name &&  route.query['active-pre-search'] === item.brandName &&
-                'border-[#0017FC] bg-[#1778EA] bg-opacity-10',
-            )
-          "
-    class=" px-4 py-3 transition-all duration-75 hover:border-[#0017FC]">
-    <div class="flex flex-col w-full gap-y-1" >
+    @click="handleClick(item)"
+    :class="
+      cn(
+        'flex flex-col items-start justify-between gap-y-1 rounded-lg border-2 bg-white p-4 pr-5 duration-200 hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10',
+        route.query['search'] === item.name &&
+          route.query['active-pre-search'] === item.brandName &&
+          'border-[#0017FC] bg-[#1778EA] bg-opacity-10',
+      )
+    "
+    class="px-4 py-3 transition-all duration-75 hover:border-[#0017FC]">
+    <div class="flex w-full flex-col gap-y-1">
       <div class="flex w-full justify-between">
         <p class="text-sm font-normal text-[#101828]">{{ item.name }}</p>
         <Popover @update:open="(value) => (popoverOpened = value)">
@@ -96,10 +97,7 @@ const handleClickOnChange = (item: BidWithName) => {
           </PopoverContent>
         </Popover>
       </div>
-      <div
-        class="flex w-full flex-col items-start justify-between gap-y-1"
-
-      >
+      <div class="flex w-full flex-col items-start justify-between gap-y-1">
         <div class="flex w-full flex-row justify-between">
           <div class="flex w-full flex-row gap-x-2">
             <p class="text-xs font-normal text-[#858FA3]" v-if="item.article">
@@ -139,7 +137,7 @@ const handleClickOnChange = (item: BidWithName) => {
       </div>
     </div>
 
-    <div class="flex gap-x-2 "  v-if="item.image" >
+    <div class="flex gap-x-2" v-if="item.image">
       <img
         :src="renderFile(item.image)"
         alt="attachment"

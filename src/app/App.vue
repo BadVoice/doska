@@ -13,10 +13,9 @@
 
   import { useUnit } from 'effector-vue/composition';
   import { $showAddOfferModal } from '@/widgets/offers/model/offers-model';
-  import {MyRequestsPage, RequestHistory} from '@/pages/my-requests';
+  import { RequestHistory, SelectBrand } from '@/pages/my-requests';
   import { CompanyForm } from '@/widgets/company-form';
   import { $requestViewMode } from '@/pages/my-requests/model/my-requests-model';
-  import { SelectBrand } from '@/features/select-brand';
   import { searchQuery } from '@/entities/offer';
 
   const route = useRoute();
@@ -168,24 +167,33 @@
       </div>
       <div
         class="w-full flex-grow bg-[#F9FAFB]"
-        v-if="
-          isMobile &&
-          !isProductCardOpen &&
-          !isFilterCardOpen
-        ">
+        v-if="isMobile && !isProductCardOpen && !isFilterCardOpen">
         <Offers
-          v-if="requestViewMode === 'offers' && !isFilterCardOpen &&
-          !isProductCardOpen"
+          v-if="
+            requestViewMode === 'offers' &&
+            !isFilterCardOpen &&
+            !isProductCardOpen
+          "
           @offer-clicked="handleItemClick"
           @open-filter="isFilterCardOpen = true"
           @page-selected="handlePageSelected"
           class="flex w-full" />
       </div>
-      <router-view v-if="!isMobile && !isAuthOpen && !isSidebarOpen && requestViewMode === null"  />
-      <router-view v-if="!isMobile && requestViewMode && !isAuthOpen && !isSidebarOpen" />
-<!--      <router-view v-if="!isMobile && requestViewMode === 'offers' || requestViewMode === 'history' || requestViewMode === 'selectBrand'"  />-->
       <router-view
-        v-if="isMobile && !isAuthOpen && !isFilterCardOpen && !isSidebarOpen && !requestViewMode" />
+        v-if="
+          !isMobile && !isAuthOpen && !isSidebarOpen && requestViewMode === null
+        " />
+      <router-view
+        v-if="!isMobile && requestViewMode && !isAuthOpen && !isSidebarOpen" />
+      <!--      <router-view v-if="!isMobile && requestViewMode === 'offers' || requestViewMode === 'history' || requestViewMode === 'selectBrand'"  />-->
+      <router-view
+        v-if="
+          isMobile &&
+          !isAuthOpen &&
+          !isFilterCardOpen &&
+          !isSidebarOpen &&
+          !requestViewMode
+        " />
       <SelectBrand v-if="isMobile && requestViewMode === 'selectBrand'" />
       <Auth v-if="isAuthOpen" @submit-close-auth="isAuthOpen = false" />
       <CompanyForm
@@ -204,27 +212,24 @@
       <RequestHistory v-if="requestViewMode === 'history'" />
       <SelectBrand v-else-if="requestViewMode === 'selectBrand'" />
       <Offers
-          v-if="
-
-          requestViewMode === 'offers'
-        "
-          @offer-clicked="handleItemClick"
-          @open-filter="isFilterCardOpen = true"
-          @page-selected="handlePageSelected"
-          class="hidden w-full sm:flex lg:hidden" />
+        v-if="requestViewMode === 'offers'"
+        @offer-clicked="handleItemClick"
+        @open-filter="isFilterCardOpen = true"
+        @page-selected="handlePageSelected"
+        class="hidden w-full sm:flex lg:hidden" />
 
       <ProductCard
-          v-if="
+        v-if="
           isProductCardOpen &&
           productItem &&
           !isMobile &&
           route.path === '/advertisements' &&
           !isFilterCardOpen
         "
-          :product-item="productItem"
-          :is-product-card-open="isProductCardOpen"
-          @close-product-card="handleCloseProductCard"
-          class="hidden sm:flex lg:hidden" />
+        :product-item="productItem"
+        :is-product-card-open="isProductCardOpen"
+        @close-product-card="handleCloseProductCard"
+        class="hidden sm:flex lg:hidden" />
 
       <ManuallyAddOffer
         v-if="

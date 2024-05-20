@@ -1,15 +1,12 @@
-import {createMutation, keepFresh} from '@farfetched/core';
-import {combine, createEvent, createStore, sample} from 'effector';
+import { createMutation, keepFresh } from '@farfetched/core';
+import { createEvent, createStore, sample } from 'effector';
 import { not, spread } from 'patronum';
 
 import { $api } from '@/shared/api/api';
 
-import {
-  deleteRequestMutation,
-  myRequestsQuery,
-} from '@/entities/requests';
+import { deleteRequestMutation, myRequestsQuery } from '@/entities/requests';
 
-import type { Bid, Brand } from "@/shared/api/generated/Api";
+import type { Bid, Brand } from '@/shared/api/generated/Api';
 import { searchQuery } from '@/entities/offer';
 
 type TSelectScreenMode = 'offers' | 'selectBrand' | 'history' | null;
@@ -65,11 +62,6 @@ keepFresh(myRequestsQuery, {
   triggers: [deleteRequestMutation.finished.success],
 });
 
-keepFresh(myRequestsQuery, {
-  automatically: true,
-  triggers: [deleteRequestMutation.finished.success],
-});
-
 sample({
   source: not($filterOpened),
   clock: filterVisibilityChanged,
@@ -78,21 +70,21 @@ sample({
 });
 
 sample({
-  // @ts-expect-error
   clock: filterSubmitted,
-  fn: (clk: FormValues) => ({
-    filterMutation: {
-      secure: true,
-      format: 'json',
-      path: '/bids',
-      query: {
-        search: clk.name,
-        amount: clk.count,
-        article: clk.article,
-      }
-    },
-    $filterOpened: false,
-  }),
+  fn: (clk: FormValues) =>
+    ({
+      filterMutation: {
+        secure: true,
+        format: 'json',
+        path: '/bids',
+        query: {
+          search: clk.name,
+          amount: clk.count,
+          article: clk.article,
+        },
+      },
+      $filterOpened: false,
+    }) as const,
   target: spread({ filterMutation: myRequestsQuery.start, $filterOpened }),
 });
 
@@ -112,61 +104,40 @@ sample({
   target: $requestViewMode,
 });
 
-export const requestClickedOnChange = createEvent<BidWithName>();
-export const brandClickedOnChange = createEvent<Brand>();
-const changedBid = createStore<BidWithName>({} as BidWithName);
-const changedBrand = createStore<Brand>({} as Brand);
-
-sample({
-  clock: requestClickedOnChange,
-  fn: (bidData) => {
-    return bidData;
-  },
-  target: changedBid,
-});
-
-sample({
-  clock: brandClickedOnChange,
-  fn: (brandData) => {
-    return brandData;
-  },
-  target: changedBrand,
-});
-
-// @ts-expect-error
-export const bidMutation = createMutation<BidMutationData>({
-  handler: async (data) => {
-   if(!data.brand.name && !data.brand.id) {
-     console.log(data.brand.name)
-     console.log('brand not found')
-   }
-   else {
-     const response = await $api.bids.updateBid(parseInt(data.bid.id ?? "", 10), {
-       name: data.bid.name,
-       amount: data.bid.amount,
-       brand: parseInt(data.brand.id ?? "", 10),
-       category: data.bid.category,
-     });
-     return response.data;
-   }
+export const bidMutation = createMutation({
+  handler: async (data: BidMutationData) => {
+    if (!data.brand.name && !data.brand.id) {
+      console.log(data.brand.name);
+      console.log('brand not found');
+    } else {
+      const response = await $api.bids.updateBid(parseInt(data.bid.id ?? ''), {
+        name: data.bid.name,
+        amount: data.bid.amount,
+        brand: parseInt(data.brand.id ?? ''),
+        category: data.bid.category,
+      });
+      return response.data;
+    }
   },
 });
 
-const $combinedBidData = combine(
-    changedBid,
-    changedBrand,
-    (bid, brand) => ({ bid, brand })
-);
+export const requestSelected = createEvent<BidWithName>();
+export const brandSelected = createEvent<Brand>();
+const $changedBid = createStore<BidWithName | null>(null);
 
 sample({
-  clock: $combinedBidData,
-  fn: (combinedData: { bid: BidWithName; brand: Brand }) => {
-    return {
-      id: combinedData.bid.id,
-      params: combinedData.bid,
-      bid: combinedData.bid,
-      brand: combinedData.brand
-    };
-  },
+  clock: requestSelected,
+  target: $changedBid,
+});
+
+sample({
+  source: $changedBid,
+  clock: brandSelected,
+  filter: (src, clk) => !!src && !!clk,
+  fn: (src, clk) => ({
+    params: src!,
+    bid: src!,
+    brand: clk,
+  }),
   target: bidMutation.start,
 });

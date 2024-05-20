@@ -19,7 +19,7 @@
   defineProps<{ class: string }>();
 
   const isMobile = ref(false);
-  const page = ref(0);
+  const page = ref(1);
 
   const requestViewMode = useUnit(resetRequestViewMode);
 
