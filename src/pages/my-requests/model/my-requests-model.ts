@@ -37,18 +37,20 @@ export const requestClicked = createEvent<BidWithName>();
 export const requestViewModeChanged = createEvent<TSelectScreenMode>();
 
 export const $filterOpened = createStore(false);
-export const $requestViewMode = createStore<TSelectScreenMode>(null);
+
 export const resetRequestViewMode = createEvent();
+export const $requestViewMode = createStore<TSelectScreenMode | null>(
+  null,
+).reset(resetRequestViewMode);
 
 export const $searchQS = createStore<{ search: string; brand: string } | null>(
   null,
 );
 
-$requestViewMode.on(resetRequestViewMode, () => null);
-
 sample({
   clock: deleteRequestClicked,
-  fn: () => ({
+  fn: (clk) => ({
+    mutation: clk,
     $requestViewMode: null,
   }),
   target: spread({
