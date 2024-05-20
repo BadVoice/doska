@@ -33,7 +33,6 @@ export const myRequestsQuery = createQuery({
 export const deleteRequestMutation = createMutation({
   handler: async (id: string) => {
     const res = await $api.bids.deleteBid(parseInt(id, 10))
-    console.log(res)
     return res
   },
 });

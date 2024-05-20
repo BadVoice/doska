@@ -1,15 +1,15 @@
-import {createMutation, createQuery, keepFresh} from '@farfetched/core';
+import {createMutation, keepFresh} from '@farfetched/core';
 import {combine, createEvent, createStore, sample} from 'effector';
 import { not, spread } from 'patronum';
 
-import {$api, $qwepApi} from '@/shared/api/api';
+import { $api } from '@/shared/api/api';
 
 import {
   deleteRequestMutation,
   myRequestsQuery,
 } from '@/entities/requests';
-// import { visibilitySelectBrandChanged } from '@/features/select-brand';
-import type {Bid, FullRequestParams, RequestParams} from "@/shared/api/generated/Api";
+
+import type { Bid, Brand } from "@/shared/api/generated/Api";
 import { searchQuery } from '@/entities/offer';
 
 type TSelectScreenMode = 'offers' | 'selectBrand' | 'history' | null;
@@ -20,6 +20,17 @@ export interface FormValues {
   article: string;
   count: string;
   assigment: string;
+}
+
+export interface BidWithName extends Bid {
+  brandName?: string;
+  categoryName?: string;
+}
+
+interface BidMutationData {
+  params: BidWithName;
+  bid: BidWithName;
+  brand: Brand;
 }
 
 export const deleteRequestClicked = createEvent<string>();
@@ -36,9 +47,6 @@ export const $searchQS = createStore<{ search: string; brand: string } | null>(
   null,
 );
 
-interface FilterParams {
-  amount?: number;
-}
 $requestViewMode.on(resetRequestViewMode, () => null);
 
 sample({
@@ -125,33 +133,22 @@ sample({
   target: changedBrand,
 });
 
-export interface BidWithName extends Bid {
-  brandName?: string;
-  categoryName?: string;
-}
-
-interface BidMutationData {
-  params: BidWithName;
-  bid: BidWithName;
-  brand: Brand;
-}
-export interface Brand {
-  id: number;
-  brandName: string;
-}
 // @ts-expect-error
 export const bidMutation = createMutation<BidMutationData>({
   handler: async (data) => {
-   if(data.brand) {
-     throw new Error('brand not found');
+   if(!data.brand.name && !data.brand.id) {
+     console.log(data.brand.name)
+     console.log('brand not found')
    }
-     const response = await $api.bids.updateBid(parseInt(data.bid.id as string, 10), {
-       name: data.bid.name as string,
-       amount: data.bid.amount as number,
-       brand: data.brand as number,
-       category: data.bid.category as number,
+   else {
+     const response = await $api.bids.updateBid(parseInt(data.bid.id ?? "", 10), {
+       name: data.bid.name,
+       amount: data.bid.amount,
+       brand: parseInt(data.brand.id ?? "", 10),
+       category: data.bid.category,
      });
-    return response.data;
+     return response.data;
+   }
   },
 });
 
@@ -163,11 +160,13 @@ const $combinedBidData = combine(
 
 sample({
   clock: $combinedBidData,
-  fn: (combinedData: { bid: BidWithName; brand: Brand }) => ({
-    id: combinedData.bid.id,
-    params: combinedData.bid,
-    bid: combinedData.bid,
-    brand: combinedData.brand
-  }),
+  fn: (combinedData: { bid: BidWithName; brand: Brand }) => {
+    return {
+      id: combinedData.bid.id,
+      params: combinedData.bid,
+      bid: combinedData.bid,
+      brand: combinedData.brand
+    };
+  },
   target: bidMutation.start,
 });
