@@ -24,7 +24,7 @@ export function getButtonList(visibleSearch: Ref<boolean>) {
         },
         {
           label: 'Не опубликованные',
-          link: '/?',
+          link: '/advertisements',
           active: false,
         },
         {

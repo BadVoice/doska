@@ -60,9 +60,16 @@
   });
 
   const activeButton = computed(() => {
-    return buttonList.value.find((button) =>
-      route.path.startsWith(button.link),
-    );
+    const currentButton = buttonList.value.find((button) => {
+      const parts = route.path.split('/');
+      return parts[1] === button.link.split('/')[1]; // Сравниваем первые части путей
+    });
+
+    if (currentButton) {
+      currentButton.active = true;
+    }
+
+    return currentButton;
   });
 
   const scrollToButton = (index: number) => {

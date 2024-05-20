@@ -172,7 +172,8 @@
           v-if="
             requestViewMode === 'offers' &&
             !isFilterCardOpen &&
-            !isProductCardOpen
+            !isProductCardOpen &&
+            !isSidebarOpen
           "
           @offer-clicked="handleItemClick"
           @open-filter="isFilterCardOpen = true"
@@ -185,7 +186,6 @@
         " />
       <router-view
         v-if="!isMobile && requestViewMode && !isAuthOpen && !isSidebarOpen" />
-      <!--      <router-view v-if="!isMobile && requestViewMode === 'offers' || requestViewMode === 'history' || requestViewMode === 'selectBrand'"  />-->
       <router-view
         v-if="
           isMobile &&
@@ -194,7 +194,7 @@
           !isSidebarOpen &&
           !requestViewMode
         " />
-      <SelectBrand v-if="isMobile && requestViewMode === 'selectBrand'" />
+      <SelectBrand v-if="isMobile &&  !isSidebarOpen &&  requestViewMode === 'selectBrand'" />
       <Auth v-if="isAuthOpen" @submit-close-auth="isAuthOpen = false" />
       <CompanyForm
         v-if="isCompanyOpen"
