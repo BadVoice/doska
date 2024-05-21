@@ -3,7 +3,7 @@
   import { X } from 'lucide-vue-next';
   import { useFilter } from '../lib/schema';
   import FilterInput from './filter-input.vue';
-  import { computed, defineProps, ref } from 'vue';
+  import { computed, defineProps, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
 
   import {
@@ -43,10 +43,6 @@
     'filtered-items-came',
     'filterChanged',
   ]);
-
-  function closeFilter() {
-    emit('close-filter-card', false);
-  }
 
   let filterParams = computed(() => {
     const params = { ...route.query };
@@ -120,6 +116,21 @@
       closeFilter();
     }
   };
+
+  const showClearButton = ref(false);
+
+  watch(form.values, () => {
+    for (const key of Object.keys(form.values)) {
+      if (form.isFieldDirty(key)) {
+        showClearButton.value = true;
+      }
+    }
+  });
+
+  function closeFilter() {
+    showClearButton.value = false;
+    emit('close-filter-card', false);
+  }
 </script>
 
 <template>
@@ -138,17 +149,15 @@
           Закрыть
         </p>
       </div>
-      <!--      <div>-->
-      <!--        <div-->
-      <!--          v-if="!form?.values.length"-->
-      <!--          @click="form.resetForm()"-->
-      <!--          class="group flex cursor-pointer items-center gap-x-2 px-2 py-2">-->
-      <!--          <p-->
-      <!--            class="text-center text-[17px] text-primary group-hover:text-primary/70">-->
-      <!--            Очистить-->
-      <!--          </p>-->
-      <!--        </div>-->
-      <!--      </div>-->
+      <div
+        v-if="showClearButton"
+        @click="form.resetForm()"
+        class="group flex cursor-pointer items-center gap-x-2 px-2 py-2">
+        <p
+          class="text-center text-[17px] text-primary group-hover:text-primary/70">
+          Очистить
+        </p>
+      </div>
     </div>
 
     <form
