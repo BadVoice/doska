@@ -1,41 +1,36 @@
 <script setup lang="ts">
-  import type {
-    PreSearchResponse,
-    PreSearchResponses,
-  } from '@/shared/api/generated/Api';
-  import { ref } from 'vue';
-  import { useRoute } from 'vue-router';
+  import type { PreSearchResponse } from '@/shared/api/generated/Api';
   import { cn } from '@/shared/lib';
+  import { useUnit } from 'effector-vue/composition';
+  import {
+    $selectedAdvertisementId,
+    advertisementClicked,
+  } from '../model/advertisement-model';
 
-  const props = defineProps<{
-    searchResult: PreSearchResponses;
+  defineProps<{
+    searchResult: Readonly<PreSearchResponse[]>;
   }>();
-  const cardFocused = ref(false);
-  const emit = defineEmits(['advertisementClicked']);
 
-  const route = useRoute();
+  const handleSelected = useUnit(advertisementClicked);
+  const selectedItem = useUnit($selectedAdvertisementId);
+
   const handleCardClick = (item: PreSearchResponse) => {
-    if (!item) {
-      return;
-    }
-    cardFocused.value = true;
-    const { article, brand, id } = item;
-    emit('advertisementClicked', { id, article, brand });
+    handleSelected(item);
   };
 </script>
 
 <template>
-  <div v-if="searchResult" class="w-full">
+  <div v-if="searchResult" class="w-full border broder-r">
     <div class="mx-auto flex flex-col items-center justify-center gap-y-6 p-4">
       <ul class="flex w-full max-w-[324px] flex-col gap-y-4">
         <li
-          v-for="item in props.searchResult"
+          v-for="item in searchResult"
           @click="handleCardClick(item)"
           :key="item.id"
           :class="
             cn(
               'flex flex-col items-start justify-between rounded-lg border-2 bg-white p-4 pr-5 duration-200 hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10',
-              route.query['active-pre-search'] === item.brand &&
+              selectedItem === item.id &&
                 'border-[#0017FC] bg-[#1778EA] bg-opacity-10',
             )
           ">

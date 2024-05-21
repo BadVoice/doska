@@ -111,7 +111,6 @@
       v-if="data?.data.items"
       class="custom-scrollbar flex h-[100vh] flex-col items-center gap-4 overflow-auto bg-[#F9FAFB] p-4 sm:max-h-[calc(100vh-150px)]">
       <OfferList
-        class="h-full"
         :offers-items="data?.data.items as any"
         @offer-clicked="handleItemClick" />
     </div>

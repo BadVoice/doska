@@ -1,17 +1,21 @@
 <script setup lang="ts">
-import {computed, nextTick, onMounted, ref, watch} from 'vue';
+  import { computed, nextTick, onMounted, ref, watch } from 'vue';
   import { getButtonList } from '../lib/button-list';
   import { Button } from '@/shared/ui/button';
   import BurgerMenu from './burger-menu.vue';
   import Search from './assets/search.vue';
   import { Input } from '@/shared/ui/input';
   import { useRoute, useRouter } from 'vue-router';
-  import { useDebounceFn } from '@vueuse/core';
-import {useUnit} from "effector-vue/composition";
-import {myRequestsQuery} from "@/entities/requests";
+  import { useUnit } from 'effector-vue/composition';
+  import { searchTermInputed } from '@/widgets/header/model/header-modal';
+  import { myRequestsQuery } from '@/entities/requests';
 
   const route = useRoute();
   const router = useRouter();
+
+  const searchTerm = ref('');
+
+  const handleSubmit = useUnit(searchTermInputed);
 
   const isBurgerMenuOpen = ref(false);
 
@@ -20,23 +24,16 @@ import {myRequestsQuery} from "@/entities/requests";
   const formFocused = ref(false);
   const scrollableContainer = ref();
 
-const {
-  start: handleMount,
-  data: requests,
-  pending,
-} = useUnit(myRequestsQuery);
+  const { start: handleMount, data: requests } = useUnit(myRequestsQuery);
 
-
-onMounted(handleMount);
+  onMounted(handleMount);
 
   function handleSubmitSearch(event: Event) {
     event.preventDefault();
     if (searchTerm.value !== '') {
-      handleInput();
+      handleSubmit(searchTerm.value);
     }
   }
-
-  const searchTerm = ref('');
 
   const emit = defineEmits([
     'submitSearch',
@@ -46,17 +43,13 @@ onMounted(handleMount);
     'buttonClicked',
   ]);
 
-  const handleInput = useDebounceFn(() => {
-    emit('submitSearch', searchTerm.value);
-  }, 500);
-
-  function handleWheel(event: WheelEvent) {
-    event.preventDefault();
-    scrollableContainer.value.scrollBy({
-      left: event.deltaY < 0 ? 30 : -30,
-      behaviour: 'smooth',
-    });
-  }
+  // function handleWheel(event: WheelEvent) {
+  //   event.preventDefault();
+  //   scrollableContainer.value.scrollBy({
+  //     left: event.deltaY < 0 ? 30 : -30,
+  //     behaviour: 'smooth',
+  //   });
+  // }
 
   watch(visibleSearch, (newValue) => {
     if (newValue) {
@@ -65,7 +58,7 @@ onMounted(handleMount);
       });
       nextTick(() => {
         document.getElementById('search')?.focus();
-        router.push('/search-history');
+        router.push('/advertisements');
       });
     }
   });
@@ -111,13 +104,13 @@ onMounted(handleMount);
     }
   };
 
-const requestsCount = computed(() => {
-  if (requests.value) {
-    return requests.value.length;
-  } else {
-    return 0;
-  }
-});
+  const requestsCount = computed(() => {
+    if (requests.value) {
+      return requests.value.length;
+    } else {
+      return 0;
+    }
+  });
 </script>
 
 <template>
@@ -170,7 +163,7 @@ const requestsCount = computed(() => {
           :key="visibleSearch ? 'true' : 'false'"
           v-model="searchTerm"
           @keydown.enter="handleSubmitSearch"
-          @input="handleInput"
+          @input="handleSubmitSearch"
           id="search"
           type="text"
           @focus="formFocused = true"
@@ -201,7 +194,7 @@ const requestsCount = computed(() => {
             size="sm">
             {{ button.label }}
             <template v-if="button.link === '/'">
-              {{`(${requestsCount})`}}
+              {{ `(${requestsCount})` }}
             </template>
           </Button>
         </RouterLink>

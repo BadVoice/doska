@@ -18,7 +18,7 @@ export const myRequestsQuery = createQuery({
       return response.data;
     }
 
-    const res = bids.map((bid) => ({
+    return bids.map((bid) => ({
       ...bid,
       article: bid.article || 'Не указано',
       // @ts-expect-error the backend expects a number, but returns a string as the id
@@ -26,9 +26,6 @@ export const myRequestsQuery = createQuery({
       // @ts-expect-error the backend expects a number, but returns a string as the id
       categoryName: categoriesMap.get(bid.category) || 'Не указано',
     }));
-
-    console.log(res);
-    return res;
   },
 });
 
