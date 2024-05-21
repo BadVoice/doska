@@ -94,7 +94,6 @@
   onMounted(() => {
     if (route.query.search) {
       router.push({
-        name: 'advertisements',
         query: {
           search: route.query.search,
           'active-pre-search': route.query['active-pre-search'],
@@ -156,7 +155,7 @@
         @open-sidebar="isSidebarOpen = true"
         @create-clicked="isCreateAdvertisementOpen = true" />
       <div
-        v-if="isMobile && (selectedAdvertisement || isFilterCardOpen)"
+        v-if="isMobile && (selectedAdvertisement || isFilterCardOpen || isProductCardOpen)"
         class="w-full">
         <ProductCard
           v-if="productItem"

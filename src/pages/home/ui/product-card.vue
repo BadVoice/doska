@@ -26,14 +26,6 @@
 
   const emits = defineEmits(['close-product-card']);
   function closeProduct() {
-    router.push({
-      name: 'advertisements',
-      query: {
-        search: route.query.search,
-        'active-pre-search': route.query['active-pre-search'],
-        'active-card': '',
-      },
-    });
     emits('close-product-card', false);
   }
 
