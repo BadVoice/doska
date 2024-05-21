@@ -82,12 +82,6 @@
   const isMobile = ref(false);
   const isAuthOpen = ref(false);
 
-  const lgScreen = ref(false);
-
-  onMounted(() => {
-    lgScreen.value = window.innerWidth >= 1400;
-  });
-
   const checkIsMobile = () => {
     isMobile.value = window.innerWidth < 640;
   };
@@ -181,21 +175,31 @@ onMounted(() => {
           v-if="
             requestViewMode === 'offers' &&
             !isFilterCardOpen &&
-            !isProductCardOpen
+            !isProductCardOpen &&
+            !isSidebarOpen
           "
           @offer-clicked="handleItemClick"
           @open-filter="isFilterCardOpen = true"
           @page-selected="handlePageSelected"
           class="flex w-full" />
       </div>
-      <router-view v-if="!isAuthOpen" />
-      <SelectBrand v-if="isMobile && requestViewMode === 'selectBrand'" />
+      <router-view v-if="!isAuthOpen  && !isSidebarOpen && (
+          isMobile &&
+          !isProductCardOpen &&
+          !isFilterCardOpen &&
+          !isAuthOpen &&
+          !isSidebarOpen &&
+          !requestViewMode &&
+          !isCreateAdvertisementOpen)" />
+      <router-view v-if="!isAuthOpen && !isMobile" />
+      <SelectBrand v-if="isMobile &&
+            !isSidebarOpen && requestViewMode === 'selectBrand'" />
       <Auth v-if="isAuthOpen" @submit-close-auth="isAuthOpen = false" />
       <CompanyForm
         v-if="isCompanyOpen"
         @submit-close-company="isCompanyOpen = false" />
       <Sidebar
-        v-if="isSidebarOpen"
+        v-if="isSidebarOpen && !isCompanyOpen"
         @close-sidebar="isSidebarOpen = false"
         @navigate="handleNavigate" />
       <CreateAdvertisement
@@ -206,12 +210,24 @@ onMounted(() => {
     <div v-if="!isMobile" class="flex-grow bg-[#F9FAFB] w-full">
       <RequestHistory v-if="requestViewMode === 'history'" />
       <SelectBrand v-else-if="requestViewMode === 'selectBrand'" />
+
+    <div class="w-full min-w-full flex lg:hidden">
       <Offers
-        v-if="requestViewMode === 'offers'"
-        @offer-clicked="handleItemClick"
-        @open-filter="isFilterCardOpen = true"
-        @page-selected="handlePageSelected"
-        class="hidden w-full sm:flex lg:hidden" />
+          v-if="requestViewMode === 'offers' && !isFilterCardOpen && !isProductCardOpen"
+          @offer-clicked="handleItemClick"
+          @open-filter="isFilterCardOpen = true"
+          @page-selected="handlePageSelected"
+          class="hidden w-full sm:flex lg:hidden" />
+    </div>
+
+      <div class="w-full min-w-full hidden lg:flex">
+        <Offers
+            v-if="requestViewMode === 'offers' "
+            @offer-clicked="handleItemClick"
+            @open-filter="isFilterCardOpen = true"
+            @page-selected="handlePageSelected"
+            class="hidden w-full sm:flex lg:hidden" />
+      </div>
 
       <ProductCard
         v-if="

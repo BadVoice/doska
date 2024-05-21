@@ -74,7 +74,7 @@
 </script>
 
 <template>
-  <div class="flex flex-col" v-if="!!data?.data?.items">
+  <div class="flex flex-col w-full" v-if="!!data?.data?.items">
     <div class="w-full min-w-[350px]">
       <div
         class="flex items-center border-b border-r border-[#D0D4DB] bg-white p-4 pr-5">
