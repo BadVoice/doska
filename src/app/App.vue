@@ -162,7 +162,10 @@ onMounted(() => {
         @open-sidebar="isSidebarOpen = true"
         @create-clicked="isCreateAdvertisementOpen = true" />
       <div
-        v-if="isMobile && !isProductCardOpen && !isFilterCardOpen"
+        v-if="
+          isMobile &&
+          (selectedAdvertisement || isFilterCardOpen || isProductCardOpen)
+        "
         class="w-full">
         <ProductCard
           v-if="productItem"

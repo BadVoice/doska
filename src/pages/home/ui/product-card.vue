@@ -25,7 +25,8 @@
   const route = useRoute();
 
   const emits = defineEmits(['close-product-card']);
- function closeProduct() {
+  
+  function closeProduct() {
     emits('close-product-card', false);
   }
 

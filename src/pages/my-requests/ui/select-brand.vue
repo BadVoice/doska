@@ -14,6 +14,7 @@
 
   const handleClick = (brand: any) => {
     handleBrandSelected(brand);
+    changeViewMode('offers');
   };
 
   onMounted(handleMount);
