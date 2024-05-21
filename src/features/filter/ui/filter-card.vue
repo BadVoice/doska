@@ -14,6 +14,7 @@
   } from '@headlessui/vue';
   import { useUnit } from 'effector-vue/composition';
   import { searchQuery } from '@/entities/offer';
+  import { $selectedAdvertisement } from '@/entities/advertisement';
 
   defineProps<{
     isFilterCardOpen: boolean;
@@ -32,23 +33,17 @@
 
   const { form } = useFilter(data?.value?.data.filters as any);
 
-  const initialVendors = ref([...selectedVendors.value]);
-  const initialBrands = ref([...selectedBrands.value]);
-  const initialCities = ref([...selectedCities.value]);
-  const initialPriceFrom = ref(form.values.priceFrom);
-  const initialPriceTo = ref(form.values.priceTo);
-  const initialCountFrom = ref(form.values.countFrom);
-  const initialCountTo = ref(form.values.countTo);
-
   const route = useRoute();
   const router = useRouter();
-  const search = computed(() => route.query.search);
+
+  const search = useUnit($selectedAdvertisement);
 
   const emit = defineEmits([
     'close-filter-card',
     'filtered-items-came',
     'filterChanged',
   ]);
+
   function closeFilter() {
     emit('close-filter-card', false);
   }
@@ -87,76 +82,44 @@
     router.replace({ query });
   };
 
-  const onSubmit = (event: Event) => {
+  const onSubmit = async (event: Event) => {
     event.preventDefault();
-    form.validate();
+    await form.validate();
+
     if (Object.keys(form.errors.value).length === 0) {
-      (async () => {
-        const values = form.values;
-        const vendors = selectedVendors.value;
-        const brands = selectedBrands.value;
-        const cityIds = selectedCities.value.map((city) => city.id as number);
-        try {
-          const filterParamsValue = filterParams.value;
-          updateUrl(filterParamsValue);
-          startSearch({
-            search: search.value?.toString() ?? '',
-            page_size: 10,
-            brand: route.query['active-pre-search']?.toString() ?? '',
-            filters: {
-              name: values.denomination,
-              article: values.article,
-              price: {
-                from: values.priceFrom,
-                to: values.priceTo,
-              },
-              delivery: {
-                from: values.countFrom,
-                to: values.countTo,
-              },
-            },
-            exclude: {
-              brand: brands,
-              vendor: vendors,
-              city_id: cityIds,
-            },
-          });
-        } catch (error) {
-          console.error(error);
-        }
-      })();
+      const values = form.values;
+      const vendors = selectedVendors.value;
+      const brands = selectedBrands.value;
+      const cityIds = selectedCities.value.map((city) => city.id as number);
+      const filterParamsValue = filterParams.value;
+      updateUrl(filterParamsValue);
+
+      startSearch({
+        search: search.value?.article ?? '',
+        page_size: 10,
+        brand: search.value?.brand ?? '',
+        filters: {
+          name: values.denomination,
+          article: values.article,
+          price: {
+            from: values.priceFrom,
+            to: values.priceTo,
+          },
+          delivery: {
+            from: values.countFrom,
+            to: values.countTo,
+          },
+        },
+        exclude: {
+          brand: brands,
+          vendor: vendors,
+          city_id: cityIds,
+        },
+      });
+
+      closeFilter();
     }
   };
-
-  const resetForm = () => {
-    selectedVendors.value = [];
-    selectedBrands.value = [];
-    selectedCities.value = [];
-
-    form.values.denomination = '';
-    form.values.article = '';
-    form.values.priceFrom = '';
-    form.values.priceTo = '';
-    form.values.countFrom = '';
-    form.values.countTo = '';
-
-    onSubmit(new Event('submit'));
-    updateUrl({});
-  };
-
-  const showClearButton = computed(() => {
-    return (
-      form.values.denomination?.length > 0 ||
-      form.values.article?.length > 0 ||
-      form.values.priceFrom !== initialPriceFrom.value ||
-      form.values.priceTo !== initialPriceTo.value ||
-      form.values.countFrom !== initialCountFrom.value ||
-      form.values.countTo !== initialCountTo.value ||
-      selectedVendors.value.length !== initialVendors.value.length ||
-      selectedBrands.value.length !== initialBrands.value.length ||
-      selectedCities.value.length !== initialCities.value.length
-    );
-  });
 </script>
 
 <template>
@@ -175,17 +138,17 @@
           Закрыть
         </p>
       </div>
-      <div>
-        <div
-          v-if="showClearButton"
-          @click="resetForm"
-          class="group flex cursor-pointer items-center gap-x-2 px-2 py-2">
-          <p
-            class="text-center text-[17px] text-primary group-hover:text-primary/70">
-            Очистить
-          </p>
-        </div>
-      </div>
+      <!--      <div>-->
+      <!--        <div-->
+      <!--          v-if="!form?.values.length"-->
+      <!--          @click="form.resetForm()"-->
+      <!--          class="group flex cursor-pointer items-center gap-x-2 px-2 py-2">-->
+      <!--          <p-->
+      <!--            class="text-center text-[17px] text-primary group-hover:text-primary/70">-->
+      <!--            Очистить-->
+      <!--          </p>-->
+      <!--        </div>-->
+      <!--      </div>-->
     </div>
 
     <form

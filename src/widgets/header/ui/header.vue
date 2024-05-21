@@ -53,7 +53,7 @@
       });
       nextTick(() => {
         document.getElementById('search')?.focus();
-        router.push('/search-history');
+        router.push('/advertisements');
       });
     }
   });

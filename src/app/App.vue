@@ -17,12 +17,14 @@
   import { CompanyForm } from '@/widgets/company-form';
   import { $requestViewMode } from '@/pages/my-requests/model/my-requests-model';
   import { searchQuery } from '@/entities/offer';
+  import { $selectedAdvertisement } from '@/entities/advertisement';
 
   const route = useRoute();
   const router = useRouter();
 
   const showAddOfferModal = useUnit($showAddOfferModal);
   const requestViewMode = useUnit($requestViewMode);
+  const selectedAdvertisement = useUnit($selectedAdvertisement);
 
   const { start: search } = useUnit(searchQuery);
 
@@ -54,10 +56,10 @@
         vendor: vendorsArray,
         city_id: citiesArray,
       },
-      search: route.query.search?.toString() ?? '',
+      search: selectedAdvertisement.value?.article ?? '',
       page: page,
       page_size: 10,
-      brand: route.query['active-pre-search']?.toString() ?? '',
+      brand: selectedAdvertisement.value?.brand ?? '',
     });
   }
 
@@ -79,9 +81,6 @@
 
   const isMobile = ref(false);
   const isAuthOpen = ref(false);
-  const selectedAdvertisement = ref(false);
-
-  defineEmits(['advertisementItems']);
 
   const checkIsMobile = () => {
     isMobile.value = window.innerWidth < 640;
@@ -137,7 +136,8 @@
 
 <template>
   <div class="flex flex-row bg-white">
-    <div class="flex w-full flex-col items-center sm:max-w-[356px]">
+    <div
+      class="flex max-h-[100vh] w-full flex-col items-center sm:max-w-[356px]">
       <Header
         v-if="
           isMobile &&
@@ -179,21 +179,7 @@
           @page-selected="handlePageSelected"
           class="flex w-full" />
       </div>
-      <router-view
-        v-if="
-          !isMobile && !isAuthOpen && !isSidebarOpen && requestViewMode === null
-        " />
-      <router-view
-        v-if="!isMobile && requestViewMode && !isAuthOpen && !isSidebarOpen" />
-      <!--      <router-view v-if="!isMobile && requestViewMode === 'offers' || requestViewMode === 'history' || requestViewMode === 'selectBrand'"  />-->
-      <router-view
-        v-if="
-          isMobile &&
-          !isAuthOpen &&
-          !isFilterCardOpen &&
-          !isSidebarOpen &&
-          !requestViewMode
-        " />
+      <router-view v-if="!isAuthOpen" />
       <SelectBrand v-if="isMobile && requestViewMode === 'selectBrand'" />
       <Auth v-if="isAuthOpen" @submit-close-auth="isAuthOpen = false" />
       <CompanyForm
