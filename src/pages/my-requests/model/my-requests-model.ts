@@ -143,3 +143,8 @@ sample({
   }),
   target: bidMutation.start,
 });
+
+keepFresh(myRequestsQuery, {
+  automatically: true,
+  triggers: [bidMutation.finished.success],
+});
