@@ -17,12 +17,14 @@
   import { CompanyForm } from '@/widgets/company-form';
   import { $requestViewMode } from '@/pages/my-requests/model/my-requests-model';
   import { searchQuery } from '@/entities/offer';
+  import { $selectedAdvertisement } from '@/entities/advertisement';
 
   const route = useRoute();
   const router = useRouter();
 
   const showAddOfferModal = useUnit($showAddOfferModal);
   const requestViewMode = useUnit($requestViewMode);
+  const selectedAdvertisement = useUnit($selectedAdvertisement);
 
   const { start: search } = useUnit(searchQuery);
 
@@ -54,10 +56,10 @@
         vendor: vendorsArray,
         city_id: citiesArray,
       },
-      search: route.query.search?.toString() ?? '',
+      search: selectedAdvertisement.value?.article ?? '',
       page: page,
       page_size: 10,
-      brand: route.query['active-pre-search']?.toString() ?? '',
+      brand: selectedAdvertisement.value?.brand ?? '',
     });
   }
 
@@ -79,9 +81,6 @@
 
   const isMobile = ref(false);
   const isAuthOpen = ref(false);
-  const selectedAdvertisement = ref(false);
-
-  defineEmits(['advertisementItems']);
 
   const lgScreen = ref(false);
 
@@ -98,10 +97,9 @@
     window.addEventListener('resize', checkIsMobile);
   });
 
-  onMounted(() => {
+onMounted(() => {
     if (route.query.search) {
       router.push({
-        // name: 'advertisements',
         query: {
           search: route.query.search,
           'active-pre-search': route.query['active-pre-search'],
@@ -144,7 +142,8 @@
 
 <template>
   <div class="flex flex-row bg-white">
-    <div class="flex w-full flex-col items-center sm:max-w-[356px]">
+    <div
+      class="flex max-h-[100vh] w-full flex-col items-center sm:max-w-[356px]">
       <Header
         v-if="
           isMobile &&
@@ -163,7 +162,7 @@
         @open-sidebar="isSidebarOpen = true"
         @create-clicked="isCreateAdvertisementOpen = true" />
       <div
-        v-if="isMobile   && isProductCardOpen"
+        v-if="isMobile && !isProductCardOpen && !isFilterCardOpen"
         class="w-full">
         <ProductCard
           v-if="productItem"
@@ -179,29 +178,15 @@
           v-if="
             requestViewMode === 'offers' &&
             !isFilterCardOpen &&
-            !isProductCardOpen &&
-            !isSidebarOpen
+            !isProductCardOpen
           "
           @offer-clicked="handleItemClick"
           @open-filter="isFilterCardOpen = true"
           @page-selected="handlePageSelected"
           class="flex w-full" />
       </div>
-      <router-view
-        v-if="
-          !isMobile && !isAuthOpen && !isSidebarOpen && requestViewMode === null
-        " />
-      <router-view
-        v-if="!isMobile && requestViewMode && !isAuthOpen && !isSidebarOpen" />
-      <router-view
-        v-if="
-          isMobile &&
-          !isAuthOpen &&
-          !isFilterCardOpen &&
-          !isSidebarOpen &&
-          !requestViewMode
-        " />
-      <SelectBrand v-if="isMobile &&  !isSidebarOpen &&  requestViewMode === 'selectBrand'" />
+      <router-view v-if="!isAuthOpen" />
+      <SelectBrand v-if="isMobile && requestViewMode === 'selectBrand'" />
       <Auth v-if="isAuthOpen" @submit-close-auth="isAuthOpen = false" />
       <CompanyForm
         v-if="isCompanyOpen"

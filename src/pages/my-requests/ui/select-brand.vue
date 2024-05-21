@@ -1,20 +1,18 @@
 <script setup lang="ts">
-import {
-  brandSelected,
-  requestViewModeChanged,
-} from '@/pages/my-requests/model/my-requests-model';
-import { useUnit } from 'effector-vue/composition';
+  import { useUnit } from 'effector-vue/composition';
+  import { getBrands, mounted } from '../model/brand-model';
   import { onMounted } from 'vue';
-
-  import {getBrands, mounted} from "@/pages/my-requests/model/brand-model";
-  import type {Brand} from "@/shared/api/generated/Api";
+  import {
+    brandSelected,
+    requestViewModeChanged,
+  } from '@/pages/my-requests/model/my-requests-model';
 
   const handleMount = useUnit(mounted);
   const { data: brands } = useUnit(getBrands);
   const changeViewMode = useUnit(requestViewModeChanged);
   const handleBrandSelected = useUnit(brandSelected);
 
-  const handleClick = (brand: Brand) => {
+  const handleClick = (brand: any) => {
     handleBrandSelected(brand);
   };
 
