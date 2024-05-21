@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, nextTick, ref, watch } from 'vue';
+  import { computed, nextTick, onMounted, ref, watch } from 'vue';
   import { getButtonList } from '../lib/button-list';
   import { Button } from '@/shared/ui/button';
   import BurgerMenu from './burger-menu.vue';
@@ -8,6 +8,7 @@
   import { useRoute, useRouter } from 'vue-router';
   import { useUnit } from 'effector-vue/composition';
   import { searchTermInputed } from '@/widgets/header/model/header-modal';
+  import { myRequestsQuery } from '@/entities/requests';
 
   const route = useRoute();
   const router = useRouter();
@@ -22,6 +23,10 @@
   const buttonList = getButtonList(visibleSearch);
   const formFocused = ref(false);
   const scrollableContainer = ref();
+
+  const { start: handleMount, data: requests } = useUnit(myRequestsQuery);
+
+  onMounted(handleMount);
 
   function handleSubmitSearch(event: Event) {
     event.preventDefault();
@@ -59,9 +64,16 @@
   });
 
   const activeButton = computed(() => {
-    return buttonList.value.find((button) =>
-      route.path.startsWith(button.link),
-    );
+    const currentButton = buttonList.value.find((button) => {
+      const parts = route.path.split('/');
+      return parts[1] === button.link.split('/')[1];
+    });
+
+    if (currentButton) {
+      currentButton.active = true;
+    }
+
+    return currentButton;
   });
 
   const scrollToButton = (index: number) => {
@@ -91,6 +103,14 @@
       });
     }
   };
+
+  const requestsCount = computed(() => {
+    if (requests.value) {
+      return requests.value.length;
+    } else {
+      return 0;
+    }
+  });
 </script>
 
 <template>
@@ -173,6 +193,9 @@
             class="max-h-[28px] rounded-lg"
             size="sm">
             {{ button.label }}
+            <template v-if="button.link === '/'">
+              {{ `(${requestsCount})` }}
+            </template>
           </Button>
         </RouterLink>
       </div>
