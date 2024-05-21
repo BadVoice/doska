@@ -106,4 +106,6 @@
       class="custom-scrollbar h-full overflow-auto"
       v-if="route.path === '/search-history'" />
   </ScrollArea>
+  <div class="h-[100vh] w-full border-r bg-[#F9FAFB]">
+  </div>
 </template>
