@@ -123,12 +123,12 @@ export const bidMutation = createMutation({
   },
 });
 
-export const requestSelected = createEvent<BidWithName>();
+export const editRequestSelected = createEvent<BidWithName>();
 export const brandSelected = createEvent<Brand>();
 const $changedBid = createStore<BidWithName | null>(null);
 
 sample({
-  clock: requestSelected,
+  clock: editRequestSelected,
   target: $changedBid,
 });
 

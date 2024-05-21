@@ -15,12 +15,14 @@
   const selectedItem = useUnit($selectedAdvertisementId);
 
   const handleCardClick = (item: PreSearchResponse) => {
-    handleSelected(item);
+    if (!item) return;
+
+    handleSelected({ id: item.id, article: item.article, brand: item.brand });
   };
 </script>
 
 <template>
-  <div v-if="searchResult" class="w-full border broder-r">
+  <div v-if="searchResult" class="broder-r w-full border">
     <div class="mx-auto flex flex-col items-center justify-center gap-y-6 p-4">
       <ul class="flex w-full max-w-[324px] flex-col gap-y-4">
         <li

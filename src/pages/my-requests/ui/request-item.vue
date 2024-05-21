@@ -5,12 +5,14 @@
   import { PopoverClose } from 'radix-vue';
   import {
     deleteRequestClicked,
+    editRequestSelected,
     requestClicked,
     requestViewModeChanged,
   } from '@/pages/my-requests/model/my-requests-model';
   import { useUnit } from 'effector-vue/composition';
   import type { BidWithName } from '@/entities/requests';
   import { useRoute } from 'vue-router';
+  import { advertisementClicked } from '@/entities/advertisement';
 
   defineProps<{
     status: { color: string; text: string }[];
@@ -24,13 +26,24 @@
   }
 
   const handleRequestClicked = useUnit(requestClicked);
+  const handleEditRequest = useUnit(editRequestSelected);
+
   const changeViewMode = useUnit(requestViewModeChanged);
 
   const popoverOpened = ref(false);
+  const handleSelected = useUnit(advertisementClicked);
 
   const handleClick = (item: BidWithName) => {
+    if (!item) return null;
+
     handleRequestClicked(item);
     changeViewMode('offers');
+    handleSelected({
+      id: item.id,
+      article: item.article,
+      brand: item.brand?.toString() ?? '',
+    });
+
     // if (!item.brandName || item.brandName === 'Не указано') {
     //   requestClickedOnChange(item);
     //   changeViewMode('selectBrand');
@@ -40,7 +53,7 @@
     // }
   };
   const handleClickOnChange = (item: BidWithName) => {
-    handleRequestClicked(item);
+    handleEditRequest(item);
     changeViewMode('selectBrand');
   };
 </script>
