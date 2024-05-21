@@ -99,7 +99,7 @@
       <AdvertisementList
         v-if="preSearchData"
         :search-result="preSearchData?.data"
-        class="custom-scrollbar h-full overflow-auto" />
+        class="custom-scrollbar h-full overflow-auto bg-[#F9FAFB]" />
     </template>
 
     <SearchHistory
