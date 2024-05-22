@@ -110,7 +110,7 @@
 
     <ScrollArea
       v-if="data?.data.items"
-      class="flex max-h-[calc(100vh-125px)] flex-col gap-y-4 px-4 pt-4 max-sm:max-h-[calc(100vh-150px)] max-sm:pb-10">
+      class="flex max-h-[calc(100vh-125px)] flex-col gap-y-4 px-4 pt-4 max-sm:max-h-[calc(100vh-151px)] max-sm:pb-10">
       <OfferList
         :offers-items="data?.data.items as any"
         @offer-clicked="handleItemClick"
@@ -150,30 +150,4 @@
       </Pagination>
     </div>
   </div>
-  <!--    <div-->
-  <!--      v-else-->
-  <!--      class="custom-scrollbar h-[calc(100vh-73px)] overflow-auto bg-[#F9FAFB]"></div>-->
-  <!--  </div>-->
 </template>
-
-<style scoped>
-  .custom-scrollbar {
-    scrollbar-width: thin;
-    scrollbar-color: #d0d4db #f9fafb;
-    border-radius: 3px;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
-    background-color: #f9fafb;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    background-color: #d0d4db;
-    border-radius: 3px;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background-color: #a7acb5;
-  }
-</style>
