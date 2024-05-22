@@ -86,13 +86,14 @@
           </p>
         </div>
       </div>
-      <ScrollArea v-else-if="!pending" class="h-full">
-        <div class="m-4 flex flex-col gap-y-4">
-          <RequestItem
-            v-for="item of requests"
-            :item="item as Bid"
-            :status="status" />
-        </div>
+      <ScrollArea v-else-if="!pending" class="h-full max-h-[calc(100vh-151px)]">
+        <RecycleScroller
+          class="scroller mx-4 mt-4 flex h-full flex-col"
+          :items="requests"
+          :item-size="130"
+          v-slot="{ item }">
+          <RequestItem :item="item as Bid" :status="status" />
+        </RecycleScroller>
       </ScrollArea>
 
       <div
