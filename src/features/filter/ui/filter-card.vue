@@ -212,30 +212,32 @@
               class="inline-flex w-full justify-between rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium shadow-sm hover:bg-gray-50">
               <p class="text-sm font-normal text-gray-400">Населенный пункт</p>
             </ListboxButton>
-
             <transition
               leave-active-class="transition ease-in duration-100"
               leave-from-class="opacity-100"
               leave-to-class="opacity-0">
               <ListboxOptions
                 class="absolute z-10 mt-1 max-h-36 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                <ListboxOption
-                  v-for="item in data?.data?.filters?.cities"
-                  :key="item.id"
-                  :value="item"
-                  as="template">
-                  <li
-                    class="mx-1 my-1 cursor-pointer select-none rounded bg-blue-200 py-2 pl-3 pr-9 text-gray-900 hover:bg-blue-100"
-                    :class="{
-                      'bg-gray-50 text-black ': selectedCities.some(
-                        (city) => city.id === item.id,
-                      ),
-                    }">
-                    <span class="block truncate font-normal">
-                      {{ item.title }}</span
-                    >
-                  </li>
-                </ListboxOption>
+                <RecycleScroller
+                  class="scroller flex h-full flex-col"
+                  :items="data?.data?.filters?.cities"
+                  :item-size="46"
+                  key-field="id"
+                  v-slot="{ item }">
+                  <ListboxOption :key="item.id" :value="item" as="template">
+                    <li
+                      class="mx-1 my-1 cursor-pointer select-none rounded bg-blue-200 py-2 pl-3 pr-9 text-gray-900 hover:bg-blue-100"
+                      :class="{
+                        'bg-gray-50 text-black ': selectedCities.some(
+                          (city) => city.id === item.id,
+                        ),
+                      }">
+                      <span class="block truncate font-normal">
+                        {{ item.title }}</span
+                      >
+                    </li>
+                  </ListboxOption>
+                </RecycleScroller>
               </ListboxOptions>
             </transition>
           </Listbox>
@@ -273,19 +275,23 @@
               leave-to-class="opacity-0">
               <ListboxOptions
                 class="absolute z-10 mt-1 max-h-36 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                <ListboxOption
-                  v-for="item in data?.data?.filters?.vendors"
-                  :key="item"
-                  :value="item"
-                  as="template">
-                  <li
-                    class="mx-1 my-1 cursor-pointer select-none rounded bg-blue-200 py-2 pl-3 pr-9 text-gray-900 hover:bg-blue-100"
-                    :class="{
-                      'bg-gray-50 text-black ': selectedVendors.includes(item),
-                    }">
-                    <span class="block truncate font-normal">{{ item }}</span>
-                  </li>
-                </ListboxOption>
+                <RecycleScroller
+                  class="scroller flex h-full flex-col"
+                  :items="data?.data?.filters?.vendors"
+                  :item-size="46"
+                  key-field="id"
+                  v-slot="{ item }">
+                  <ListboxOption :key="item" :value="item" as="template">
+                    <li
+                      class="mx-1 my-1 cursor-pointer select-none rounded bg-blue-200 py-2 pl-3 pr-9 text-gray-900 hover:bg-blue-100"
+                      :class="{
+                        'bg-gray-50 text-black ':
+                          selectedVendors.includes(item),
+                      }">
+                      <span class="block truncate font-normal">{{ item }}</span>
+                    </li>
+                  </ListboxOption>
+                </RecycleScroller>
               </ListboxOptions>
             </transition>
           </Listbox>
@@ -303,20 +309,23 @@
               leave-from-class="opacity-100"
               leave-to-class="opacity-0">
               <ListboxOptions
-                class="absolute z-10 mt-1 max-h-36 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                <ListboxOption
-                  v-for="item in data?.data?.filters?.brands"
-                  :key="item"
-                  :value="item"
-                  as="template">
-                  <li
-                    class="mx-1 my-1 cursor-pointer select-none rounded bg-blue-200 py-2 pl-3 pr-9 text-gray-900 hover:bg-blue-100"
-                    :class="{
-                      'bg-gray-50 text-black ': selectedBrands.includes(item),
-                    }">
-                    <span class="block truncate font-normal">{{ item }}</span>
-                  </li>
-                </ListboxOption>
+                class="absolute top-0 z-10 mt-1 max-h-36 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                <RecycleScroller
+                  class="scroller flex h-full flex-col"
+                  :items="data?.data?.filters?.brands"
+                  :item-size="46"
+                  key-field="id"
+                  v-slot="{ item }">
+                  <ListboxOption :key="item" :value="item" as="template">
+                    <li
+                      class="mx-1 my-1 cursor-pointer select-none rounded bg-blue-200 py-2 pl-3 pr-9 text-gray-900 hover:bg-blue-100"
+                      :class="{
+                        'bg-gray-50 text-black ': selectedBrands.includes(item),
+                      }">
+                      <span class="block truncate font-normal">{{ item }}</span>
+                    </li>
+                  </ListboxOption>
+                </RecycleScroller>
               </ListboxOptions>
             </transition>
           </Listbox>

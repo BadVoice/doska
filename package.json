@@ -35,6 +35,7 @@
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
     "vue-the-mask": "^0.11.1",
+    "vue-virtual-scroller": "2.0.0-beta.8",
     "zod": "^3.22.4"
   },
   "devDependencies": {
@@ -42,6 +43,7 @@
     "@types/node": "^20.12.7",
     "@types/nprogress": "^0.2.3",
     "@types/vue-the-mask": "^0.11.5",
+    "@types/vue-virtual-scroller": "npm:@earltp/vue-virtual-scroller@^1.0.1",
     "@vitejs/plugin-vue": "^5.0.4",
     "@vue/tsconfig": "^0.5.1",
     "autoprefixer": "^10.4.19",

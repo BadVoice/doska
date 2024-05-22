@@ -88,7 +88,7 @@
       <h3 v-else class="text-[18px] font-semibold">История поиска</h3>
     </div>
   </div>
-  <ScrollArea class="max-h-[calc(100vh-177px)]">
+  <ScrollArea class="max-h-[calc(100vh-177px)] w-full">
     <template
       v-if="
         (route.path === '/advertisements' &&
@@ -99,13 +99,14 @@
       <AdvertisementList
         v-if="preSearchData"
         :search-result="preSearchData?.data"
-        class="custom-scrollbar h-full overflow-auto bg-[#F9FAFB]" />
+        class="custom-scrollbar h-full w-full overflow-auto bg-[#F9FAFB]" />
     </template>
 
     <SearchHistory
       class="custom-scrollbar h-full overflow-auto"
       v-if="route.path === '/search-history'" />
   </ScrollArea>
-  <div v-if="!preSearchData" class="h-[100vh] w-full border-r bg-[#F9FAFB]">
-  </div>
+  <div
+    v-if="!preSearchData"
+    class="h-[100vh] w-full border-r bg-[#F9FAFB]"></div>
 </template>
