@@ -74,7 +74,7 @@
 </script>
 
 <template>
-  <div class="flex flex-col w-full" v-if="!!data?.data?.items">
+  <div class="flex w-full flex-col" v-if="!!data?.data?.items">
     <div class="w-full min-w-[350px]">
       <div
         class="flex items-center border-b border-r border-[#D0D4DB] bg-white p-4 pr-5">
@@ -115,7 +115,8 @@
         @offer-clicked="handleItemClick" />
     </div>
 
-    <div class="flex bg-[#F9FAFB] py-4">
+    <div
+      class="flex w-fit bg-[#F9FAFB] py-4 max-sm:fixed max-sm:bottom-7 max-sm:left-1/2 max-sm:right-1/2 max-sm:h-fit max-sm:-translate-x-1/2 max-sm:p-0">
       <Pagination
         v-if="!!data?.data.pages"
         v-slot="{ page }"
