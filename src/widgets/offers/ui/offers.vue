@@ -15,6 +15,7 @@
   } from '@/shared/ui/pagination';
   import { useUnit } from 'effector-vue/composition';
   import { resetRequestViewMode } from '@/pages/my-requests/model/my-requests-model';
+  import { ScrollArea } from '@/shared/ui/scroll-area';
 
   defineProps<{ class: string }>();
 
@@ -107,16 +108,16 @@
       </div>
     </div>
 
-    <div
+    <ScrollArea
       v-if="data?.data.items"
-      class="custom-scrollbar flex h-[100vh] flex-col items-center gap-4 overflow-auto bg-[#F9FAFB] p-4 sm:max-h-[calc(100vh-150px)]">
+      class="flex max-h-[calc(100vh-125px)] flex-col gap-y-4 px-4 pt-4 max-sm:max-h-[calc(100vh-150px)] max-sm:pb-10">
       <OfferList
         :offers-items="data?.data.items as any"
-        @offer-clicked="handleItemClick" />
-    </div>
+        @offer-clicked="handleItemClick"
+    /></ScrollArea>
 
     <div
-      class="flex w-fit bg-[#F9FAFB] py-4 max-sm:fixed max-sm:bottom-7 max-sm:left-1/2 max-sm:right-1/2 max-sm:h-fit max-sm:-translate-x-1/2 max-sm:p-0">
+      class="mx-auto flex w-fit bg-[#F9FAFB] py-2 max-sm:fixed max-sm:bottom-7 max-sm:left-1/2 max-sm:right-1/2 max-sm:h-fit max-sm:-translate-x-1/2 max-sm:p-0">
       <Pagination
         v-if="!!data?.data.pages"
         v-slot="{ page }"
