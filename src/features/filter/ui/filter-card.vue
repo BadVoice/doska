@@ -20,15 +20,17 @@
     isFilterCardOpen: boolean;
   }>();
 
-  const selectedVendors = ref([] as string[]);
-  const selectedBrands = ref(['none'] as string[]);
+  const selectedVendors = ref<string[]>([]);
+  const selectedBrands = ref<string[]>([]);
 
   interface City {
     id: number;
     title: string;
   }
 
-  const selectedCities = ref([] as City[]);
+  const selectedCities = ref<City[]>([]);
+  const allSelected = ref(false);
+
   const { start: startSearch, data } = useUnit(searchQuery);
 
   const { form } = useFilter(data?.value?.data.filters as any);
@@ -131,6 +133,23 @@
     showClearButton.value = false;
     emit('close-filter-card', false);
   }
+
+  function handleSelectAll() {
+    if (data?.value?.data?.filters && !allSelected.value) {
+      selectedVendors.value = (data.value.data.filters.vendors ??
+        []) as string[];
+      selectedCities.value = (data.value.data.filters.cities ?? []) as City[];
+      selectedBrands.value = (data.value.data.filters.brands ?? []) as string[];
+
+      allSelected.value = true;
+    } else {
+      selectedVendors.value = [];
+      selectedCities.value = [];
+      selectedBrands.value = [];
+
+      allSelected.value = false;
+    }
+  }
 </script>
 
 <template>
@@ -138,9 +157,8 @@
     v-if="isFilterCardOpen"
     class="flex h-screen w-full flex-col justify-between bg-white lg:max-w-[355px]">
     <div
-      @click="closeFilter"
       class="flex cursor-pointer items-center justify-between gap-x-2 border-b border-l border-r border-[#D0D4DB] px-2 py-4">
-      <div class="group flex items-center gap-x-2">
+      <div class="group flex items-center gap-x-2" @click="closeFilter">
         <Button variant="ghost" size="icon">
           <X class="h-7 w-7 text-primary group-hover:text-primary/70" />
         </Button>
@@ -149,15 +167,28 @@
           Закрыть
         </p>
       </div>
-      <div
+      <Button variant="ghost" @click="handleSelectAll">
+        <p
+          class="text-center text-[17px] font-normal text-primary group-hover:text-primary/70">
+          {{ allSelected ? 'Отменить всё' : 'Выбрать всё' }}
+        </p>
+      </Button>
+
+      <Button
+        variant="ghost"
         v-if="showClearButton"
-        @click="form.resetForm()"
+        @click="
+          () => {
+            form.resetForm();
+            closeFilter();
+          }
+        "
         class="group flex cursor-pointer items-center gap-x-2 px-2 py-2">
         <p
-          class="text-center text-[17px] text-primary group-hover:text-primary/70">
+          class="text-center text-[17px] font-normal text-primary group-hover:text-primary/70">
           Очистить
         </p>
-      </div>
+      </Button>
     </div>
 
     <form
