@@ -191,7 +191,7 @@ onMounted(() => {
           !isSidebarOpen &&
           !requestViewMode &&
           !isCreateAdvertisementOpen)" />
-      <router-view v-if="!isAuthOpen && !isMobile" />
+      <router-view v-if="!isAuthOpen && !isMobile && !isSidebarOpen" />
       <SelectBrand v-if="isMobile &&
             !isSidebarOpen && requestViewMode === 'selectBrand'" />
       <Auth v-if="isAuthOpen" @submit-close-auth="isAuthOpen = false" />
