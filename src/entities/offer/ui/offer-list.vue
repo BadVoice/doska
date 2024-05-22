@@ -23,7 +23,7 @@
   <div
     :class="
       cn(
-        'mb-4 flex w-full cursor-default flex-col items-start justify-between rounded-lg border border-[#D0D4DB] bg-white p-4 duration-200 hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10',
+        'mt-4 flex w-full cursor-default flex-col items-start justify-between rounded-lg border border-[#D0D4DB] bg-white p-4 duration-200 hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10',
         route.query['active-card'] === item.itemId &&
           'border-[#0017FC] bg-[#1778EA] bg-opacity-10',
       )

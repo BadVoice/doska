@@ -15,7 +15,10 @@
   import { $showAddOfferModal } from '@/widgets/offers/model/offers-model';
   import { RequestHistory, SelectBrand } from '@/pages/my-requests';
   import { CompanyForm } from '@/widgets/company-form';
-  import { $requestViewMode } from '@/pages/my-requests/model/my-requests-model';
+  import {
+    $requestViewMode,
+    requestViewModeChanged,
+  } from '@/pages/my-requests/model/my-requests-model';
   import { searchQuery } from '@/entities/offer';
   import { $selectedAdvertisement } from '@/entities/advertisement';
 
@@ -25,6 +28,8 @@
   const showAddOfferModal = useUnit($showAddOfferModal);
   const requestViewMode = useUnit($requestViewMode);
   const selectedAdvertisement = useUnit($selectedAdvertisement);
+
+  const changeRequestViewMode = useUnit(requestViewModeChanged);
 
   const { start: search } = useUnit(searchQuery);
 
@@ -91,7 +96,7 @@
     window.addEventListener('resize', checkIsMobile);
   });
 
-onMounted(() => {
+  onMounted(() => {
     if (route.query.search) {
       router.push({
         query: {
@@ -131,6 +136,10 @@ onMounted(() => {
       router.push('/');
       isSidebarOpen.value = false;
     }
+  }
+
+  function handleCloseOffers() {
+    changeRequestViewMode(null);
   }
 </script>
 
@@ -172,6 +181,7 @@ onMounted(() => {
         class="w-full flex-grow bg-[#F9FAFB]"
         v-if="isMobile && !isProductCardOpen && !isFilterCardOpen">
         <Offers
+          @close-offers="handleCloseOffers"
           v-if="
             requestViewMode === 'offers' &&
             !isFilterCardOpen &&
@@ -183,17 +193,23 @@ onMounted(() => {
           @page-selected="handlePageSelected"
           class="flex w-full" />
       </div>
-      <router-view v-if="!isAuthOpen  && !isSidebarOpen && (
+      <router-view
+        v-if="
+          !isAuthOpen &&
+          !isSidebarOpen &&
           isMobile &&
           !isProductCardOpen &&
           !isFilterCardOpen &&
           !isAuthOpen &&
           !isSidebarOpen &&
           !requestViewMode &&
-          !isCreateAdvertisementOpen)" />
+          !isCreateAdvertisementOpen
+        " />
       <router-view v-if="!isAuthOpen && !isMobile && !isSidebarOpen" />
-      <SelectBrand v-if="isMobile &&
-            !isSidebarOpen && requestViewMode === 'selectBrand'" />
+      <SelectBrand
+        v-if="
+          isMobile && !isSidebarOpen && requestViewMode === 'selectBrand'
+        " />
       <Auth v-if="isAuthOpen" @submit-close-auth="isAuthOpen = false" />
       <CompanyForm
         v-if="isCompanyOpen"
@@ -207,32 +223,36 @@ onMounted(() => {
         @close="isCreateAdvertisementOpen = false" />
     </div>
 
-    <div v-if="!isMobile" class="flex-grow bg-[#F9FAFB] w-full">
+    <div v-if="!isMobile" class="w-full flex-grow bg-[#F9FAFB]">
       <RequestHistory v-if="requestViewMode === 'history'" />
       <SelectBrand v-else-if="requestViewMode === 'selectBrand'" />
 
-    <div class="w-full min-w-full flex lg:hidden">
-      <Offers
-          v-if="requestViewMode === 'offers' && !isFilterCardOpen && !isProductCardOpen"
+      <div class="flex w-full min-w-full lg:hidden">
+        <Offers
+          @close-offers="handleCloseOffers"
+          v-if="
+            requestViewMode === 'offers' &&
+            !isFilterCardOpen &&
+            !isProductCardOpen
+          "
           @offer-clicked="handleItemClick"
           @open-filter="isFilterCardOpen = true"
           @page-selected="handlePageSelected"
           class="hidden w-full sm:flex lg:hidden" />
-    </div>
+      </div>
 
-      <div class="w-full min-w-full hidden lg:flex">
+      <div class="hidden w-full min-w-full lg:flex">
         <Offers
-            v-if="requestViewMode === 'offers' "
-            @offer-clicked="handleItemClick"
-            @open-filter="isFilterCardOpen = true"
-            @page-selected="handlePageSelected"
-            class="hidden w-full sm:flex lg:hidden" />
+          @close-offers="handleCloseOffers"
+          v-if="requestViewMode === 'offers'"
+          @offer-clicked="handleItemClick"
+          @open-filter="isFilterCardOpen = true"
+          @page-selected="handlePageSelected"
+          class="hidden w-full sm:flex lg:hidden" />
       </div>
 
       <ProductCard
-        v-if="
-          isProductCardOpen && productItem && !isFilterCardOpen
-        "
+        v-if="isProductCardOpen && productItem && !isFilterCardOpen"
         :product-item="productItem"
         :is-product-card-open="isProductCardOpen"
         @close-product-card="handleCloseProductCard"
@@ -247,11 +267,7 @@ onMounted(() => {
           !isFilterCardOpen
         " />
       <Filter
-        v-if="
-          isFilterCardOpen &&
-          !isMobile &&
-          !isProductCardOpen
-        "
+        v-if="isFilterCardOpen && !isMobile && !isProductCardOpen"
         :is-filter-card-open="isFilterCardOpen"
         @close-filter-card="isFilterCardOpen = false"
         class="hidden w-full sm:inline-block xl:hidden" />
@@ -260,11 +276,7 @@ onMounted(() => {
       v-if="!isFilterCardOpen && !isProductCardOpen && !showAddOfferModal"
       class="hidden h-screen w-full min-w-[360px] flex-col justify-between border-l border-[#D0D4DB] bg-[#F9FAFB] sm:w-[360px] lg:flex"></div>
     <ProductCard
-      v-if="
-        productItem &&
-        !isMobile &&
-        !showAddOfferModal
-      "
+      v-if="productItem && !isMobile && !showAddOfferModal"
       :product-item="productItem"
       :is-product-card-open="isProductCardOpen"
       @close-product-card="handleCloseProductCard"

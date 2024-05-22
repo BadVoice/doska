@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { Button } from '@/shared/ui/button';
 
-  import { onMounted, onUnmounted, ref } from 'vue';
+  import { onMounted, ref } from 'vue';
   import type { Item } from '@/shared/api/generated/Api';
   import { OfferList, searchQuery } from '@/entities/offer';
 
@@ -14,15 +14,12 @@
     PaginationPrev,
   } from '@/shared/ui/pagination';
   import { useUnit } from 'effector-vue/composition';
-  import { resetRequestViewMode } from '@/pages/my-requests/model/my-requests-model';
   import { ScrollArea } from '@/shared/ui/scroll-area';
 
   defineProps<{ class: string }>();
 
   const isMobile = ref(false);
   const page = ref(1);
-
-  const requestViewMode = useUnit(resetRequestViewMode);
 
   function getAnnouncementText(count: number) {
     if (count === 0 || !count) {
@@ -42,7 +39,12 @@
     }
   }
 
-  const emit = defineEmits(['offerClicked', 'open-filter', 'page-selected']);
+  const emit = defineEmits([
+    'offerClicked',
+    'open-filter',
+    'page-selected',
+    'closeOffers',
+  ]);
 
   const { data } = useUnit(searchQuery);
 
@@ -57,13 +59,6 @@
     emit('open-filter');
   };
 
-  onMounted(() => {
-    document.body.style.overflow = 'hidden';
-  });
-  onUnmounted(() => {
-    document.body.style.overflow = 'auto';
-  });
-
   const checkIsMobile = () => {
     isMobile.value = window.innerWidth < 440;
   };
@@ -75,13 +70,13 @@
 </script>
 
 <template>
-  <div class="flex w-full flex-col" v-if="!!data?.data?.items">
+  <div class="flex w-full flex-col sm:max-h-[100vh]" v-if="!!data?.data?.items">
     <div class="w-full min-w-[350px]">
       <div
         class="flex items-center border-b border-r border-[#D0D4DB] bg-white p-4 pr-5">
         <Button
           class="-ml-2 sm:hidden"
-          @click="requestViewMode"
+          @click="$emit('closeOffers')"
           size="icon"
           variant="ghost">
           <img
@@ -110,44 +105,42 @@
 
     <ScrollArea
       v-if="data?.data.items"
-      class="flex max-h-[calc(100vh-125px)] flex-col gap-y-4 px-4 pt-4 max-sm:max-h-[calc(100vh-151px)] max-sm:pb-10">
+      class="flex max-h-[calc(100vh-72px)] flex-col gap-y-4 px-4 max-sm:max-h-[calc(100vh-201px)]">
       <OfferList
         :offers-items="data?.data.items as any"
-        @offer-clicked="handleItemClick"
-    /></ScrollArea>
+        @offer-clicked="handleItemClick" />
+      <div class="mx-auto flex w-fit bg-[#F9FAFB] py-2">
+        <Pagination
+          v-if="!!data?.data.pages"
+          v-slot="{ page }"
+          :total="data?.data.items_count"
+          :sibling-count="1"
+          :show-edges="!isMobile"
+          @update:page="(value) => $emit('page-selected', value)"
+          v-model:page="page"
+          class="mx-auto gap-1 sm:-translate-x-1 sm:gap-2">
+          <PaginationList v-slot="{ items }" class="flex items-center gap-1">
+            <PaginationPrev v-if="data?.data.has_prev" />
 
-    <div
-      class="mx-auto flex w-fit bg-[#F9FAFB] py-2 max-sm:fixed max-sm:bottom-7 max-sm:left-1/2 max-sm:right-1/2 max-sm:h-fit max-sm:-translate-x-1/2 max-sm:p-0">
-      <Pagination
-        v-if="!!data?.data.pages"
-        v-slot="{ page }"
-        :total="data?.data.items_count"
-        :sibling-count="1"
-        :show-edges="!isMobile"
-        @update:page="(value) => $emit('page-selected', value)"
-        v-model:page="page"
-        class="mx-auto gap-1 sm:-translate-x-1 sm:gap-2">
-        <PaginationList v-slot="{ items }" class="flex items-center gap-1">
-          <PaginationPrev v-if="data?.data.has_prev" />
+            <template v-for="(item, index) in items">
+              <PaginationListItem
+                v-if="item.type === 'page'"
+                :key="index"
+                :value="item.value"
+                as-child>
+                <Button
+                  class="h-10 w-10 p-0"
+                  :variant="item.value === page ? 'default' : 'outline'">
+                  {{ item.value }}
+                </Button>
+              </PaginationListItem>
+              <PaginationEllipsis v-else :key="item.type" :index="index" />
+            </template>
 
-          <template v-for="(item, index) in items">
-            <PaginationListItem
-              v-if="item.type === 'page'"
-              :key="index"
-              :value="item.value"
-              as-child>
-              <Button
-                class="h-10 w-10 p-0"
-                :variant="item.value === page ? 'default' : 'outline'">
-                {{ item.value }}
-              </Button>
-            </PaginationListItem>
-            <PaginationEllipsis v-else :key="item.type" :index="index" />
-          </template>
-
-          <PaginationNext v-if="data?.data.has_next" />
-        </PaginationList>
-      </Pagination>
-    </div>
+            <PaginationNext v-if="data?.data.has_next" />
+          </PaginationList>
+        </Pagination>
+      </div>
+    </ScrollArea>
   </div>
 </template>
