@@ -1,6 +1,5 @@
 <script setup lang="ts">
   import {
-    Button,
     FormControl,
     FormField,
     FormItem,
@@ -100,12 +99,6 @@
           </FormItem>
         </FormField>
       </form>
-    </div>
-    <div
-      class="inset-x-0 bottom-0 flex w-full flex-col gap-y-2 border-t border-[#CCD0D9] bg-white p-4">
-      <Button @click="onSubmit" class="w-full text-[17px] font-semibold"
-        >Зарегистрировать</Button
-      >
     </div>
   </div>
 </template>

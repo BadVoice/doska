@@ -73,20 +73,6 @@ sample({
 
 sample({
   clock: authFormSubmitted,
-  source: $inputMode,
-  fn: (mode, data: IAuthFormValues) => {
-    if (mode === 'email') {
-      return {
-        ...data,
-        value: data.value,
-      };
-    } else {
-      return {
-        ...data,
-        value: data.value,
-      };
-    }
-  },
   target: [$authFormValues, loginUser.start],
 });
 
