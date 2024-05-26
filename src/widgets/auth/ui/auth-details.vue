@@ -45,9 +45,12 @@
         return;
       }
 
-      form.setFieldValue('captchaToken', captchaToken.value);
+      const values = {
+        ...form.values,
+        captchaToken: captchaToken.value,
+      };
 
-      handleSubmit(form.values);
+      handleSubmit(values);
     }
   };
 

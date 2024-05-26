@@ -18,10 +18,10 @@ interface IAuthFormValues {
 }
 
 interface SendDetailsParams {
-  email: string;
-  phone: string;
+  email?: string;
+  phone?: string;
   password: string;
-  first_name?: string;
+  first_name: string;
   captchaToken?: string;
 }
 
@@ -38,12 +38,17 @@ export const $inputMode = createStore<TInputMode>('email');
 
 export const registerUser = createMutation({
   handler: async (data: SendDetailsParams) =>
-    $api.user.createUser({
-      email: data.email,
-      password: data.password,
-      first_name: data.first_name,
-      recaptcha: data.captchaToken,
-    }),
+    $api.user.createUser(
+      Object.assign(
+        {
+          password: data.password,
+          first_name: data.first_name,
+          recaptcha: data.captchaToken,
+        },
+        data.email && { email: data.email },
+        data.phone && { phone: data.phone },
+      ),
+    ),
 });
 
 export const loginUser = createMutation({
@@ -63,11 +68,14 @@ sample({
   },
   fn: (src, clk) =>
     ({
-      email: src.$authFormValues?.value,
-      password: src.$authFormValues?.password,
-      first_name: clk.name,
+      email:
+        src.$inputMode === 'email' ? src.$authFormValues?.value : undefined,
+      phone:
+        src.$inputMode === 'phone' ? src.$authFormValues?.value : undefined,
+      password: src.$authFormValues?.password ?? '',
+      first_name: clk.name ?? '',
       captchaToken: clk.captchaToken,
-    }) as SendDetailsParams,
+    }) as const,
   target: registerUser.start,
 });
 
