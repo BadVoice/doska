@@ -100,7 +100,6 @@
           <FormLabel>Телефон или почта</FormLabel>
           <FormControl>
             <Input
-              autofocus
               autocomplete="tel"
               v-if="inputMode === 'phone'"
               v-mask="'+7 (###) ###-##-##'"
@@ -110,7 +109,6 @@
               placeholder="Телефон или почта"
               v-bind="componentField" />
             <Input
-              autofocus
               v-else
               autocomplete="email"
               @update:model-value="(payload) => handleInput(payload.toString())"
@@ -128,7 +126,6 @@
           <FormLabel>Пароль</FormLabel>
           <FormControl>
             <Input
-              autofocus
               type="password"
               placeholder="Ваш пароль"
               v-bind="componentField" />
