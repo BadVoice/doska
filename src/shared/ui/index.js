@@ -6,3 +6,4 @@ export * from './label';
 export * from './pagination';
 export * from './select';
 export * from './popover';
+export * from './pin-input'
