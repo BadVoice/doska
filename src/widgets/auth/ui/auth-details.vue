@@ -47,9 +47,7 @@
 
       form.setFieldValue('captchaToken', captchaToken.value);
 
-      handleSubmit({
-        ...form.values,
-      });
+      handleSubmit(form.values);
     }
   };
 
