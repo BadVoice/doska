@@ -53,8 +53,12 @@
         return;
       }
 
-      form.setFieldValue('captchaToken', captchaToken.value);
-      authFormSubmitted(form.values);
+      const values = {
+        ...form.values,
+        captchaToken: captchaToken.value,
+      };
+
+      authFormSubmitted(values);
     }
   };
 
@@ -65,11 +69,6 @@
     }
 
     onSubmit();
-  };
-
-  const label = {
-    email: 'номер телефона',
-    phone: 'почту',
   };
 
   loginUser.finished.success.watch(({ result }) => {
