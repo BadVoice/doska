@@ -1,17 +1,18 @@
 <script setup lang="ts">
   import { Button } from '@/shared/ui';
-  import { AuthCode, AuthDetails, CompanyForm } from '@/widgets/auth';
+  import { AuthCode, AuthDetails, CompanyForm, VerificationCode } from '@/widgets/auth';
   import { useUnit } from 'effector-vue/composition';
   import {
     $formIndex,
     $formMode,
     formIndexExceded,
   } from '@/widgets/auth/lib/form-mode';
-  import { formPrevClicked } from '../model/auth-model';
+  import { $inputMode, formPrevClicked } from '../model/auth-model';
 
   const emit = defineEmits(['submitCloseAuth']);
   const formMode = useUnit($formMode);
   const prevForm = useUnit(formPrevClicked);
+  const inputMode = useUnit($inputMode);
   const formIndex = useUnit($formIndex);
 
   function backForm() {
@@ -45,6 +46,7 @@
     <AuthCode
       @on-login="emit('submitCloseAuth')"
       v-if="formMode === 'phoneOrEmail'" />
+    <VerificationCode v-else-if="inputMode === 'phone' && formMode === 'verification'" />
     <AuthDetails v-else-if="formMode === 'details'" />
     <CompanyForm v-else />
   </div>
