@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import {
+    Button,
     FormControl,
     FormField,
     FormItem,
@@ -28,6 +29,7 @@
       });
 
       emit('closeRegisterCompany')
+
     }
   };
 
@@ -100,7 +102,12 @@
         </FormField>
       </form>
     </div>
-  </div>
+    <div
+      class="mt-auto flex w-full items-center justify-center border-t border-[#D0D4DB] p-4">
+      <Button @click="onSubmit" class="w-full rounded-[9px] text-[16px]">
+        Зарегистрировать компанию
+      </Button>
+    </div>  </div>
 </template>
 
 <style scoped lang="postcss">
