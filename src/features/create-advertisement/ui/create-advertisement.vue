@@ -159,37 +159,39 @@
               <FormMessage />
             </FormItem>
           </FormField>
-          <Listbox v-model="category">
-            <p class="text-[14px] font-semibold text-[#101828]">Категория</p>
-            <ListboxButton
-              class="inline-flex w-full justify-between rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium hover:bg-gray-50">
-              <p
-                :class="
+
+          <div class="relative text-left inline-block">
+            <Listbox v-model="category">
+              <p class="text-[14px] font-semibold text-[#101828] pb-2">Категория</p>
+              <ListboxButton
+                class="inline-flex w-full justify-between rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium hover:bg-gray-50">
+                <p
+                  :class="
                   cn(
                     'text-[16px] font-normal tracking-wide text-[#858FA3]',
                     category && 'text-black',
                   )
                 ">
-                {{
-                  categories?.data.find((value) => value.id === category)
-                    ?.name ?? 'Категория'
-                }}
-              </p>
-              <ChevronDown color="#858FA3" class="h-5 w-5" />
-            </ListboxButton>
+                  {{
+                    categories?.data.find((value) => value.id === category)
+                      ?.name ?? 'Категория'
+                  }}
+                </p>
+                <ChevronDown color="#858FA3" class="h-5 w-5" />
+              </ListboxButton>
 
-            <transition
-              leave-active-class="transition ease-in duration-100"
-              leave-from-class="opacity-100"
-              leave-to-class="opacity-0">
-              <ListboxOptions
-                class="max-h-36 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                <ListboxOption
-                  v-if="categories?.data"
-                  v-for="item in categories?.data"
-                  :value="item.id">
-                  <li
-                    :class="
+              <transition
+                leave-active-class="transition ease-in duration-100"
+                leave-from-class="opacity-100"
+                leave-to-class="opacity-0">
+                <ListboxOptions
+                  class="w-full absolute z-10 overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                  <ListboxOption
+                    v-if="categories?.data"
+                    v-for="item in categories?.data"
+                    :value="item.id">
+                    <li
+                      :class="
                       cn(
                         'mx-1 my-1 cursor-pointer select-none rounded py-2 pl-3 pr-9 text-gray-900 hover:bg-opacity-90',
                         category === parseInt(item?.id ?? '0') &&
@@ -199,43 +201,45 @@
                     <span class="block truncate font-normal">
                       {{ item.name }}
                     </span>
-                  </li>
-                </ListboxOption>
-              </ListboxOptions>
-            </transition>
-          </Listbox>
+                    </li>
+                  </ListboxOption>
+                </ListboxOptions>
+              </transition>
+            </Listbox>
+          </div>
 
-          <Listbox v-model="brand">
-            <p class="text-[14px] font-semibold text-[#101828]">Бренд</p>
-            <ListboxButton
-              class="inline-flex w-full justify-between rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium hover:bg-gray-50">
-              <p
-                :class="
+       <div class="relative text-left inline-block">
+         <Listbox v-model="brand">
+           <p class="text-[14px] font-semibold text-[#101828] pb-2">Бренд</p>
+           <ListboxButton
+             class="inline-flex w-full justify-between rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium hover:bg-gray-50">
+             <p
+               :class="
                   cn(
                     'text-[16px] font-normal tracking-wide text-[#858FA3]',
                     brand && 'text-black',
                   )
                 ">
-                {{
-                  brands?.data.find((value) => value.id === brand)?.name ??
-                  'Бренд'
-                }}
-              </p>
-              <ChevronDown color="#858FA3" class="h-5 w-5" />
-            </ListboxButton>
+               {{
+                 brands?.data.find((value) => value.id === brand)?.name ??
+                 'Бренд'
+               }}
+             </p>
+             <ChevronDown color="#858FA3" class="h-5 w-5" />
+           </ListboxButton>
 
-            <transition
-              leave-active-class="transition ease-in duration-100"
-              leave-from-class="opacity-100"
-              leave-to-class="opacity-0">
-              <ListboxOptions
-                class="max-h-36 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                <ListboxOption
-                  v-if="brands?.data"
-                  v-for="item in brands?.data"
-                  :value="item.id">
-                  <li
-                    :class="
+           <transition
+             leave-active-class="transition ease-in duration-100"
+             leave-from-class="opacity-100"
+             leave-to-class="opacity-0">
+             <ListboxOptions
+               class=" absolute w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+               <ListboxOption
+                 v-if="brands?.data"
+                 v-for="item in brands?.data"
+                 :value="item.id">
+                 <li
+                   :class="
                       cn(
                         'mx-1 my-1 cursor-pointer select-none rounded py-2 pl-3 pr-9 text-gray-900 hover:bg-opacity-90',
                         brand === parseInt(item?.id ?? '0') &&
@@ -245,11 +249,13 @@
                     <span class="block truncate font-normal">
                       {{ item.name }}
                     </span>
-                  </li>
-                </ListboxOption>
-              </ListboxOptions>
-            </transition>
-          </Listbox>
+                 </li>
+               </ListboxOption>
+             </ListboxOptions>
+           </transition>
+         </Listbox>
+       </div>
+
         </form>
         <div
           class="mt-auto flex w-full items-center justify-center border-t border-[#D0D4DB] p-4">

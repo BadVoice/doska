@@ -27,7 +27,7 @@
         ...form.values,
       });
 
-      emit('closeRegisterCompany');
+      emit('closeRegisterCompany')
     }
   };
 
