@@ -88,9 +88,9 @@
       </p>
       <Button
         v-if="formMode === 'form'"
+        @click="handleClose"
         variant="ghost"
         size="icon"
-        @click="form.resetForm()"
         class="ml-auto">
         <X class="h-7 w-7 select-none" color="#0017FC" />
       </Button>
