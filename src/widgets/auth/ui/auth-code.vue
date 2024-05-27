@@ -67,8 +67,6 @@
     if (Object.keys(form.errors.value).length <= 0) {
       nextModal();
     }
-
-    onSubmit();
   };
 
   loginUser.finished.success.watch(({ result }) => {

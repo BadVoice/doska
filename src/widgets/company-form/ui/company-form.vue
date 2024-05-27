@@ -26,4 +26,13 @@
     class="min-h-[calc(100vh-56px)] w-full flex-grow border-r border-[#D0D4DB] bg-[#F9FAFB]">
     <CreateCompany @close-register-company="emit('submitCloseCompany')" />
   </div>
+  <!--    <div-->
+  <!--      class="mt-auto flex flex-col gap-y-2 w-full items-center justify-center border-t border-[#D0D4DB] p-4">-->
+  <!--      <Button @click="onSubmit" class="w-full rounded-[9px] text-[16px]">-->
+  <!--        Зарегистрировать-->
+  <!--      </Button>-->
+  <!--      <Button-->
+  <!--        @click="nextModal()"-->
+  <!--        class="bg-whhite w-full border border-[#0017FC] text-[17px] font-semibold text-[#0017FC] hover:bg-white">Пропустить</Button>-->
+  <!--    </div>-->
 </template>
