@@ -47,7 +47,8 @@
       @on-login="emit('submitCloseAuth')"
       v-if="formMode === 'phoneOrEmail'" />
     <VerificationCode v-else-if="inputMode === 'phone' && formMode === 'verification'" />
-    <AuthDetails v-else-if="formMode === 'details'" />
-    <CompanyForm v-else />
+    <CompanyForm v-else-if="formMode === 'company'" />
+    <AuthDetails v-else />
+
   </div>
 </template>

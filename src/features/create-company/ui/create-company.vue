@@ -16,6 +16,7 @@
   } from '@/features/create-company/model/company-model';
   import type { AxiosResponse } from 'axios';
   import { ref } from 'vue';
+  import { formSubmitted } from '@/widgets/auth/model/auth-model';
 
   const emit = defineEmits(['registerCompany', 'closeRegisterCompany']);
   const handleSubmit = useUnit(companyFormSubmitted);
@@ -55,6 +56,8 @@
       console.error(result);
     }
   });
+
+  const nextModal = useUnit(formSubmitted);
 </script>
 
 <template v-else>
@@ -103,11 +106,15 @@
       </form>
     </div>
     <div
-      class="mt-auto flex w-full items-center justify-center border-t border-[#D0D4DB] p-4">
+      class="mt-auto flex flex-col gap-y-2 w-full items-center justify-center border-t border-[#D0D4DB] p-4">
       <Button @click="onSubmit" class="w-full rounded-[9px] text-[16px]">
-        Зарегистрировать компанию
+        Зарегистрировать
       </Button>
-    </div>  </div>
+      <Button
+        @click="emit('closeRegisterCompany');"
+        class="bg-whhite w-full border border-[#0017FC] text-[17px] font-semibold text-[#0017FC] hover:bg-white">Пропустить</Button>
+    </div>
+  </div>
 </template>
 
 <style scoped lang="postcss">

@@ -213,7 +213,9 @@
       <Auth v-if="isAuthOpen" @submit-close-auth="isAuthOpen = false" />
       <CompanyForm
         v-if="isCompanyOpen"
-        @submit-close-company="isCompanyOpen = false" />
+        @submit-close-company="isCompanyOpen = false"
+        @skipRegisterCompany="isCompanyOpen = false"
+      />
       <Sidebar
         v-if="isSidebarOpen && !isCompanyOpen"
         @close-sidebar="isSidebarOpen = false"
