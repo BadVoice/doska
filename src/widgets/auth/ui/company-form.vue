@@ -33,22 +33,7 @@
 </script>
 
 <template v-else>
-  <div class="flex h-full flex-col justify-between">
-    <div class="custom-scrollbar max-h-[calc(100vh-200px)] overflow-x-auto">
       <CreateCompany />
-    </div>
-    <div
-      class="inset-x-0 bottom-0 flex w-full flex-col gap-y-2 border-t border-[#CCD0D9] bg-white p-4">
-      <Button @click="onSubmit" class="w-full text-[17px] font-semibold"
-        >Зарегистрировать</Button
-      >
-      <Button
-        @click="nextModal()"
-        class="bg-whhite w-full border border-[#0017FC] text-[17px] font-semibold text-[#0017FC] hover:bg-white"
-        >Пропустить этот шаг</Button
-      >
-    </div>
-  </div>
 </template>
 
 <style scoped lang="postcss">
