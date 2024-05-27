@@ -57,7 +57,6 @@
         ...form.values,
         captchaToken: captchaToken.value,
       };
-
       authFormSubmitted(values);
     }
   };
@@ -66,6 +65,13 @@
     form.validate();
     if (Object.keys(form.errors.value).length <= 0) {
       nextModal();
+
+      const values = {
+        ...form.values,
+        captchaToken: captchaToken.value,
+      };
+
+      authFormSubmitted(values);
     }
   };
 
