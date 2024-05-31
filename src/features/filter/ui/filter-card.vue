@@ -3,8 +3,7 @@
   import { X } from 'lucide-vue-next';
   import { useFilter } from '../lib/schema';
   import FilterInput from './filter-input.vue';
-  import { computed, defineProps, ref, watch } from 'vue';
-  import { useRoute, useRouter } from 'vue-router';
+  import { defineProps, onMounted, ref, watch } from 'vue';
 
   import {
     Listbox,
@@ -14,9 +13,12 @@
   } from '@headlessui/vue';
   import { useUnit } from 'effector-vue/composition';
   import { searchQuery } from '@/entities/offer';
-  import { $selectedAdvertisement } from '@/entities/advertisement';
   import SelectAll from '@/features/filter/ui/select-all.vue';
   import { ScrollArea } from '@/shared/ui/scroll-area';
+  import {
+    $filterValues,
+    filterSubmitted,
+  } from '@/features/filter/model/filter-model';
 
   defineProps<{
     isFilterCardOpen: boolean;
@@ -25,61 +27,16 @@
   const selectedVendors = ref<string[]>([]);
   const selectedBrands = ref<string[]>([]);
 
-  interface City {
-    id: number;
-    title: string;
-  }
+  const handleFilterSubmit = useUnit(filterSubmitted);
 
-  const selectedCities = ref<City[]>([]);
+  const selectedCities = ref<number[]>([]);
 
-  const { start: startSearch, data } = useUnit(searchQuery);
+  const { data, pending } = useUnit(searchQuery);
+  const filterValues = useUnit($filterValues);
 
   const { form } = useFilter(data?.value?.data.filters as any);
 
-  const route = useRoute();
-  const router = useRouter();
-
-  const search = useUnit($selectedAdvertisement);
-
-  const emit = defineEmits([
-    'close-filter-card',
-    'filtered-items-came',
-    'filterChanged',
-  ]);
-
-  let filterParams = computed(() => {
-    const params = { ...route.query };
-
-    for (const key in form.values) {
-      if (form.values[key]) {
-        params[key] = form.values[key];
-      }
-    }
-
-    if (data?.value?.data.filters?.vendors) {
-      params.vendors = selectedVendors.value.join(',');
-    }
-
-    if (data?.value?.data.filters?.brands) {
-      params.brands = selectedBrands.value.join(',');
-    }
-
-    if (data?.value?.data.filters?.cities) {
-      const cityIds = selectedCities.value.map((city) => city.id as number);
-      params.cities = cityIds.join(',');
-    }
-
-    return params;
-  });
-
-  const updateUrl = (params: any) => {
-    const query = {
-      search: route.query.search,
-      'active-pre-search': route.query['active-pre-search'],
-      ...params,
-    };
-    router.replace({ query });
-  };
+  const emit = defineEmits(['close-filter-card']);
 
   const onSubmit = async (event: Event) => {
     event.preventDefault();
@@ -89,32 +46,9 @@
       const values = form.values;
       const vendors = selectedVendors.value;
       const brands = selectedBrands.value;
-      const cityIds = selectedCities.value.map((city) => city.id as number);
-      const filterParamsValue = filterParams.value;
-      updateUrl(filterParamsValue);
+      const cities = selectedCities.value;
 
-      startSearch({
-        search: search.value?.article ?? '',
-        page_size: 10,
-        brand: search.value?.brand ?? '',
-        filters: {
-          name: values.denomination,
-          article: values.article,
-          price: {
-            from: values.priceFrom,
-            to: values.priceTo,
-          },
-          delivery: {
-            from: values.countFrom,
-            to: values.countTo,
-          },
-        },
-        exclude: {
-          brand: brands,
-          vendor: vendors,
-          city_id: cityIds,
-        },
-      });
+      handleFilterSubmit({ ...values, vendors, brands, cities });
 
       closeFilter();
     }
@@ -134,6 +68,38 @@
     showClearButton.value = false;
     emit('close-filter-card', false);
   }
+
+  watch(pending, () => {
+    if (filterValues.value) {
+      form.setValues({
+        article: filterValues.value?.article,
+        denomination: filterValues.value?.denomination,
+        priceFrom: filterValues?.value?.priceFrom,
+        priceTo: filterValues?.value?.priceTo,
+        countFrom: filterValues?.value?.countFrom,
+        countTo: filterValues?.value?.countTo,
+      });
+      selectedCities.value = (filterValues.value?.cities as number[]) ?? [];
+      selectedVendors.value = (filterValues.value?.vendors as string[]) ?? [];
+      selectedBrands.value = (filterValues.value?.brands as string[]) ?? [];
+    }
+  });
+
+  onMounted(() => {
+    if (filterValues.value) {
+      form.setValues({
+        article: filterValues.value?.article,
+        denomination: filterValues.value?.denomination,
+        priceFrom: filterValues?.value?.priceFrom,
+        priceTo: filterValues?.value?.priceTo,
+        countFrom: filterValues?.value?.countFrom,
+        countTo: filterValues?.value?.countTo,
+      });
+      selectedCities.value = (filterValues.value?.cities as number[]) ?? [];
+      selectedVendors.value = (filterValues.value?.vendors as string[]) ?? [];
+      selectedBrands.value = (filterValues.value?.brands as string[]) ?? [];
+    }
+  });
 </script>
 
 <template>
@@ -154,6 +120,7 @@
 
       <Button
         variant="ghost"
+        type="button"
         v-if="showClearButton"
         @click="
           () => {
@@ -189,7 +156,7 @@
                   Населенный пункт
                 </p>
                 <SelectAll
-                  :list="data?.data?.filters?.cities"
+                  :list="data?.data?.filters?.cities?.map((item) => item.id)"
                   v-model="selectedCities" />
               </div>
 
@@ -211,12 +178,15 @@
                     :item-size="46"
                     key-field="id"
                     v-slot="{ item }">
-                    <ListboxOption :key="item.id" :value="item" as="template">
+                    <ListboxOption
+                      :key="item.id"
+                      :value="item.id"
+                      as="template">
                       <li
                         class="mx-1 my-1 cursor-pointer select-none rounded bg-blue-200 py-2 pl-3 pr-9 text-gray-900 hover:bg-blue-100"
                         :class="{
                           'bg-gray-50 text-black ': selectedCities.some(
-                            (city) => city.id === item.id,
+                            (city) => city === item.id,
                           ),
                         }">
                         <span class="block truncate font-normal">
