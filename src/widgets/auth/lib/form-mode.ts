@@ -1,26 +1,15 @@
 import { createEvent, createStore, sample } from 'effector';
-import { formPrevClicked, formSubmitted } from '../model/auth-model';
 
 type TFormMode = 'phoneOrEmail' | 'details' | 'company' | 'verification';
 
-export const formIndexExceded = createEvent();
+export const handleNextForm = createEvent<TFormMode>();
+export const handleRegistrationFulfilled = createEvent();
 
-export const $formIndex = createStore<number>(0)
-  .on(formSubmitted, (src) => src + 1)
-  .on(formPrevClicked, (src) => src - 1)
-  .reset(formIndexExceded);
-
-export const $formMode = createStore<TFormMode>('phoneOrEmail');
+export const $formMode = createStore<TFormMode>('phoneOrEmail').reset(
+  handleRegistrationFulfilled,
+);
 
 sample({
-  source: $formIndex,
-  filter: (src) => src >= 3,
-  target: formIndexExceded,
-});
-
-sample({
-  source: $formIndex,
-  filter: (src) => src <= 2,
-  fn: (src) => (['phoneOrEmail', 'verification', 'details', 'company'] as const)[src],
+  clock: handleNextForm,
   target: $formMode,
 });

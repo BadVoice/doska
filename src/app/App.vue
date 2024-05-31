@@ -14,7 +14,6 @@
   import { useUnit } from 'effector-vue/composition';
   import { $showAddOfferModal } from '@/widgets/offers/model/offers-model';
   import { RequestHistory, SelectBrand } from '@/pages/my-requests';
-  import { CompanyForm } from '@/widgets/company-form';
   import {
     $requestViewMode,
     requestViewModeChanged,
@@ -211,11 +210,7 @@
           isMobile && !isSidebarOpen && requestViewMode === 'selectBrand'
         " />
       <Auth v-if="isAuthOpen" @submit-close-auth="isAuthOpen = false" />
-      <CompanyForm
-        v-if="isCompanyOpen"
-        @submit-close-company="isCompanyOpen = false"
-        @skipRegisterCompany="isCompanyOpen = false"
-      />
+
       <Sidebar
         v-if="isSidebarOpen && !isCompanyOpen"
         @close-sidebar="isSidebarOpen = false"
@@ -268,11 +263,11 @@
           !isProductCardOpen &&
           !isFilterCardOpen
         " />
-      <Filter
-        v-if="isFilterCardOpen && !isMobile && !isProductCardOpen"
-        :is-filter-card-open="isFilterCardOpen"
-        @close-filter-card="isFilterCardOpen = false"
-        class="hidden w-full sm:inline-block xl:hidden" />
+      <!--      <Filter-->
+      <!--        v-if="isFilterCardOpen && !isMobile && !isProductCardOpen"-->
+      <!--        :is-filter-card-open="isFilterCardOpen"-->
+      <!--        @close-filter-card="isFilterCardOpen = false"-->
+      <!--        class="hidden w-full sm:inline-block xl:hidden" />-->
     </div>
     <div
       v-if="!isFilterCardOpen && !isProductCardOpen && !showAddOfferModal"
