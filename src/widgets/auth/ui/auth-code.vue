@@ -12,7 +12,6 @@
   import {
     $inputMode,
     authFormSubmitted,
-    formSubmitted,
     loginUser,
     valueInputed,
   } from '@/widgets/auth/model/auth-model';
@@ -20,6 +19,7 @@
   import { ref } from 'vue';
   import VerifyCaptcha from '@/widgets/auth/ui/verify-captcha.vue';
   import { type AxiosResponse } from 'axios';
+  import { handleNextForm } from '@/widgets/auth/lib/form-mode';
 
   interface CustomAxiosResponse<T = any> extends AxiosResponse<T> {
     response?: {
@@ -28,7 +28,7 @@
     };
   }
 
-  const nextModal = useUnit(formSubmitted);
+  const nextModal = useUnit(handleNextForm);
   const handleInput = useUnit(valueInputed);
   const inputMode = useUnit($inputMode);
   const loginError = ref(false);
@@ -64,7 +64,7 @@
   const onRegister = () => {
     form.validate();
     if (Object.keys(form.errors.value).length <= 0) {
-      nextModal();
+      nextModal(inputMode.value === 'phone' ? 'verification' : 'details');
 
       const values = {
         ...form.values,
@@ -148,7 +148,7 @@
       <Button
         @click="onRegister"
         class="bg-whhite w-full border border-[#0017FC] text-[17px] font-semibold text-[#0017FC] hover:bg-white"
-        >Продолжить регистрацию</Button
+        >Получить пароль</Button
       >
     </div>
   </div>

@@ -12,16 +12,16 @@
   import {
     $inputMode,
     detailsFormSubmitted,
-    formSubmitted,
     registerUser,
   } from '@/widgets/auth/model/auth-model';
   import { useUnit } from 'effector-vue/composition';
   import VerifyCaptcha from '@/widgets/auth/ui/verify-captcha.vue';
   import { ref } from 'vue';
   import type { AxiosResponse } from 'axios';
+  import { handleNextForm } from '@/widgets/auth/lib/form-mode';
 
   const inputMode = useUnit($inputMode);
-  const nextModal = useUnit(formSubmitted);
+  const nextModal = useUnit(handleNextForm);
   const handleSubmit = useUnit(detailsFormSubmitted);
 
   const showCaptcha = ref(false);
@@ -66,7 +66,7 @@
       (result as CustomAxiosResponse).response?.status || null;
 
     if (registerStatus.value === 201) {
-      nextModal();
+      nextModal('company');
     } else if (registerStatus.value === 400) {
       registerError.value = true;
     } else if (registerStatus.value === 429) {
@@ -75,7 +75,7 @@
     } else {
       showCaptcha.value = false;
       registerError.value = false;
-      nextModal();
+      nextModal('company');
     }
   });
 

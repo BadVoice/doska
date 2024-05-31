@@ -22,13 +22,14 @@
 <template>
   <FormField v-slot="{ componentField }" :name="name">
     <FormItem class="flex flex-col">
-      <FormLabel class="text-[13px] font-semibold" v-if="label">
-        {{ label }}
+      <FormLabel class="text-[13px] font-semibold" v-if="label ?? placeholder">
+        {{ label ?? placeholder }}
       </FormLabel>
 
       <FormControl>
         <Input
           :type="number ? 'number' : 'text'"
+          class="h-fit rounded-[8px] border border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
           :placeholder="placeholder"
           v-bind="componentField" />
       </FormControl>

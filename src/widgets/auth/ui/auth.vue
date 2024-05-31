@@ -1,29 +1,25 @@
 <script setup lang="ts">
   import { Button } from '@/shared/ui';
-  import { AuthCode, AuthDetails, CompanyForm, VerificationCode } from '@/widgets/auth';
   import { useUnit } from 'effector-vue/composition';
   import {
-    $formIndex,
     $formMode,
-    formIndexExceded,
+    handleRegistrationFulfilled,
   } from '@/widgets/auth/lib/form-mode';
-  import { $inputMode, formPrevClicked } from '../model/auth-model';
+  import CreateCompany from '@/widgets/auth/ui/create-company.vue';
+  import AuthCode from '@/widgets/auth/ui/auth-code.vue';
+  import VerificationCode from '@/widgets/auth/ui/verification-code.vue';
+  import AuthDetails from '@/widgets/auth/ui/auth-details.vue';
 
   const emit = defineEmits(['submitCloseAuth']);
   const formMode = useUnit($formMode);
-  const prevForm = useUnit(formPrevClicked);
-  const inputMode = useUnit($inputMode);
-  const formIndex = useUnit($formIndex);
+  const handleExit = useUnit(handleRegistrationFulfilled);
 
   function backForm() {
-    if (formIndex.value >= 1) {
-      prevForm();
-    } else {
-      emit('submitCloseAuth', false);
-    }
+    handleExit();
+    emit('submitCloseAuth', false);
   }
 
-  formIndexExceded.watch(() => {
+  handleRegistrationFulfilled.watch(() => {
     emit('submitCloseAuth', false);
   });
 </script>
@@ -46,9 +42,8 @@
     <AuthCode
       @on-login="emit('submitCloseAuth')"
       v-if="formMode === 'phoneOrEmail'" />
-    <VerificationCode v-else-if="inputMode === 'phone' && formMode === 'verification'" />
-    <CompanyForm v-else-if="formMode === 'company'" />
+    <VerificationCode v-else-if="formMode === 'verification'" />
+    <CreateCompany v-else-if="formMode === 'company'" />
     <AuthDetails v-else />
-
   </div>
 </template>
