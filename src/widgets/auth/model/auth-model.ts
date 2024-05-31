@@ -26,7 +26,6 @@ interface SendDetailsParams {
 }
 
 export const valueInputed = createEvent<string>();
-export const formSubmitted = createEvent();
 export const formPrevClicked = createEvent();
 export const detailsFormSubmitted = createEvent<IFormValues>();
 export const authFormSubmitted = createEvent<IAuthFormValues>();
