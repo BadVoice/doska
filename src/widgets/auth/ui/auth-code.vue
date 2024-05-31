@@ -72,13 +72,6 @@
       };
 
       authFormSubmitted(values);
-
-      const values = {
-        ...form.values,
-        captchaToken: captchaToken.value,
-      };
-
-      authFormSubmitted(values);
     }
   };
 
