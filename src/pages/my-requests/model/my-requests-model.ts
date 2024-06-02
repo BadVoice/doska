@@ -4,7 +4,7 @@ import { not, spread } from 'patronum';
 
 import { $api } from '@/shared/api/api';
 
-import { deleteRequestMutation, myRequestsQuery } from '@/entities/requests';
+import { deleteRequestMutation, editRequestMutation, myRequestsQuery } from '@/entities/requests';
 
 import type { Bid, Brand } from '@/shared/api/generated/Api';
 import { searchQuery } from '@/entities/offer';
@@ -31,6 +31,7 @@ interface BidMutationData {
 }
 
 export const deleteRequestClicked = createEvent<string>();
+export const archiveRequestClicked = createEvent<Bid>();
 export const filterVisibilityChanged = createEvent<boolean | void>();
 export const filterSubmitted = createEvent<FormValues>();
 export const requestClicked = createEvent<BidWithName>();
@@ -59,9 +60,21 @@ sample({
   }),
 });
 
+sample({
+  clock: archiveRequestClicked,
+  fn: (clk) => ({
+    mutation: clk,
+    $requestViewMode: null,
+  }),
+  target: spread({
+    mutation: editRequestMutation.start,
+    $requestViewMode,
+  }),
+})
+
 keepFresh(myRequestsQuery, {
   automatically: true,
-  triggers: [deleteRequestMutation.finished.success],
+  triggers: [deleteRequestMutation.finished.success, editRequestMutation.finished.success],
 });
 
 sample({

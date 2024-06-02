@@ -1,6 +1,6 @@
 import { createMutation, createQuery } from '@farfetched/core';
 import { $api } from '@/shared/api';
-import type { FullRequestParams } from '@/shared/api/generated/Api';
+import type { Bid, FullRequestParams } from '@/shared/api/generated/Api';
 
 export const myRequestsQuery = createQuery({
   handler: async (params?: FullRequestParams) => {
@@ -31,4 +31,8 @@ export const myRequestsQuery = createQuery({
 
 export const deleteRequestMutation = createMutation({
   handler: (id: string) => $api.bids.deleteBid(parseInt(id)),
+});
+
+export const editRequestMutation = createMutation({
+  handler: (bid: Bid) => $api.bids.updateBid(parseInt(bid?.id ?? '0'), { name: bid.name, status: 3, amount: bid.amount, category: bid.category})
 });
