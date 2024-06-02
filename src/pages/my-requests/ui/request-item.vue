@@ -8,6 +8,7 @@
     editRequestSelected,
     requestClicked,
     requestViewModeChanged,
+    archiveRequestClicked
   } from '@/pages/my-requests/model/my-requests-model';
   import { useUnit } from 'effector-vue/composition';
   import type { BidWithName } from '@/entities/requests';
@@ -27,6 +28,7 @@
 
   const handleRequestClicked = useUnit(requestClicked);
   const handleEditRequest = useUnit(editRequestSelected);
+  const handleArchiveRequest = useUnit(archiveRequestClicked);
 
   const changeViewMode = useUnit(requestViewModeChanged);
 
@@ -86,12 +88,12 @@
             >
           </PopoverTrigger>
           <PopoverContent
-            class="flex h-[111px] w-[150px] flex-col justify-center rounded-[10px] border-b-0 border-t-0 p-0">
+            class="flex h-fit overflow-hidden w-[150px] flex-col justify-center rounded-[10px] p-0">
             <PopoverClose class="flex flex-col gap-y-0">
               <Button
                 @click="changeViewMode('history')"
                 variant="ghost"
-                class="rounded-b-0 flex h-full w-full rounded-[8px] border-t-2 border-[#D0D4DB] px-4 py-2 text-start hover:bg-[#F9FAFB]">
+                class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
                 <p class="w-full text-[14px] font-semibold">История заявки</p>
               </Button>
               <Button
@@ -103,8 +105,14 @@
               <Button
                 variant="ghost"
                 @click="deleteRequestClicked(item.id ?? '')"
-                class="rounded-t-0 flex h-full w-full rounded-[8px] border-b-2 border-[#D0D4DB] px-4 py-2 text-start hover:bg-[#F9FAFB]">
+                class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
                 <p class="w-full text-[14px] font-semibold">Удалить заявку</p>
+              </Button>
+              <Button
+                variant="ghost"
+                @click="handleArchiveRequest(item)"
+                class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
+                <p class="w-full text-[14px] font-semibold">Архивировать</p>
               </Button>
             </PopoverClose>
           </PopoverContent>
