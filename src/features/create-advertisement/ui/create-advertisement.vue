@@ -29,6 +29,7 @@
     ListboxOptions,
   } from '@headlessui/vue';
   import { cn } from '@/shared/lib';
+  import { ScrollArea } from '@/shared/ui/scroll-area';
 
   const emit = defineEmits(['close']);
   const { advertisementTypeSelected: handleSelectedType, $formMode: formMode } =
@@ -42,10 +43,13 @@
 
   const advertisementType = useUnit($advertisementType);
 
-  const { form, category, brand } = useCreateAdvertisementForm();
+  const { form, category, brand } = useCreateAdvertisementForm(
+    advertisementType.value,
+  );
 
   const onSubmit = async () => {
     await form.validate();
+    console.log(form.errors.value);
     if (Object.keys(form.errors.value).length < 1) {
       emit('close');
       formSubmitted(form.values);
@@ -87,7 +91,7 @@
           alt="arrow" />
       </Button>
       <p class="cursor-default text-[18px] font-semibold leading-3">
-        Размещение {{ advertisementType === 'sell' ? 'предложения' : 'заявки' }}
+        Размещение {{ advertisementType === 'sell' ? 'объявления' : 'заявки' }}
       </p>
       <Button
         v-if="formMode === 'form'"
@@ -98,14 +102,14 @@
         <X class="h-7 w-7 select-none" color="#0017FC" />
       </Button>
     </div>
-    <div
-      class="flex h-full w-full flex-col items-center gap-y-10 bg-[#F9FAFB] pt-20">
+    <ScrollArea
+      class="flex h-[calc(100vh-40px)] w-full flex-col items-center gap-y-10 bg-[#F9FAFB] [&>div>div]:!flex [&>div>div]:h-full [&>div>div]:flex-col">
       <template v-if="formMode === 'selectType'">
-        <div class="flex flex-col items-center gap-y-4 px-5">
+        <div class="mt-20 flex flex-col items-center gap-y-4 px-5">
           <img src="./assets/bag.svg" alt="bag" class="h-[60px] w-[60px]" />
           <p class="text-[17px] font-medium">Хотите купить или продать?</p>
         </div>
-        <div class="flex w-full gap-x-4 px-5">
+        <div class="mt-6 flex w-full gap-x-4 px-5">
           <Button
             class="w-full rounded-[10px] text-[16px]"
             @click="handleSelectedType('buy')"
@@ -119,9 +123,7 @@
         </div>
       </template>
       <template v-else>
-        <form
-          @submit="onSubmit"
-          class="-mt-10 flex w-full flex-col gap-y-4 px-5">
+        <form @submit="onSubmit" class="my-5 flex w-full flex-col gap-y-4 px-5">
           <FormField v-slot="{ componentField }" name="name">
             <FormItem>
               <FormLabel>Наименование</FormLabel>
@@ -162,10 +164,36 @@
               <FormMessage />
             </FormItem>
           </FormField>
+          <FormField v-slot="{ componentField }" name="price">
+            <FormItem>
+              <FormLabel>Цена</FormLabel>
 
-          <div
-            class="relative inline-block text-left"
-            v-if="advertisementType === 'sell'">
+              <FormControl>
+                <Input
+                  class="h-fit rounded-[8px] border border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
+                  type="number"
+                  placeholder="Цена"
+                  v-bind="componentField" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+          <FormField v-slot="{ componentField }" name="available">
+            <FormItem>
+              <FormLabel>Срок до клиента</FormLabel>
+
+              <FormControl>
+                <Input
+                  class="h-fit rounded-[8px] border border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
+                  type="number"
+                  placeholder="Срок до клиента"
+                  v-bind="componentField" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+
+          <div class="relative inline-block text-left">
             <Listbox v-model="category">
               <p class="pb-2 text-[14px] font-semibold text-[#101828]">
                 Категория
@@ -215,7 +243,7 @@
             </Listbox>
           </div>
 
-          <div class="relative inline-block text-left">
+          <div class="relative mb-5 inline-block text-left">
             <Listbox v-model="brand">
               <p class="pb-2 text-[14px] font-semibold text-[#101828]">Бренд</p>
               <ListboxButton
@@ -263,13 +291,14 @@
             </Listbox>
           </div>
         </form>
-        <div
-          class="mt-auto flex w-full items-center justify-center border-t border-[#D0D4DB] p-4">
-          <Button @click="onSubmit" class="w-full rounded-[9px] text-[16px]">
-            Опубликовать заявку
-          </Button>
-        </div>
       </template>
+    </ScrollArea>
+    <div
+      v-if="advertisementType"
+      class="mt-auto flex w-full items-center justify-center border-t border-[#D0D4DB] p-4">
+      <Button @click="onSubmit" class="w-full rounded-[9px] text-[16px]">
+        Опубликовать заявку
+      </Button>
     </div>
   </div>
 </template>

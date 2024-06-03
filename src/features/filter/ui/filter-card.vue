@@ -183,9 +183,9 @@
                       :value="item.id"
                       as="template">
                       <li
-                        class="mx-1 my-1 cursor-pointer select-none rounded bg-blue-200 py-2 pl-3 pr-9 text-gray-900 hover:bg-blue-100"
+                        class="mx-1 my-1 cursor-pointer select-none bg-gray-50 text-black rounded py-2 pl-3 pr-9 "
                         :class="{
-                          'bg-gray-50 text-black ': selectedCities.some(
+                          '!bg-blue-200 hover:!bg-blue-100 !text-gray-900': selectedCities.some(
                             (city) => city === item.id,
                           ),
                         }">
@@ -246,10 +246,11 @@
                     v-slot="{ item }">
                     <ListboxOption :key="item" :value="item" as="template">
                       <li
-                        class="mx-1 my-1 cursor-pointer select-none rounded bg-blue-200 py-2 pl-3 pr-9 text-gray-900 hover:bg-blue-100"
+                        class="mx-1 my-1 cursor-pointer select-none bg-gray-50 text-black rounded py-2 pl-3 pr-9 "
                         :class="{
-                          'bg-gray-50 text-black ':
-                            selectedVendors.includes(item),
+                          '!bg-blue-200 hover:!bg-blue-100 !text-gray-900': selectedVendors.some(
+                            (vendor) => vendor === item,
+                          ),
                         }">
                         <span class="block truncate font-normal">{{
                           item
@@ -291,10 +292,11 @@
                     v-slot="{ item }">
                     <ListboxOption :key="item" :value="item" as="template">
                       <li
-                        class="mx-1 my-1 cursor-pointer select-none rounded bg-blue-200 py-2 pl-3 pr-9 text-gray-900 hover:bg-blue-100"
+                        class="mx-1 my-1 cursor-pointer select-none bg-gray-50 text-black rounded py-2 pl-3 pr-9 "
                         :class="{
-                          'bg-gray-50 text-black ':
-                            selectedBrands.includes(item),
+                          '!bg-blue-200 hover:!bg-blue-100 !text-gray-900': selectedBrands.some(
+                            (brand) => brand === item,
+                          ),
                         }">
                         <span class="block truncate font-normal">{{
                           item

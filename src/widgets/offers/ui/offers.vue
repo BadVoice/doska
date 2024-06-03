@@ -15,11 +15,14 @@
   } from '@/shared/ui/pagination';
   import { useUnit } from 'effector-vue/composition';
   import { ScrollArea } from '@/shared/ui/scroll-area';
+  import { $filterValues } from '@/features/filter';
 
   defineProps<{ class: string }>();
 
   const isMobile = ref(false);
   const page = ref(1);
+
+  const filterValues = useUnit($filterValues);
 
   function getAnnouncementText(count: number) {
     if (count === 0 || !count) {
@@ -70,7 +73,7 @@
 </script>
 
 <template>
-  <div class="flex w-full flex-col sm:max-h-[100vh]" v-if="!!data?.data?.items">
+  <div class="flex w-full flex-col sm:max-h-[100vh]" >
     <div class="w-full min-w-[350px]">
       <div
         class="flex items-center border-b border-r border-[#D0D4DB] bg-white p-4 pr-5">
@@ -92,7 +95,7 @@
           <Button
             v-if="
               getAnnouncementText(data?.data.items_count ?? 0) !==
-              'Нет предложений'
+              'Нет предложений' || filterValues
             "
             @click="handleFilterClick"
             size="icon"
