@@ -22,6 +22,7 @@ export const offersUnmounted = createEvent();
 export const $filterValues = createStore<IFilterValues | null>(null).reset(
   offersUnmounted,
 );
+
 persist({
   store: $filterValues,
   key: 'filter',

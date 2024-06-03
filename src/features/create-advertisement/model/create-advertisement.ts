@@ -1,6 +1,6 @@
 import { $api } from '@/shared/api';
 import type { Bid, Offer } from '@/shared/api/generated/Api';
-import { createMutation, createQuery } from '@farfetched/core';
+import { createMutation, createQuery, keepFresh } from '@farfetched/core';
 import { createEvent, createStore, sample } from 'effector';
 import { spread } from 'patronum';
 import { myRequestsQuery } from '@/entities/requests';
@@ -14,6 +14,8 @@ export interface FormValues {
   count: string;
   category: number;
   brand?: number;
+  price?: number;
+  available?: number;
 }
 
 const createOfferMutation = createMutation({
@@ -79,7 +81,7 @@ sample({
     category: clk.category,
     brand: clk.brand,
   }),
-  target: [createBidMutation.start, formClosed, myRequestsQuery.start],
+  target: [createBidMutation.start, formClosed],
 });
 
 sample({
@@ -88,10 +90,19 @@ sample({
   filter: (src) => src === 'sell',
   fn: (_, clk) => ({
     name: clk.name,
-    price: 0,
     amount: parseInt(clk?.count ?? '1'),
     category: clk.category,
     brand: clk.brand,
+    price: clk.price!,
+    delivery_time: clk.available,
   }),
-  target: [createOfferMutation.start, formClosed, myRequestsQuery.start],
+  target: [createOfferMutation.start, formClosed],
+});
+
+keepFresh(myRequestsQuery, {
+  triggers: [
+    createOfferMutation.finished.success,
+    createBidMutation.finished.success,
+  ],
+  automatically: true,
 });
