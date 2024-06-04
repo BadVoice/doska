@@ -4,7 +4,7 @@
   import myOffersIcon from '@/widgets/sidebar/assets/myOffersIcon.vue';
   import logoutIcon from '@/widgets/sidebar/assets/logoutIcon.vue';
   import { Button } from '@/shared/ui';
-  import { type DefineComponent, reactive } from 'vue';
+  import { type DefineComponent } from 'vue';
 
   export interface IButtonMobile {
     label: string;
@@ -12,15 +12,15 @@
     icon: DefineComponent<{}, {}, any> | null;
   }
 
-  const emit = defineEmits([
-    'close-sidebar',
-    'navigate',
-    'logout',
-    'add-company',
-    'my-requests',
-  ]);
+  const emit = defineEmits<{
+    (e: 'close-sidebar'): void;
+    (
+      e: 'navigate',
+      value: 'my-requests' | 'my-offers' | 'change-company' | 'add-company',
+    ): void;
+  }>();
 
-  const sidebarItems = reactive<IButtonMobile[]>([
+  const sidebarItems: IButtonMobile[] = [
     {
       label: 'Мои Покупки',
       icon: myRequestsIcon,
@@ -34,14 +34,14 @@
     {
       label: 'Переключить аккаунт',
       icon: logoutIcon,
-      action: () => emit('navigate', 'logout'),
+      action: () => emit('navigate', 'change-company'),
     },
     {
       label: 'Добавить компанию',
       icon: companyIcon,
       action: () => emit('navigate', 'add-company'),
     },
-  ]);
+  ];
 </script>
 
 <template>
@@ -78,5 +78,3 @@
     </ul>
   </div>
 </template>
-
-<style scoped lang="postcss"></style>
