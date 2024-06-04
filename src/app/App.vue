@@ -5,7 +5,7 @@
   import { ProductCard } from '@/pages/home';
   import { Header } from '@/widgets/header';
   import { Filter } from '@/features/filter';
-  import { Auth } from '@/widgets/auth';
+  import { Auth, authFormOpened } from '@/widgets/auth';
   import { ManuallyAddOffer, Offers } from '@/widgets/offers';
   import { CreateAdvertisement } from '@/features/create-advertisement';
   import type { Item } from '@/shared/api/generated/Api';
@@ -20,13 +20,19 @@
   } from '@/pages/my-requests/model/my-requests-model';
   import { searchQuery } from '@/entities/offer';
   import { $selectedAdvertisement } from '@/entities/advertisement';
+  import {
+    ChangeCompany,
+    changeCompanyVisibleChanged,
+  } from '@/widgets/change-company';
 
   const route = useRoute();
   const router = useRouter();
 
   const showAddOfferModal = useUnit($showAddOfferModal);
   const requestViewMode = useUnit($requestViewMode);
+  const openAuthForm = useUnit(authFormOpened);
   const selectedAdvertisement = useUnit($selectedAdvertisement);
+  const changeSwitchCompanyVisible = useUnit(changeCompanyVisibleChanged);
 
   const changeRequestViewMode = useUnit(requestViewModeChanged);
 
@@ -73,7 +79,6 @@
   const isFilterCardOpen = ref(false);
   const isCreateAdvertisementOpen = ref(false);
   const isSidebarOpen = ref(false);
-  const isCompanyOpen = ref(false);
 
   watch([isProductCardOpen, isFilterCardOpen], () => {
     if (isProductCardOpen.value && isFilterCardOpen.value) {
@@ -125,27 +130,34 @@
     isProductCardOpen.value = false;
   }
 
-  function handleNavigate(destination: string) {
+  function handleNavigate(
+    destination: 'my-requests' | 'my-offers' | 'change-company' | 'add-company',
+  ) {
     if (destination === 'add-company') {
-      isCompanyOpen.value = true;
+      handleAddCompany();
     } else if (destination === 'my-requests') {
       router.push('/');
-      isSidebarOpen.value = false;
+    } else if (destination === 'change-company') {
+      changeSwitchCompanyVisible(true);
     } else {
       router.push('/');
-      isSidebarOpen.value = false;
     }
+    isSidebarOpen.value = false;
   }
 
   function handleCloseOffers() {
     changeRequestViewMode(null);
   }
+
+  function handleAddCompany() {
+    isAuthOpen.value = true;
+    openAuthForm('company');
+  }
 </script>
 
 <template>
   <div class="flex flex-row bg-white">
-    <div
-      class="flex max-h-[100vh] w-full flex-col items-center sm:max-w-[356px]">
+    <div class="flex h-[100vh] w-full flex-col items-center sm:max-w-[356px]">
       <Header
         v-if="
           isMobile &&
@@ -212,9 +224,10 @@
       <Auth v-if="isAuthOpen" @submit-close-auth="isAuthOpen = false" />
 
       <Sidebar
-        v-if="isSidebarOpen && !isCompanyOpen"
+        v-if="isSidebarOpen && !isAuthOpen"
         @close-sidebar="isSidebarOpen = false"
         @navigate="handleNavigate" />
+      <ChangeCompany />
       <CreateAdvertisement
         v-if="isCreateAdvertisementOpen"
         @close="isCreateAdvertisementOpen = false" />

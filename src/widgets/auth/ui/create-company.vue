@@ -29,10 +29,9 @@
   const onSubmit = () => {
     form.validate();
     if (Object.keys(form.errors.value).length <= 0) {
-      handleSubmit({
-        ...form.values,
-      });
       console.log(form.values);
+
+      handleSubmit(form.values);
 
       nextModal();
     }
