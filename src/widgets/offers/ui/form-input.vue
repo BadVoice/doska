@@ -22,7 +22,9 @@
 <template>
   <FormField v-slot="{ componentField }" :name="name">
     <FormItem class="flex flex-col">
-      <FormLabel class="text-[13px] font-semibold" v-if="label ?? placeholder">
+      <FormLabel
+        class="text-[13px] font-semibold"
+        v-if="(label ?? placeholder) && !number">
         {{ label ?? placeholder }}
       </FormLabel>
 
