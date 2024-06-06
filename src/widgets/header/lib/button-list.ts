@@ -8,11 +8,13 @@ export function getButtonList(visibleSearch: Ref<boolean>) {
           label: 'Объявления',
           link: '/search-history',
           active: false,
+          status: -2,
         },
         {
           label: 'Заявки',
           link: '/',
           active: false,
+          status: -1,
         },
       ];
     } else {
@@ -21,36 +23,31 @@ export function getButtonList(visibleSearch: Ref<boolean>) {
           label: 'Мои заявки',
           link: '/',
           active: false,
+          status: -1,
         },
         {
-          label: 'Не опубликованные',
-          link: '/advertisements',
+          label: 'Созданные',
+          link: '/',
           active: false,
+          status: 0,
         },
         {
-          label: 'Заказано',
-          link: '/?',
+          label: 'Опубликованные',
+          link: '/',
           active: false,
+          status: 1,
         },
         {
-          label: 'Исполнено',
-          link: '/?',
+          label: 'Исполненные',
+          link: '/',
           active: false,
+          status: 2,
         },
         {
-          label: 'Возврат',
-          link: '/?',
+          label: 'Архивированные',
+          link: '/',
           active: false,
-        },
-        {
-          label: 'Возвращено',
-          link: '/?',
-          active: false,
-        },
-        {
-          label: 'Архив',
-          link: '/?',
-          active: false,
+          status: 3,
         },
       ];
     }

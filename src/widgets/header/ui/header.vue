@@ -1,16 +1,19 @@
 <script setup lang="ts">
-  import { computed, nextTick, onMounted, ref, watch } from 'vue';
+  import { nextTick, onMounted, ref, watch } from 'vue';
   import { getButtonList } from '../lib/button-list';
   import { Button } from '@/shared/ui/button';
   import BurgerMenu from './burger-menu.vue';
   import Search from './assets/search.vue';
   import { Input } from '@/shared/ui/input';
-  import { useRoute, useRouter } from 'vue-router';
+  import { useRouter } from 'vue-router';
   import { useUnit } from 'effector-vue/composition';
-  import { searchTermInputed } from '@/widgets/header/model/header-modal';
+  import {
+    $selectedSortType,
+    searchTermInputed,
+    sortTypeSelected,
+  } from '@/widgets/header/model/header-modal';
   import { myRequestsQuery } from '@/entities/requests';
 
-  const route = useRoute();
   const router = useRouter();
 
   const searchTerm = ref('');
@@ -25,6 +28,8 @@
   const scrollableContainer = ref();
 
   const { start: handleMount, data: requests } = useUnit(myRequestsQuery);
+  const handleSortTypeSelected = useUnit(sortTypeSelected);
+  const selectedSortType = useUnit($selectedSortType);
 
   onMounted(handleMount);
 
@@ -43,14 +48,6 @@
     'buttonClicked',
   ]);
 
-  // function handleWheel(event: WheelEvent) {
-  //   event.preventDefault();
-  //   scrollableContainer.value.scrollBy({
-  //     left: event.deltaY < 0 ? 30 : -30,
-  //     behaviour: 'smooth',
-  //   });
-  // }
-
   watch(visibleSearch, (newValue) => {
     if (newValue) {
       nextTick(() => {
@@ -61,19 +58,6 @@
         router.push('/advertisements');
       });
     }
-  });
-
-  const activeButton = computed(() => {
-    const currentButton = buttonList.value.find((button) => {
-      const parts = route.path.split('/');
-      return parts[1] === button.link.split('/')[1];
-    });
-
-    if (currentButton) {
-      currentButton.active = true;
-    }
-
-    return currentButton;
   });
 
   const scrollToButton = (index: number) => {
@@ -103,14 +87,6 @@
       });
     }
   };
-
-  const requestsCount = computed(() => {
-    if (requests.value) {
-      return requests.value.length;
-    } else {
-      return 0;
-    }
-  });
 </script>
 
 <template>
@@ -171,7 +147,7 @@
           class="border-0 py-0 focus:outline-none" />
       </form>
     </div>
-    <div class="flex w-full items-center justify-between gap-6 py-4 pl-4">
+    <div class="flex w-full items-center py-4 pl-4">
       <div
         ref="scrollableContainer"
         class="no-scrollbar overflow-x-auto whitespace-nowrap">
@@ -180,21 +156,30 @@
           :key="button.label"
           :to="button?.link"
           @click="scrollToButton(index)"
-          class="mr-4 inline-block focus:outline-none">
+          class="mr-4 focus:outline-none">
           <Button
             variant="outline"
-            @click="emit('buttonClicked', index)"
+            @click="
+              () => {
+                handleSortTypeSelected(button.status);
+                emit('buttonClicked', index);
+              }
+            "
             :class="{
               'border-[#0017FC] bg-[#1778EA] bg-opacity-10 text-[#0017FC] hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10 hover:text-[#0017FC]':
-                button.link === activeButton?.link,
-              'border-[#D0D4DB] bg-[#F9FAFB] text-[#858FA3] hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10 hover:text-[#0017FC]':
-                button.link !== activeButton?.link,
+                selectedSortType === button.status,
             }"
             class="max-h-[28px] rounded-lg"
             size="sm">
             {{ button.label }}
-            <template v-if="button.link === '/'">
-              {{ `(${requestsCount})` }}
+            <template v-if="button.link === '/' && requests?.length">
+              ({{
+                button.status >= 0
+                  ? requests?.filter(
+                      (request) => request.status === button.status,
+                    ).length
+                  : requests?.length
+              }})
             </template>
           </Button>
         </RouterLink>

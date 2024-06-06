@@ -164,7 +164,10 @@
               <FormMessage />
             </FormItem>
           </FormField>
-          <FormField v-slot="{ componentField }" name="price">
+          <FormField
+            v-slot="{ componentField }"
+            name="price"
+            v-if="advertisementType === 'sell'">
             <FormItem>
               <FormLabel>Цена</FormLabel>
 
@@ -178,7 +181,10 @@
               <FormMessage />
             </FormItem>
           </FormField>
-          <FormField v-slot="{ componentField }" name="available">
+          <FormField
+            v-if="advertisementType === 'sell'"
+            v-slot="{ componentField }"
+            name="available">
             <FormItem>
               <FormLabel>Срок до клиента</FormLabel>
 

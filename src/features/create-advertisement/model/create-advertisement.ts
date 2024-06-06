@@ -12,9 +12,9 @@ export interface FormValues {
   name: string;
   article: string;
   count: string;
-  category: number;
   brand?: number;
   price?: number;
+  category: number;
   available?: number;
 }
 
@@ -28,8 +28,8 @@ const createBidMutation = createMutation({
       name: data.name,
       article: data.article || 'Не указано',
       amount: data.amount,
-      category: data.category,
       brand: data.brand,
+      category: data.category,
       status: 0,
     }),
 });
