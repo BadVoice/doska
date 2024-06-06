@@ -13,6 +13,7 @@
   import { myRequestsQuery } from '@/entities/requests';
   import { ScrollArea } from '@/shared/ui/scroll-area';
   import { useRoute, useRouter } from 'vue-router';
+  import { $selectedSortType } from '@/widgets/header';
 
   const emit = defineEmits(['handleData']);
   const router = useRouter();
@@ -28,6 +29,7 @@
     data: requests,
     pending,
   } = useUnit(myRequestsQuery);
+  const selectedSortType = useUnit($selectedSortType);
 
   onMounted(handleMount);
 
@@ -87,13 +89,16 @@
         </div>
       </div>
       <ScrollArea v-else-if="!pending" class="h-full max-h-[calc(100vh-151px)]">
-        <RecycleScroller
-          class="scroller mx-4 mt-4 flex h-full flex-col"
-          :items="requests"
-          :item-size="130"
-          v-slot="{ item }">
-          <RequestItem :item="item as Bid" :status="status" />
-        </RecycleScroller>
+        <div class="my-4 flex flex-col gap-y-2 px-4">
+          <RequestItem
+            v-for="item in selectedSortType >= 0
+              ? requests.filter(
+                  (request) => request.status === selectedSortType,
+                )
+              : requests"
+            :item="item as Bid"
+            :status="status" />
+        </div>
       </ScrollArea>
 
       <div
