@@ -401,12 +401,15 @@ export interface Item {
   parsedDelivery?: string;
 }
 
-export interface SearchResponse {
+export interface SearchPagination {
   page?: number;
   pages?: number;
   has_next?: boolean;
   has_prev?: boolean;
   items_count?: number;
+}
+
+export interface SearchResponse extends SearchPagination {
   search_id?: string;
   items?: Item[];
   filters?: SearchResponseFilters;

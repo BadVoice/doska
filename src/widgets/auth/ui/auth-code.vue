@@ -18,15 +18,7 @@
   import { useUnit } from 'effector-vue/composition';
   import { ref } from 'vue';
   import VerifyCaptcha from '@/widgets/auth/ui/verify-captcha.vue';
-  import { type AxiosResponse } from 'axios';
   import { handleNextForm } from '@/widgets/auth/lib/form-mode';
-
-  interface CustomAxiosResponse<T = any> extends AxiosResponse<T> {
-    response?: {
-      status?: number;
-      data?: any;
-    };
-  }
 
   const nextModal = useUnit(handleNextForm);
   const handleInput = useUnit(valueInputed);
@@ -61,26 +53,12 @@
     }
   };
 
-  const onRegister = () => {
-    form.validate();
-    if (Object.keys(form.errors.value).length <= 0) {
-      nextModal(inputMode.value === 'phone' ? 'verification' : 'details');
-
-      const values = {
-        ...form.values,
-        captchaToken: captchaToken.value,
-      };
-
-      authFormSubmitted(values);
-    }
-  };
-
-  loginUser.finished.success.watch(({ result }) => {
-    if ((result as CustomAxiosResponse).response?.status === 201) {
+  loginUser.finished.success.watch(({ result }: any) => {
+    if ([201, 200].includes(result.status)) {
       nextModal('verification');
-    } else if ((result as CustomAxiosResponse).response?.status === 429) {
+    } else if (result.response?.status === 429) {
       showCaptcha.value = true;
-      loginError.value = true;
+      loginError.value = false;
     } else {
       loginError.value = true;
       showCaptcha.value = false;
@@ -133,11 +111,6 @@
       class="inset-x-0 bottom-0 flex w-full flex-col gap-y-3 border-t border-[#CCD0D9] bg-white p-4">
       <Button @click="onSubmit" class="w-full text-[17px] font-semibold"
         >Войти</Button
-      >
-      <Button
-        @click="onRegister"
-        class="bg-whhite w-full border border-[#0017FC] text-[17px] font-semibold text-[#0017FC] hover:bg-white"
-        >Получить пароль</Button
       >
     </div>
   </div>
