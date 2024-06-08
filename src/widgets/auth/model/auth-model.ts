@@ -42,17 +42,10 @@ export const registerUser = createMutation({
 
 export const loginUser = createMutation({
   handler: async (data: IAuthFormValues) => {
-    if (data.value.includes('@')) {
-      return $api.user.createAuthUser({
-        username: data.value,
-        recaptcha: data.captchaToken,
-      });
-    } else {
-      return $api.user.createAuthUser({
-        username: data.value.replace(/[^+\d]/g, '').replace(/\+/g, ''),
-        recaptcha: data.captchaToken,
-      });
-    }
+    return $api.user.createAuthUser({
+      username: data.value,
+      recaptcha: data.captchaToken,
+    });
   },
 });
 
@@ -75,7 +68,15 @@ sample({
 });
 
 sample({
+  source: { $phoneOrEmail, $inputMode },
   clock: authFormSubmitted,
+  fn: (src, clk) => ({
+    captchaToken: clk.captchaToken,
+    value:
+      src.$inputMode === 'phone'
+        ? src.$phoneOrEmail.replace(/[^+\d]/g, '').slice(0, 12)
+        : src.$phoneOrEmail,
+  }),
   target: [$authFormValues, loginUser.start],
 });
 
