@@ -8,7 +8,6 @@ export function useFilterRequestsForm(): {
   const formSchema = toTypedSchema(
     z.object({
       name: z.string().optional(),
-      requestType: z.string().optional(),
       article: z.string().optional(),
       count: z
         .number({

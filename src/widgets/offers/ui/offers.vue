@@ -1,10 +1,9 @@
 <script setup lang="ts">
   import { Button } from '@/shared/ui/button';
 
-  import { onMounted, onUnmounted, ref } from 'vue';
-  import type { Item, SearchPagination } from '@/shared/api/generated/Api';
-  import { OfferList } from '@/entities/offer';
-  import { useRoute } from 'vue-router';
+  import { onMounted, ref } from 'vue';
+  import type { Item } from '@/shared/api/generated/Api';
+  import { OfferList, searchQuery } from '@/entities/offer';
 
   import {
     Pagination,
@@ -14,17 +13,22 @@
     PaginationNext,
     PaginationPrev,
   } from '@/shared/ui/pagination';
+  import { useUnit } from 'effector-vue/composition';
+  import { ScrollArea } from '@/shared/ui/scroll-area';
+  import { $filterValues } from '@/features/filter';
+  import { useRoute } from 'vue-router';
+  import { offerAddButtonClicked } from '@/widgets/offers';
+  import { Plus } from 'lucide-vue-next';
 
-  const props = defineProps<{
-    offersItems: Item[];
-  }>();
+  defineProps<{ class: string }>();
 
   const route = useRoute();
-  const pagination = defineModel<SearchPagination>('pagination', {
-    required: true,
-  });
 
   const isMobile = ref(false);
+  const page = ref(1);
+
+  const filterValues = useUnit($filterValues);
+  const handleAddOffer = useUnit(offerAddButtonClicked);
 
   function getAnnouncementText(count: number) {
     if (count === 0 || !count) {
@@ -44,7 +48,14 @@
     }
   }
 
-  const emit = defineEmits(['offerClicked', 'open-filter', 'page-selected']);
+  const emit = defineEmits([
+    'offerClicked',
+    'open-filter',
+    'page-selected',
+    'closeOffers',
+  ]);
+
+  const { data } = useUnit(searchQuery);
 
   const handleItemClick = (item: Item) => {
     if (!item) {
@@ -57,13 +68,6 @@
     emit('open-filter');
   };
 
-  onMounted(() => {
-    document.body.style.overflow = 'hidden';
-  });
-  onUnmounted(() => {
-    document.body.style.overflow = 'auto';
-  });
-
   const checkIsMobile = () => {
     isMobile.value = window.innerWidth < 440;
   };
@@ -75,103 +79,89 @@
 </script>
 
 <template>
-  <div class="flex flex-col">
-    <div
-      v-if="
-        route.path === '/advertisements' && route.query['active-pre-search']
-      "
-      class="w-full min-w-[350px]">
+  <div class="flex w-full flex-col sm:max-h-[100vh]">
+    <div class="w-full min-w-[350px]">
       <div
-        v-if="route.path === '/advertisements'"
-        class="flex items-center justify-between border-b border-r border-[#D0D4DB] bg-white p-4 pr-5">
-        <h3 class="text-[18px] font-semibold">
-          {{ getAnnouncementText(pagination.items_count ?? 0) }}
-        </h3>
+        class="flex items-center border-b border-r border-[#D0D4DB] bg-white p-4 pr-5">
         <Button
-          v-if="
-            route.path === '/advertisements' &&
-            getAnnouncementText(pagination.items_count ?? 0) !==
-              'Нет предложений'
-          "
-          @click="handleFilterClick"
+          class="-ml-2 sm:hidden"
+          @click="$emit('closeOffers')"
           size="icon"
           variant="ghost">
-          <img src="../assets/filterIcon.svg" alt="filterIcon" />
+          <img
+            src="./assets/backIcon.svg"
+            class="h-6 w-6 select-none"
+            alt="arrow" />
         </Button>
+
+        <div class="flex w-full items-center justify-between">
+          <h3 class="text-[18px] font-semibold">
+            {{ getAnnouncementText(data?.data.items_count ?? 0) }}
+          </h3>
+          <div class="flex gap-x-2">
+            <Button
+              v-if="
+                getAnnouncementText(data?.data.items_count ?? 0) !==
+                  'Нет предложений' || filterValues
+              "
+              @click="handleFilterClick"
+              size="icon"
+              variant="ghost">
+              <img src="./assets/filterIcon.svg" alt="filterIcon" />
+            </Button>
+            <Button
+              v-if="
+                getAnnouncementText(data?.data.items_count ?? 0) !==
+                  'Нет предложений' || filterValues
+              "
+              @click="handleAddOffer()"
+              size="icon"
+              variant="ghost">
+              <Plus class="h-7 w-7" color="#0017FC" />
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div
-      v-if="route.path == '/advertisements'"
-      class="custom-scrollbar flex h-[100vh] flex-col items-center gap-4 overflow-auto bg-[#F9FAFB] p-4 sm:max-h-[calc(100vh-150px)]">
+    <ScrollArea
+      v-if="data?.data.items"
+      class="flex max-h-[calc(100vh-72px)] flex-col gap-y-4 px-4 max-sm:max-h-[calc(100vh-201px)]">
       <OfferList
-        class="h-full"
-        v-if="route.path == '/advertisements'"
-        :offers-items="offersItems"
+        :offers-items="data?.data.items as any"
         @offer-clicked="handleItemClick" />
-    </div>
+      <div class="mx-auto flex w-fit bg-[#F9FAFB] py-2">
+        <Pagination
+          v-if="!!data?.data.pages"
+          v-slot="{ page }"
+          :total="data?.data.items_count"
+          :sibling-count="1"
+          :show-edges="!isMobile"
+          @update:page="(value) => $emit('page-selected', value)"
+          v-model:page="page"
+          class="mx-auto gap-1 sm:-translate-x-1 sm:gap-2">
+          <PaginationList v-slot="{ items }" class="flex items-center gap-1">
+            <PaginationPrev v-if="data?.data.has_prev" />
 
-    <div v-if="route.path === '/advertisements'" class="flex bg-[#F9FAFB] py-4">
-      <Pagination
-        v-if="
-          route.path == '/advertisements' &&
-          route.query['active-pre-search'] &&
-          !!pagination.pages
-        "
-        v-slot="{ page }"
-        :total="pagination.items_count"
-        :sibling-count="1"
-        :show-edges="!isMobile"
-        @update:page="(value) => $emit('page-selected', value)"
-        v-model:page="pagination.page"
-        class="mx-auto gap-1 sm:-translate-x-1 sm:gap-2">
-        <PaginationList v-slot="{ items }" class="flex items-center gap-1">
-          <PaginationPrev v-if="pagination.has_prev" />
+            <template v-for="(item, index) in items">
+              <PaginationListItem
+                v-if="item.type === 'page'"
+                :key="index"
+                :value="item.value"
+                as-child>
+                <Button
+                  class="h-10 w-10 p-0"
+                  :variant="item.value === page ? 'default' : 'outline'">
+                  {{ item.value }}
+                </Button>
+              </PaginationListItem>
+              <PaginationEllipsis v-else :key="item.type" :index="index" />
+            </template>
 
-          <template v-for="(item, index) in items">
-            <PaginationListItem
-              v-if="item.type === 'page'"
-              :key="index"
-              :value="item.value"
-              as-child>
-              <Button
-                class="h-10 w-10 p-0"
-                :variant="item.value === page ? 'default' : 'outline'">
-                {{ item.value }}
-              </Button>
-            </PaginationListItem>
-            <PaginationEllipsis v-else :key="item.type" :index="index" />
-          </template>
-
-          <PaginationNext v-if="pagination.has_next" />
-        </PaginationList>
-      </Pagination>
-    </div>
+            <PaginationNext v-if="data?.data.has_next" />
+          </PaginationList>
+        </Pagination>
+      </div>
+    </ScrollArea>
   </div>
-  <!--    <div-->
-  <!--      v-else-->
-  <!--      class="custom-scrollbar h-[calc(100vh-73px)] overflow-auto bg-[#F9FAFB]"></div>-->
-  <!--  </div>-->
 </template>
-
-<style scoped>
-  .custom-scrollbar {
-    scrollbar-width: thin;
-    scrollbar-color: #d0d4db #f9fafb;
-    border-radius: 3px;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
-    background-color: #f9fafb;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    background-color: #d0d4db;
-    border-radius: 3px;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background-color: #a7acb5;
-  }
-</style>

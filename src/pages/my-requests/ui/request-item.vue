@@ -1,31 +1,82 @@
 <script lang="ts" setup>
   import { ref } from 'vue';
-  import type { Bid } from '@/shared/api/generated/Api';
   import { cn } from '@/shared/lib';
   import { Button, Popover, PopoverContent, PopoverTrigger } from '@/shared/ui';
   import { PopoverClose } from 'radix-vue';
-  import { deleteRequestClicked } from '@/pages/my-requests/model/my-requests-model';
+  import {
+    deleteRequestClicked,
+    editRequestSelected,
+    requestClicked,
+    requestViewModeChanged,
+    archiveRequestClicked
+  } from '@/pages/my-requests/model/my-requests-model';
+  import { useUnit } from 'effector-vue/composition';
+  import type { BidWithName } from '@/entities/requests';
+  import { useRoute } from 'vue-router';
+  import { advertisementClicked } from '@/entities/advertisement';
 
   defineProps<{
     status: { color: string; text: string }[];
-    item: Bid;
+    item: BidWithName;
   }>();
+
+  const route = useRoute();
 
   function renderFile(file: File) {
     return URL.createObjectURL(file);
   }
 
+  const handleRequestClicked = useUnit(requestClicked);
+  const handleEditRequest = useUnit(editRequestSelected);
+  const handleArchiveRequest = useUnit(archiveRequestClicked);
+
+  const changeViewMode = useUnit(requestViewModeChanged);
+
   const popoverOpened = ref(false);
+  const handleSelected = useUnit(advertisementClicked);
+
+  const handleClick = (item: BidWithName) => {
+    if (!item) return null;
+
+    handleRequestClicked(item);
+    changeViewMode('offers');
+    handleSelected({
+      id: item.id,
+      article: item.article,
+      brand: item.brand?.toString() ?? '',
+    });
+
+    // if (!item.brandName || item.brandName === 'Не указано') {
+    //   requestClickedOnChange(item);
+    //   changeViewMode('selectBrand');
+    // } else {
+    //   requestClicked(item);
+    //   changeViewMode('offers');
+    // }
+  };
+  const handleClickOnChange = (item: BidWithName) => {
+    handleEditRequest(item);
+    changeViewMode('selectBrand');
+  };
 </script>
 
 <template>
   <div
-    class="group flex w-full flex-col gap-y-2 rounded-md border-2 border-[#D0D4DB] px-4 py-3 transition-all duration-75 hover:border-[#0017FC]">
-    <div class="flex flex-col">
+    @click="handleClick(item)"
+    :class="
+      cn(
+        'flex flex-col items-start justify-between gap-y-1 rounded-lg border-2 bg-white p-4 pr-5 duration-200 hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10',
+        route.query['search'] === item.name &&
+          route.query['active-pre-search'] === item.brandName &&
+          'border-[#0017FC] bg-[#1778EA] bg-opacity-10',
+      )
+    "
+    class="px-4 py-3 transition-all duration-75 hover:border-[#0017FC]">
+    <div class="flex w-full flex-col gap-y-1">
       <div class="flex w-full justify-between">
         <p class="text-sm font-normal text-[#101828]">{{ item.name }}</p>
         <Popover @update:open="(value) => (popoverOpened = value)">
-          <PopoverTrigger>
+          <PopoverTrigger @click.stop>
             <span
               :class="
                 cn(
@@ -37,33 +88,74 @@
             >
           </PopoverTrigger>
           <PopoverContent
-            class="flex h-[111px] w-[150px] flex-col justify-center rounded-[10px] border-b-0 border-t-0 p-0">
+            class="flex h-fit overflow-hidden w-[150px] flex-col justify-center rounded-[10px] p-0">
             <PopoverClose class="flex flex-col gap-y-0">
               <Button
+                @click="changeViewMode('history')"
                 variant="ghost"
-                class="rounded-b-0 flex h-full w-full rounded-[8px] border-t-2 border-[#D0D4DB] px-4 py-2 text-start hover:bg-[#F9FAFB]">
+                class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
                 <p class="w-full text-[14px] font-semibold">История заявки</p>
               </Button>
               <Button
                 variant="ghost"
+                @click="handleClickOnChange(item)"
                 class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
                 <p class="w-full text-[14px] font-semibold">Редактировать</p>
               </Button>
               <Button
                 variant="ghost"
                 @click="deleteRequestClicked(item.id ?? '')"
-                class="rounded-t-0 flex h-full w-full rounded-[8px] border-b-2 border-[#D0D4DB] px-4 py-2 text-start hover:bg-[#F9FAFB]">
+                class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
                 <p class="w-full text-[14px] font-semibold">Удалить заявку</p>
+              </Button>
+              <Button
+                variant="ghost"
+                @click="handleArchiveRequest(item)"
+                class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
+                <p class="w-full text-[14px] font-semibold">Архивировать</p>
               </Button>
             </PopoverClose>
           </PopoverContent>
         </Popover>
       </div>
-      <div class="flex w-full items-center justify-between">
-        <p class="text-xs font-normal text-[#858FA3]">{{ item.brand }}</p>
-        <p class="text-xs font-normal text-[#101828]">{{ item.amount }} шт</p>
+      <div class="flex w-full flex-col items-start justify-between gap-y-1">
+        <div class="flex w-full flex-row justify-between">
+          <div class="flex w-full flex-row gap-x-2">
+            <p class="text-xs font-normal text-[#858FA3]" v-if="item.article">
+              {{ item.article }}
+            </p>
+            <p class="text-xs font-normal text-[#858FA3]" v-else>Не указано</p>
+            <p class="text-xs font-normal text-[#858FA3]" v-if="item.brandName">
+              {{ item.brandName }}
+            </p>
+          </div>
+          <div class="flex gap-x-1">
+            <p class="text-xs font-normal text-[#101828]" v-if="item.amount">
+              {{ item.amount }}
+            </p>
+            <p class="text-xs font-normal text-[#101828]" v-else>Не указано</p>
+            <p class="text-xs font-normal text-[#101828]" v-if="item.amount">
+              шт
+            </p>
+          </div>
+        </div>
+
+        <div class="flex flex-row gap-x-2">
+          <div>
+            <p
+              class="min-w-[50px] text-xs font-normal text-[#858FA3]"
+              v-if="item.categoryName">
+              {{ item.categoryName }}
+            </p>
+          </div>
+          <div>
+            <p class="text-xs font-normal text-[#858FA3]" v-if="item.company">
+              {{ item.company }}
+            </p>
+            <p class="text-xs font-normal text-[#858FA3]" v-else>Не указано</p>
+          </div>
+        </div>
       </div>
-      <p class="text-xs font-normal text-[#858FA3]">{{ item.company }}</p>
     </div>
 
     <div class="flex gap-x-2" v-if="item.image">

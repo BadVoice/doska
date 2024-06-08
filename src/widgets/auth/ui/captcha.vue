@@ -1,6 +1,5 @@
 <script setup lang="ts">
   import {
-    Button,
     FormControl,
     FormField,
     FormItem,
@@ -13,13 +12,10 @@
   const onSubmit = () => {
     emit('submitCode');
   };
-
 </script>
 
 <template v-else>
-  <form
-    @submit="onSubmit"
-    class="flex w-full flex-col gap-y-4 px-5 mt-4">
+  <form @submit="onSubmit" class="mt-4 flex w-full flex-col gap-y-4 px-5">
     <p class="text-[18px] font-semibold">Введите код с картинки</p>
     <FormField v-slot="{ componentField }" name="name">
       <FormItem>
@@ -37,6 +33,4 @@
   </form>
 </template>
 
-<style scoped lang="postcss">
-
-</style>
+<style scoped lang="postcss"></style>

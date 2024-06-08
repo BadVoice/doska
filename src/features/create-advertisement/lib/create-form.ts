@@ -1,35 +1,59 @@
 import { toTypedSchema } from '@vee-validate/zod';
-import * as z from 'zod';
 import { type FormContext, useForm } from 'vee-validate';
+import { type Ref } from 'vue';
+import * as z from 'zod';
 
-export function useCreateAdvertisementForm(): {
+export function useCreateAdvertisementForm(mode: 'sell' | 'buy' | null): {
   form: FormContext<any, {}>;
+  category: Ref<number | undefined>;
+  brand: Ref<number | undefined>;
 } {
-  const formSchema = toTypedSchema(
+  const buySchema = toTypedSchema(
     z.object({
       name: z
         .string({ required_error: 'Введите наименование' })
         .min(1, 'Введите наименование'),
-      article: z
-        .string({ required_error: 'Введите артикул' })
-        .min(1, 'Введите артикул'),
+      article: z.string().optional(),
       count: z
         .number({
           required_error: 'Введите количество',
           invalid_type_error: 'Введите количество',
         })
         .min(1, 'Введите количество'),
-      assigment: z
-        .string({ required_error: 'Выберите назначение' })
-        .min(1, 'Выберите назначение'),
+      category: z.number({ required_error: 'Выберите категорию' }),
+      brand: z.number().optional(),
+    }),
+  );
+
+  const sellSchema = toTypedSchema(
+    z.object({
+      name: z
+        .string({ required_error: 'Введите наименование' })
+        .min(1, 'Введите наименование'),
+      article: z.string().optional(),
+      count: z
+        .number({
+          required_error: 'Введите количество',
+          invalid_type_error: 'Введите количество',
+        })
+        .min(1, 'Введите количество'),
+      category: z.number({ required_error: 'Выберите категорию' }),
+      brand: z.number().optional(),
+      price: z.number({ required_error: 'Введите цену' }),
+      available: z.number({ required_error: 'Введите наличие' }),
     }),
   );
 
   const form = useForm({
-    validationSchema: formSchema,
+    validationSchema: mode === 'sell' ? sellSchema : buySchema,
   });
+
+  const [category] = form.defineField('category');
+  const [brand] = form.defineField('brand');
 
   return {
     form,
+    category,
+    brand,
   };
 }

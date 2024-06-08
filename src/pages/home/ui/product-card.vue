@@ -7,7 +7,7 @@
     CarouselContent,
     CarouselItem,
   } from '@/shared/ui/carousel';
-  import { ref } from 'vue';
+  import {ref, watch} from 'vue';
   import { watchOnce } from '@vueuse/core';
   import type { Item } from '@/shared/api/generated/Api';
   import { useRoute, useRouter } from 'vue-router';
@@ -16,7 +16,7 @@
   const totalCount = ref(0);
   const current = ref(0);
 
-  defineProps<{
+   defineProps<{
     productItem: Item;
     isProductCardOpen: boolean;
   }>();
@@ -25,15 +25,8 @@
   const route = useRoute();
 
   const emits = defineEmits(['close-product-card']);
+  
   function closeProduct() {
-    router.push({
-      name: 'advertisements',
-      query: {
-        search: route.query.search,
-        'active-pre-search': route.query['active-pre-search'],
-        'active-card': '',
-      },
-    });
     emits('close-product-card', false);
   }
 

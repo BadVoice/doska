@@ -1,30 +1,26 @@
 <script setup lang="ts">
   import { Button } from '@/shared/ui';
-  import { AuthCode, AuthDetails, CompanyForm } from '@/widgets/auth';
   import { useUnit } from 'effector-vue/composition';
   import {
-    $formIndex,
     $formMode,
-    formPrevClicked,
-  } from '@/widgets/auth/model/auth-model';
+    handleRegistrationFulfilled,
+  } from '@/widgets/auth/lib/form-mode';
+  import CreateCompany from '@/widgets/auth/ui/create-company.vue';
+  import AuthCode from '@/widgets/auth/ui/auth-code.vue';
+  import VerificationCode from '@/widgets/auth/ui/verification-code.vue';
+  import AuthDetails from '@/widgets/auth/ui/auth-details.vue';
 
   const emit = defineEmits(['submitCloseAuth']);
   const formMode = useUnit($formMode);
-  const prevForm = useUnit(formPrevClicked);
-  const formIndex = useUnit($formIndex);
+  const handleExit = useUnit(handleRegistrationFulfilled);
 
   function backForm() {
-    if (formIndex.value >= 1) {
-      prevForm();
-    } else {
-      emit('submitCloseAuth', false);
-    }
+    handleExit();
+    emit('submitCloseAuth', false);
   }
 
-  $formIndex.watch((index) => {
-    if (index >= 3) {
-      emit('submitCloseAuth', false);
-    }
+  handleRegistrationFulfilled.watch(() => {
+    emit('submitCloseAuth', false);
   });
 </script>
 
@@ -43,8 +39,11 @@
   </div>
   <div
     class="min-h-[calc(100vh-56px)] w-full flex-grow border-r border-[#D0D4DB] bg-[#F9FAFB]">
-    <AuthCode v-if="formMode === 'phoneOrEmail'" />
-    <AuthDetails v-else-if="formMode === 'details'" />
-    <CompanyForm v-else />
+    <AuthCode
+      @on-login="emit('submitCloseAuth')"
+      v-if="formMode === 'phoneOrEmail'" />
+    <VerificationCode v-else-if="formMode === 'verification'" />
+    <CreateCompany v-else-if="formMode === 'company'" />
+    <AuthDetails v-else />
   </div>
 </template>

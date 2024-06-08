@@ -23,46 +23,6 @@
     }
   ],
   "paths": {
-    "/token": {
-      "post": {
-        "tags": [
-          "Auth"
-        ],
-        "summary": "метод получения токенов",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UserAuth"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "успешный ответ с токенами",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Token"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "ошибка",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/token/refresh": {
       "post": {
         "tags": [
@@ -250,21 +210,31 @@
         "tags": [
           "User"
         ],
-        "summary": "метод создания пользователя",
-        "operationId": "createUser",
+        "summary": "метод создания или аутентификации пользователя",
+        "operationId": "createAuthUser",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/User"
+                "$ref": "#/components/schemas/PostUser"
               }
             }
           },
           "required": true
         },
         "responses": {
+          "200": {
+            "description": "успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthUserResponse"
+                }
+              }
+            }
+          },
           "201": {
-            "description": "успешный ответ с созданным пользователем",
+            "description": "успешный ответ с пользователем",
             "content": {
               "application/json": {
                 "schema": {
@@ -284,6 +254,53 @@
             }
           }
         }
+      }
+    },
+    "/user_verify": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "метод верификации пользователя",
+        "description": "токен опционально",
+        "operationId": "verifyUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyUser"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyUserResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/profiles/": {
@@ -1691,6 +1708,56 @@
         ],
         "summary": "метод получения списка заявок",
         "operationId": "getBids",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "поиск по наименованию, описанию",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "article",
+            "in": "query",
+            "description": "фильтр по артикулу",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "amount",
+            "in": "query",
+            "description": "фильтр по количеству",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "destinations",
+            "in": "query",
+            "description": "фильтр по назначениям",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "description": "список destination_id",
+              "items": {
+                "type": "integer"
+              }
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "успешный ответ со списком заявок",
@@ -1924,6 +1991,56 @@
         ],
         "summary": "метод получения списка предложений",
         "operationId": "getOffers",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "поиск по наименованию, описанию",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "article",
+            "in": "query",
+            "description": "фильтр по артикулу",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "amount",
+            "in": "query",
+            "description": "фильтр по количеству",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "destinations",
+            "in": "query",
+            "description": "фильтр по назначениям",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "description": "список destination_id",
+              "items": {
+                "type": "integer"
+              }
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "успешный ответ со списком предложений",
@@ -2849,6 +2966,239 @@
         ]
       }
     },
+    "/interests/": {
+      "get": {
+        "tags": [
+          "Interests"
+        ],
+        "summary": "метод получения списка интересов",
+        "operationId": "getInterests",
+        "responses": {
+          "200": {
+            "description": "успешный ответ со списком интересов",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Interests"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Interests"
+        ],
+        "summary": "метод создания интереса",
+        "operationId": "createInterest",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Interest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "успешный ответ с созданным интересом",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Interest"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/interests/{interest_id}": {
+      "get": {
+        "tags": [
+          "Interests"
+        ],
+        "summary": "метод получения интереса",
+        "operationId": "getInterest",
+        "parameters": [
+          {
+            "name": "interest_id",
+            "in": "path",
+            "description": "идентификатор интереса",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "успешный ответ с интересом",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Interest"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Interests"
+        ],
+        "summary": "метод изменения интереса",
+        "operationId": "updateInterest",
+        "parameters": [
+          {
+            "name": "interest_id",
+            "in": "path",
+            "description": "идентификатор интереса",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Interest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "успешный ответ с измененным интересом",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Interest"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Interests"
+        ],
+        "summary": "метод удаления интереса",
+        "operationId": "deleteInterest",
+        "parameters": [
+          {
+            "name": "interest_id",
+            "in": "path",
+            "description": "идентификатор интереса",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_204"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/pre_search": {
       "post": {
         "tags": [
@@ -2994,6 +3344,451 @@
           }
         ]
       }
+    },
+    "/cart": {
+      "get": {
+        "tags": [
+          "QWEP"
+        ],
+        "summary": "метод получения корзины",
+        "operationId": "getCart",
+        "responses": {
+          "200": {
+            "description": "успешный ответ с корзиной",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Vendors"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://test.qrq.ru/qwep/api/v1/",
+            "description": "test qwep server"
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "QWEP"
+        ],
+        "summary": "метод изменения позиции корзины",
+        "operationId": "updateCartItem",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/cart_body"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://test.qrq.ru/qwep/api/v1/",
+            "description": "test qwep server"
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "QWEP"
+        ],
+        "summary": "метод создания позиции корзины",
+        "operationId": "createCartItem",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/cart_body_1"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://test.qrq.ru/qwep/api/v1/",
+            "description": "test qwep server"
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "QWEP"
+        ],
+        "summary": "метод удаления позиции корзины",
+        "operationId": "deleteCartItem",
+        "responses": {
+          "200": {
+            "description": "успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://test.qrq.ru/qwep/api/v1/",
+            "description": "test qwep server"
+          }
+        ]
+      }
+    },
+    "/qwep_interests/": {
+      "get": {
+        "tags": [
+          "QWEP"
+        ],
+        "summary": "метод получения списка интересов",
+        "operationId": "getQwepInterests",
+        "responses": {
+          "200": {
+            "description": "успешный ответ со списком интересов",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QwepInterests"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://test.qrq.ru/qwep/api/v1/",
+            "description": "test qwep server"
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "QWEP"
+        ],
+        "summary": "метод создания интереса",
+        "operationId": "createQwepInterest",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/QwepInterest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "успешный ответ с созданным интересом",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QwepInterest"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://test.qrq.ru/qwep/api/v1/",
+            "description": "test qwep server"
+          }
+        ]
+      }
+    },
+    "/qwep_interests/{interest_id}": {
+      "get": {
+        "tags": [
+          "QWEP"
+        ],
+        "summary": "метод получения интереса",
+        "operationId": "getQwepInterest",
+        "parameters": [
+          {
+            "name": "interest_id",
+            "in": "path",
+            "description": "идентификатор интереса",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "успешный ответ с интересом",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QwepInterest"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://test.qrq.ru/qwep/api/v1/",
+            "description": "test qwep server"
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "QWEP"
+        ],
+        "summary": "метод изменения интереса",
+        "operationId": "updateQwepInterest",
+        "parameters": [
+          {
+            "name": "interest_id",
+            "in": "path",
+            "description": "идентификатор интереса",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QwepInterest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "успешный ответ с измененным интересом",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QwepInterest"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://test.qrq.ru/qwep/api/v1/",
+            "description": "test qwep server"
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "QWEP"
+        ],
+        "summary": "метод удаления интереса",
+        "operationId": "deleteQwepInterest",
+        "parameters": [
+          {
+            "name": "interest_id",
+            "in": "path",
+            "description": "идентификатор интереса",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_204"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://test.qrq.ru/qwep/api/v1/",
+            "description": "test qwep server"
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -3007,10 +3802,41 @@
           }
         }
       },
-      "User": {
+      "PostUser": {
         "required": [
-          "password"
+          "username"
         ],
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "recaptcha": {
+            "type": "string",
+            "writeOnly": true
+          }
+        }
+      },
+      "VerifyUser": {
+        "required": [
+          "code",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "code": {
+            "type": "integer"
+          },
+          "recaptcha": {
+            "type": "string",
+            "writeOnly": true
+          }
+        }
+      },
+      "User": {
         "type": "object",
         "properties": {
           "username": {
@@ -3025,10 +3851,6 @@
             "type": "string",
             "format": "email"
           },
-          "password": {
-            "type": "string",
-            "writeOnly": true
-          },
           "first_name": {
             "type": "string"
           },
@@ -3041,6 +3863,28 @@
             "example": "2022-07-01"
           },
           "phone": {
+            "type": "string"
+          }
+        }
+      },
+      "AuthUserResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "VerifyUserResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "string"
+          },
+          "refresh": {
+            "type": "string"
+          },
+          "access": {
             "type": "string"
           }
         }
@@ -3083,7 +3927,8 @@
         "type": "object",
         "properties": {
           "username": {
-            "type": "string"
+            "type": "string",
+            "description": "email or phone"
           },
           "password": {
             "type": "string"
@@ -3241,7 +4086,6 @@
       "Bid": {
         "required": [
           "amount",
-          "category",
           "name"
         ],
         "type": "object",
@@ -3317,7 +4161,6 @@
       "Offer": {
         "required": [
           "amount",
-          "category",
           "name",
           "price"
         ],
@@ -3560,6 +4403,116 @@
           "$ref": "#/components/schemas/OrderReturn"
         }
       },
+      "Interest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "example": "2024-04-14T08:12:44.533679Z"
+          },
+          "related_user": {
+            "type": "integer",
+            "description": "user_id"
+          },
+          "brand": {
+            "type": "integer",
+            "description": "brand_id"
+          },
+          "city": {
+            "type": "integer",
+            "description": "city_id"
+          },
+          "amount": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "delivery_time": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "article": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "Interests": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Interest"
+        }
+      },
+      "QwepInterest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "example": "2024-04-14T08:12:44.533679Z"
+          },
+          "related_user": {
+            "type": "integer",
+            "description": "user_id"
+          },
+          "vendor": {
+            "type": "string"
+          },
+          "brand": {
+            "type": "string"
+          },
+          "city": {
+            "type": "integer",
+            "description": "city_id"
+          },
+          "amount": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "delivery_time": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "article": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "QwepInterests": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/QwepInterest"
+        }
+      },
       "PreSearchRequest": {
         "required": [
           "search"
@@ -3709,6 +4662,9 @@
           "itemId": {
             "type": "string"
           },
+          "accountId": {
+            "type": "integer"
+          },
           "fromClarification": {
             "type": "string"
           },
@@ -3798,6 +4754,9 @@
           "items_count": {
             "type": "integer"
           },
+          "search_id": {
+            "type": "string"
+          },
           "items": {
             "type": "array",
             "items": {
@@ -3868,6 +4827,14 @@
           "$ref": "#/components/schemas/Vendor"
         }
       },
+      "Response": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
       "Error": {
         "required": [
           "detail"
@@ -3884,6 +4851,48 @@
         "properties": {
           "success": {
             "type": "boolean"
+          }
+        }
+      },
+      "cart_body": {
+        "required": [
+          "account_id",
+          "cart_id",
+          "cart_item_id",
+          "quantity"
+        ],
+        "type": "object",
+        "properties": {
+          "account_id": {
+            "type": "integer"
+          },
+          "cart_id": {
+            "type": "string"
+          },
+          "cart_item_id": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "integer"
+          }
+        }
+      },
+      "cart_body_1": {
+        "required": [
+          "item_id",
+          "quantity",
+          "search_id"
+        ],
+        "type": "object",
+        "properties": {
+          "search_id": {
+            "type": "string"
+          },
+          "item_id": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "integer"
           }
         }
       },

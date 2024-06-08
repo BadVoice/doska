@@ -1,52 +1,82 @@
-import { combine, createEvent, createStore, sample } from 'effector';
+import { $api } from '@/shared/api';
+import { createMutation } from '@farfetched/core';
+import { createEvent, createStore, sample } from 'effector';
 
 export type TInputMode = 'email' | 'phone';
-type TFormMode = 'phoneOrEmail' | 'details' | 'company';
 
 interface IFormValues {
   name: string;
   phone?: string;
   email?: string;
+  captchaToken?: string;
 }
 
-interface IDetails {
-  name: string;
-  details: string;
+interface IAuthFormValues {
+  value: string;
+  captchaToken?: string;
+}
+
+interface SendDetailsParams {
+  email?: string;
+  phone?: string;
+  first_name: string;
+  captchaToken?: string;
 }
 
 export const valueInputed = createEvent<string>();
-export const formSubmitted = createEvent();
-export const formPrevClicked = createEvent();
 export const detailsFormSubmitted = createEvent<IFormValues>();
+export const authFormSubmitted = createEvent<IAuthFormValues>();
 
-export const $phoneOrEmail = createStore('');
+export const $phoneOrEmail = createStore('').on(valueInputed, (_, clk) => clk);
+export const $authFormValues = createStore<IAuthFormValues | null>(null);
+
 export const $inputMode = createStore<TInputMode>('email');
 
-export const $details = createStore<IDetails | null>(null);
+export const registerUser = createMutation({
+  handler: async (data: SendDetailsParams) =>
+    $api.user.createAuthUser({
+      username: data.email ?? data.phone ?? '',
+      recaptcha: data.captchaToken,
+    }),
+});
 
-export const $formIndex = createStore<number>(0)
-  .on(formSubmitted, (src) => src + 1)
-  .on(formPrevClicked, (src) => src - 1);
-
-export const $formMode = combine({ index: $formIndex }, ({ index }) =>
-  index <= 2
-    ? (['phoneOrEmail', 'details', 'company'] as TFormMode[])[index]
-    : 'company',
-);
-
-sample({
-  clock: detailsFormSubmitted,
-  fn: (clk) =>
-    ({
-      name: clk.name,
-      details: clk.phone ?? clk.email,
-    }) as IDetails,
-  target: $details,
+export const loginUser = createMutation({
+  handler: async (data: IAuthFormValues) => {
+    if (data.value.includes('@')) {
+      return $api.user.createAuthUser({
+        username: data.value,
+        recaptcha: data.captchaToken,
+      });
+    } else {
+      return $api.user.createAuthUser({
+        username: data.value.replace(/[^+\d]/g, '').replace(/\+/g, ''),
+        recaptcha: data.captchaToken,
+      });
+    }
+  },
 });
 
 sample({
-  clock: valueInputed,
-  target: $phoneOrEmail,
+  clock: detailsFormSubmitted,
+  source: {
+    $inputMode,
+    $authFormValues,
+  },
+  fn: (src, clk) =>
+    ({
+      email:
+        src.$inputMode === 'email' ? src.$authFormValues?.value : undefined,
+      phone:
+        src.$inputMode === 'phone' ? src.$authFormValues?.value : undefined,
+      first_name: clk.name ?? '',
+      captchaToken: clk.captchaToken,
+    }) as const,
+  target: registerUser.start,
+});
+
+sample({
+  clock: authFormSubmitted,
+  target: [$authFormValues, loginUser.start],
 });
 
 sample({

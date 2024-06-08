@@ -1,51 +1,31 @@
 <script setup lang="ts">
-  import { onMounted, ref, watch } from 'vue';
   import { SearchHistory } from '@/widgets/search-history';
 
-  import { type LocationQueryValue, useRoute, useRouter } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import { AdvertisementList } from '@/entities/advertisement';
-  import type {
-    Item,
-    PreSearchResponse,
-    PreSearchResponses,
-    SearchResponse,
-  } from '@/shared/api/generated/Api';
-  import { $qwepApi } from '@/shared/api/api';
+  import type { PreSearchResponse } from '@/shared/api/generated/Api';
+  import { useUnit } from 'effector-vue/composition';
+  import { preSearchQuery, searchQuery } from '@/entities/offer';
+  import { $searchTerm } from '@/widgets/header/model/header-modal';
+  import { ScrollArea } from '@/shared/ui/scroll-area';
+  import '../model/advertisement-page-model';
+  import { $selectedAdvertisementId } from '@/entities/advertisement/model/advertisement-model';
+  import { onMounted } from 'vue';
 
   const route = useRoute();
   const router = useRouter();
 
-  const pagination = defineModel<
-    Pick<
-      SearchResponse,
-      'has_next' | 'has_prev' | 'page' | 'items' | 'items_count' | 'pages'
-    >
-  >('pagination', {
-    required: true,
-  });
+  const searchValue = useUnit($searchTerm);
 
-  const searchResult = ref<PreSearchResponses>([]);
-  const searchParam = ref<string | LocationQueryValue[]>('');
-  const advertisementCount = ref<number>(0);
+  const { start: search, data: searchData } = useUnit(searchQuery);
+  const { data: preSearchData } = useUnit(preSearchQuery);
+  const selectedAdvertisement = useUnit($selectedAdvertisementId);
 
-  onMounted(fetchSearchResult);
-  watch(route, fetchSearchResult);
-
-  async function fetchSearchResult() {
-    searchParam.value = route.query.search as string;
-    try {
-      if (searchParam.value) {
-        searchResult.value = (
-          await $qwepApi.preSearch.getPreSearch({
-            search: searchParam.value,
-          })
-        ).data;
-        advertisementCount.value = searchResult.value.length;
-      }
-    } catch (error) {
-      console.log(error);
+  onMounted(() => {
+    if (selectedAdvertisement.value && !preSearchData.value?.data) {
+      router.push('/');
     }
-  }
+  }); // watch(route, fetchSearchResult);
 
   function getAnnouncementText(count: number) {
     if (count === 0 || !count) {
@@ -70,9 +50,10 @@
     'advertisementItems',
     'advertisementFilters',
   ]);
+
   const handleCardClicked = async (data: PreSearchResponse) => {
     try {
-      const { article, brand, id } = data;
+      const { article, brand } = data;
       await router.push({
         path: '/advertisements',
         query: {
@@ -82,29 +63,15 @@
         },
       });
       if (data) {
-        await $qwepApi.search
-          .getSearch({
-            search: article as string,
-            page: pagination.value.page,
-            page_size: 10,
-            brand: brand as string,
-          })
-          .then((response) => {
-            const { data: items } = response;
-            pagination.value = {
-              items_count: items.items_count,
-              has_next: !!items.has_next,
-              has_prev: !!items.has_prev,
-              page: items.page,
-              pages: items.pages,
-            };
-            emit('advertisementItems', response.data.items);
-            emit('advertisementFilters', response.data.filters);
-            return response.data.items as Item[];
-          });
+        search({
+          search: article?.toString() ?? '',
+          page: searchData.value?.data.page,
+          page_size: 10,
+          brand: brand?.toString() ?? '',
+        });
       }
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      console.error(err);
     }
   };
 </script>
@@ -114,52 +81,32 @@
     <div
       class="flex items-center justify-between border-b border-r border-[#D0D4DB] p-4 pr-5">
       <h3
-        v-if="route.path === '/advertisements' && searchParam"
+        v-if="route.path === '/advertisements'"
         class="text-[18px] font-semibold">
-        {{ getAnnouncementText(advertisementCount) }}
+        {{ getAnnouncementText(preSearchData?.data.length ?? 0) }}
       </h3>
       <h3 v-else class="text-[18px] font-semibold">История поиска</h3>
     </div>
   </div>
-  <div
-    class="h-[calc(100vh-177px)] w-full border-r border-[#D0D4DB] bg-[#F9FAFB]">
+  <ScrollArea class="max-h-[calc(100vh-177px)] w-full">
     <template
-      class="custom-scrollbar h-full overflow-auto"
       v-if="
         (route.path === '/advertisements' &&
           route.query.article &&
           route.query.brand) ||
-        route.query.search
+        searchValue
       ">
       <AdvertisementList
-        class="custom-scrollbar h-full overflow-auto"
-        :search-result="searchResult"
-        @advertisementClicked="handleCardClicked" />
+        v-if="preSearchData"
+        :search-result="preSearchData?.data"
+        class="custom-scrollbar h-full w-full overflow-auto bg-[#F9FAFB]" />
     </template>
+
     <SearchHistory
       class="custom-scrollbar h-full overflow-auto"
       v-if="route.path === '/search-history'" />
-  </div>
+  </ScrollArea>
+  <div
+    v-if="!preSearchData"
+    class="h-[100vh] w-full border-r bg-[#F9FAFB]"></div>
 </template>
-
-<style scoped>
-  .custom-scrollbar {
-    scrollbar-width: thin;
-    scrollbar-color: #d0d4db #f9fafb;
-    border-radius: 3px;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
-    background-color: #f9fafb;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    background-color: #d0d4db;
-    border-radius: 3px;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background-color: #a7acb5;
-  }
-</style>

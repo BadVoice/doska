@@ -9,17 +9,14 @@ const router = createRouter({
   routes: [
     {
       path: '/advertisements',
-      name: 'advertisements',
       component: AdvertisementPage,
     },
     {
       path: '/',
-      name: 'home_reqeusts',
       component: MyRequestsPage,
     },
     {
       path: '/search-history',
-      name: 'search-history',
       component: SearchHistory,
     },
   ],

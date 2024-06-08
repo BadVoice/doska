@@ -8,27 +8,76 @@
     FormMessage,
     Input,
   } from '@/shared/ui';
-  import { useUnit } from 'effector-vue/composition';
+  import { useAuthForm } from '@/widgets/auth/lib/auth-schema';
   import {
     $inputMode,
     detailsFormSubmitted,
-    formSubmitted,
+    registerUser,
   } from '@/widgets/auth/model/auth-model';
-  import { useAuthForm } from '@/widgets/auth/lib/auth-schema';
+  import { useUnit } from 'effector-vue/composition';
+  import VerifyCaptcha from '@/widgets/auth/ui/verify-captcha.vue';
+  import { ref } from 'vue';
+  import type { AxiosResponse } from 'axios';
+  import { handleNextForm } from '@/widgets/auth/lib/form-mode';
 
   const inputMode = useUnit($inputMode);
-  const nextModal = useUnit(formSubmitted);
+  const nextModal = useUnit(handleNextForm);
   const handleSubmit = useUnit(detailsFormSubmitted);
+
+  const showCaptcha = ref(false);
+  const registerError = ref(false);
+  const captchaToken = ref<string | null>(null);
+
+  const registerStatus = ref<number | null>(null);
+
+  const handleCaptchaVerified = (response: string) => {
+    captchaToken.value = response;
+  };
 
   const { form } = useAuthForm(inputMode.value);
 
   const onSubmit = () => {
     form.validate();
     if (Object.keys(form.errors.value).length <= 0) {
-      handleSubmit(form.values);
-      nextModal();
+      if (showCaptcha.value && !captchaToken.value) {
+        registerError.value = true;
+        console.error('Пожалуйста, пройдите проверку reCAPTCHA.');
+        return;
+      }
+
+      const values = {
+        ...form.values,
+        captchaToken: captchaToken.value,
+      };
+
+      handleSubmit(values);
     }
   };
+
+  interface CustomAxiosResponse<T = any> extends AxiosResponse<T> {
+    response?: {
+      status?: number;
+      data?: any;
+    };
+  }
+
+  registerUser.finished.success.watch(({ result }) => {
+    registerStatus.value =
+      (result as CustomAxiosResponse).response?.status || null;
+
+    if (registerStatus.value === 201) {
+      nextModal('company');
+    } else if (registerStatus.value === 400) {
+      registerError.value = true;
+    } else if (registerStatus.value === 429) {
+      showCaptcha.value = true;
+      registerError.value = true;
+    } else {
+      showCaptcha.value = false;
+      registerError.value = false;
+      nextModal('company');
+    }
+  });
 
   const label = {
     email: 'номер телефона',
@@ -41,6 +90,9 @@
     <form @submit="onSubmit" class="mt-4 flex w-full flex-col gap-y-4 px-4">
       <p class="text-[18px] font-semibold">
         Укажите ваше имя и {{ label[inputMode] }}
+      </p>
+      <p v-if="registerError" class="text-[14px] font-semibold text-[#858FA3]">
+        Произошла ошибка, возможно такие данные уже существуют
       </p>
       <FormField v-slot="{ componentField }" name="name">
         <FormItem>
@@ -88,6 +140,9 @@
           <FormMessage />
         </FormItem>
       </FormField>
+      <VerifyCaptcha
+        @captcha-verified="handleCaptchaVerified"
+        v-if="showCaptcha" />
     </form>
     <div
       class="inset-x-0 bottom-0 w-full border-t border-[#CCD0D9] bg-white p-4">

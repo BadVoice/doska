@@ -5,100 +5,38 @@
   import { ProductCard } from '@/pages/home';
   import { Header } from '@/widgets/header';
   import { Filter } from '@/features/filter';
-  import { Auth } from '@/widgets/auth';
-  import { Offers } from '@/widgets/offers';
+  import { Auth, authFormOpened } from '@/widgets/auth';
+  import { ManuallyAddOffer, Offers } from '@/widgets/offers';
   import { CreateAdvertisement } from '@/features/create-advertisement';
-  import type {
-    Item,
-    SearchResponse,
-    SearchResponseFilters,
-  } from '@/shared/api/generated/Api';
+  import type { Item } from '@/shared/api/generated/Api';
+  import { Sidebar } from '@/widgets/sidebar';
 
-  import { $qwepApi } from '@/shared/api/api';
+  import { useUnit } from 'effector-vue/composition';
+  import { $showAddOfferModal } from '@/widgets/offers/model/offers-model';
+  import { RequestHistory, SelectBrand } from '@/pages/my-requests';
+  import {
+    $requestViewMode,
+    requestViewModeChanged,
+  } from '@/pages/my-requests/model/my-requests-model';
+  import { searchQuery } from '@/entities/offer';
+  import { $selectedAdvertisement } from '@/entities/advertisement';
+  import {
+    ChangeCompany,
+    changeCompanyVisibleChanged,
+  } from '@/widgets/change-company';
 
   const route = useRoute();
   const router = useRouter();
 
-  const offersItems = ref<Item[]>([]);
-  const filters = ref<SearchResponseFilters>({
-    brands: ['Nissan/Infiniti'],
-    vendors: [
-      'Autodoc',
-      'Emex',
-      'Mikado Parts (API)',
-      'IXORA',
-      'АвтоПитер (API)',
-      'ffdhfdh',
-      'Tatparts',
-      'Emex (API)',
-      'Берг (API)',
-      'Армтек (API)',
-      'ПартКом (API)',
-      'Mparts (API)',
-    ],
-    cities: [
-      {
-        id: 5,
-        title: 'Партнерский склад',
-      },
-      {
-        id: 11,
-        title: 'Москва',
-      },
-      {
-        id: 12,
-        title: 'Набережные Челны',
-      },
-      {
-        id: 14,
-        title: 'Самара',
-      },
-      {
-        id: 18,
-        title: 'Склад выдачи',
-      },
-      {
-        id: 19,
-        title: 'Санкт-Петербург',
-      },
-      {
-        id: 23,
-        title: 'Оптовый склад',
-      },
-      {
-        id: 25,
-        title: 'NISSAN ЦС -1117',
-      },
-      {
-        id: 26,
-        title: 'Склад представительства',
-      },
-      {
-        id: 27,
-        title: '8250612 ЦС',
-      },
-      {
-        id: 29,
-        title: 'Ярославль',
-      },
-      {
-        id: 30,
-        title: 'Центральный склад',
-      },
-    ],
-  });
-  const pagination = ref<
-    Pick<
-      SearchResponse,
-      'has_next' | 'has_prev' | 'page' | 'items' | 'items_count' | 'pages'
-    >
-  >({
-    page: 1,
-    pages: 9,
-    has_next: true,
-    has_prev: false,
-    items_count: 0,
-  });
+  const showAddOfferModal = useUnit($showAddOfferModal);
+  const requestViewMode = useUnit($requestViewMode);
+  const openAuthForm = useUnit(authFormOpened);
+  const selectedAdvertisement = useUnit($selectedAdvertisement);
+  const changeSwitchCompanyVisible = useUnit(changeCompanyVisibleChanged);
+
+  const changeRequestViewMode = useUnit(requestViewModeChanged);
+
+  const { start: search } = useUnit(searchQuery);
 
   function handlePageSelected(page: number) {
     const vendorsString = route.query.vendors as string;
@@ -110,40 +48,29 @@
     const citiesString = route.query.cities as string;
     const citiesArray = citiesString ? citiesString.split(',').map(Number) : [];
 
-    $qwepApi.search
-      .getSearch({
-        filters: {
-          name: route.query?.denomination as string,
-          article: route.query?.article as string,
-          price: {
-            from: Number(route.query?.priceFrom) || 0,
-            to: Number(route.query?.priceTo) || 100000000000,
-          },
-          delivery: {
-            from: Number(route.query?.countFrom) || 0,
-            to: Number(route.query?.countTo) || 1000000000000000,
-          },
+    search({
+      filters: {
+        name: route.query?.denomination?.toString() ?? '',
+        article: route.query?.article?.toString() ?? '',
+        price: {
+          from: Number(route.query?.priceFrom) || 0,
+          to: Number(route.query?.priceTo) || 100000000000,
         },
-        exclude: {
-          brand: brandsArray,
-          vendor: vendorsArray,
-          city_id: citiesArray,
+        delivery: {
+          from: Number(route.query?.countFrom) || 0,
+          to: Number(route.query?.countTo) || 1000000000000000,
         },
-        search: route.query.search as string,
-        page: page,
-        page_size: 10,
-        brand: route.query['active-pre-search'] as string,
-      })
-      .then((response) => {
-        pagination.value = {
-          items_count: response.data.items_count,
-          has_next: !!response.data.has_next,
-          has_prev: !!response.data.has_prev,
-          page: response.data.page,
-          pages: response.data.pages,
-        };
-        offersItems.value = response.data.items as Item[];
-      });
+      },
+      exclude: {
+        brand: brandsArray,
+        vendor: vendorsArray,
+        city_id: citiesArray,
+      },
+      search: selectedAdvertisement.value?.article ?? '',
+      page: page,
+      page_size: 10,
+      brand: selectedAdvertisement.value?.brand ?? '',
+    });
   }
 
   const productItem = ref<Item>();
@@ -151,6 +78,7 @@
   const isProductCardOpen = ref(false);
   const isFilterCardOpen = ref(false);
   const isCreateAdvertisementOpen = ref(false);
+  const isSidebarOpen = ref(false);
 
   watch([isProductCardOpen, isFilterCardOpen], () => {
     if (isProductCardOpen.value && isFilterCardOpen.value) {
@@ -162,9 +90,6 @@
 
   const isMobile = ref(false);
   const isAuthOpen = ref(false);
-  const selectedAdvertisement = ref(false);
-
-  defineEmits(['advertisementItems']);
 
   const checkIsMobile = () => {
     isMobile.value = window.innerWidth < 640;
@@ -178,7 +103,6 @@
   onMounted(() => {
     if (route.query.search) {
       router.push({
-        name: 'advertisements',
         query: {
           search: route.query.search,
           'active-pre-search': route.query['active-pre-search'],
@@ -188,30 +112,8 @@
     }
   });
 
-  function handleSearchSubmit(searchTerm: string) {
-    router.push({
-      name: 'advertisements',
-      query: {
-        search: searchTerm,
-        'active-pre-search': route.query['active-pre-search'],
-        'active-card': route.query['active-card'],
-      },
-    });
-  }
-
-  function handleAdvertisementItems(advertisementsItems: Item[]) {
-    offersItems.value = advertisementsItems;
-    selectedAdvertisement.value = true;
-  }
-
-  function handleAdvertisementFilters(
-    advertisementsFilters: SearchResponseFilters,
-  ) {
-    filters.value = advertisementsFilters;
-    selectedAdvertisement.value = true;
-  }
-
   function handleItemClick(item: Item) {
+    console.log('click on item');
     router.push({
       path: route.fullPath,
       query: {
@@ -224,45 +126,60 @@
     productItem.value = item;
   }
 
-  function handleFilteredItemsCame(items: Item[]) {
-    offersItems.value = items;
-    isFilterCardOpen.value = false;
-  }
-
   function handleCloseProductCard() {
     isProductCardOpen.value = false;
   }
 
-  function handleRequestsData(data: {
-    list: Item[];
-    filters: SearchResponseFilters;
-    pagination: Pick<
-      SearchResponse,
-      'has_next' | 'has_prev' | 'page' | 'items' | 'items_count' | 'pages'
-    >;
-  }) {
-    console.log(data);
-    offersItems.value = data.list;
-    filters.value = data.filters;
-    pagination.value = data.pagination;
+  function handleNavigate(
+    destination: 'my-requests' | 'my-offers' | 'change-company' | 'add-company',
+  ) {
+    if (destination === 'add-company') {
+      handleAddCompany();
+    } else if (destination === 'my-requests') {
+      router.push('/');
+    } else if (destination === 'change-company') {
+      changeSwitchCompanyVisible(true);
+    } else {
+      router.push('/');
+    }
+    isSidebarOpen.value = false;
+  }
+
+  function handleCloseOffers() {
+    changeRequestViewMode(null);
+  }
+
+  function handleAddCompany() {
+    isAuthOpen.value = true;
+    openAuthForm('company');
   }
 </script>
 
 <template>
   <div class="flex flex-row bg-white">
-    <div class="flex w-full flex-col items-center sm:max-w-[356px]">
+    <div class="flex h-[100vh] w-full flex-col items-center sm:max-w-[356px]">
       <Header
-        v-if="isMobile && !isProductCardOpen && !isFilterCardOpen && !isAuthOpen && !isCreateAdvertisementOpen"
-        @submitSearch="handleSearchSubmit"
+        v-if="
+          isMobile &&
+          !isProductCardOpen &&
+          !isFilterCardOpen &&
+          !isAuthOpen &&
+          !isSidebarOpen &&
+          !isCreateAdvertisementOpen
+        "
         @submit-login="isAuthOpen = true"
+        @open-sidebar="isSidebarOpen = true"
         @create-clicked="isCreateAdvertisementOpen = true" />
       <Header
-          v-if="!isMobile && !isAuthOpen"
-          @submitSearch="handleSearchSubmit"
-          @submit-login="isAuthOpen = true"
-          @create-clicked="isCreateAdvertisementOpen = true" />
+        v-if="!isMobile && !isAuthOpen && !isSidebarOpen"
+        @submit-login="isAuthOpen = true"
+        @open-sidebar="isSidebarOpen = true"
+        @create-clicked="isCreateAdvertisementOpen = true" />
       <div
-        v-if="isMobile && (selectedAdvertisement || isFilterCardOpen)"
+        v-if="
+          isMobile &&
+          (selectedAdvertisement || isFilterCardOpen || isProductCardOpen)
+        "
         class="w-full">
         <ProductCard
           v-if="productItem"
@@ -273,101 +190,118 @@
       </div>
       <div
         class="w-full flex-grow bg-[#F9FAFB]"
-        v-if="
-          isMobile &&
-          selectedAdvertisement &&
-          !isProductCardOpen &&
-          !isFilterCardOpen
-        ">
+        v-if="isMobile && !isProductCardOpen && !isFilterCardOpen">
         <Offers
-          v-model:pagination="pagination"
+          @close-offers="handleCloseOffers"
+          v-if="
+            requestViewMode === 'offers' &&
+            !isFilterCardOpen &&
+            !isProductCardOpen &&
+            !isSidebarOpen
+          "
           @offer-clicked="handleItemClick"
           @open-filter="isFilterCardOpen = true"
-          :offers-items="offersItems"
           @page-selected="handlePageSelected"
           class="flex w-full" />
       </div>
       <router-view
-        v-if="!isAuthOpen  && !isFilterCardOpen"
-        @handle-data="handleRequestsData"
-        @advertisementItems="handleAdvertisementItems"
-        @advertisementFilters="handleAdvertisementFilters"
-        v-model:pagination="pagination" />
+        v-if="
+          !isAuthOpen &&
+          !isSidebarOpen &&
+          isMobile &&
+          !isProductCardOpen &&
+          !isFilterCardOpen &&
+          !isAuthOpen &&
+          !isSidebarOpen &&
+          !requestViewMode &&
+          !isCreateAdvertisementOpen
+        " />
+      <router-view v-if="!isAuthOpen && !isMobile && !isSidebarOpen" />
+      <SelectBrand
+        v-if="
+          isMobile && !isSidebarOpen && requestViewMode === 'selectBrand'
+        " />
       <Auth v-if="isAuthOpen" @submit-close-auth="isAuthOpen = false" />
+
+      <Sidebar
+        v-if="isSidebarOpen && !isAuthOpen"
+        @close-sidebar="isSidebarOpen = false"
+        @navigate="handleNavigate" />
+      <ChangeCompany />
       <CreateAdvertisement
         v-if="isCreateAdvertisementOpen"
         @close="isCreateAdvertisementOpen = false" />
     </div>
-    <div v-if="!isMobile" class="flex-grow bg-[#F9FAFB]">
-      <Offers
-        v-model:pagination="pagination"
-        @offer-clicked="handleItemClick"
-        @open-filter="isFilterCardOpen = true"
-        :offers-items="offersItems"
-        @page-selected="handlePageSelected"
-        class="hidden w-full lg:flex" />
 
-      <Offers
-        v-if="!isFilterCardOpen && !isProductCardOpen"
-        v-model:pagination="pagination"
-        @offer-clicked="handleItemClick"
-        @open-filter="isFilterCardOpen = true"
-        :offers-items="offersItems"
-        @page-selected="handlePageSelected"
-        class="hidden w-full sm:flex lg:hidden" />
+    <div v-if="!isMobile" class="w-full flex-grow bg-[#F9FAFB]">
+      <RequestHistory v-if="requestViewMode === 'history'" />
+      <SelectBrand v-else-if="requestViewMode === 'selectBrand'" />
+
+      <div class="flex w-full min-w-full lg:hidden">
+        <Offers
+          @close-offers="handleCloseOffers"
+          v-if="
+            requestViewMode === 'offers' &&
+            !isFilterCardOpen &&
+            !isProductCardOpen
+          "
+          @offer-clicked="handleItemClick"
+          @open-filter="isFilterCardOpen = true"
+          @page-selected="handlePageSelected"
+          class="hidden w-full sm:flex lg:hidden" />
+      </div>
+
+      <div class="hidden w-full min-w-full lg:flex">
+        <Offers
+          @close-offers="handleCloseOffers"
+          v-if="requestViewMode === 'offers'"
+          @offer-clicked="handleItemClick"
+          @open-filter="isFilterCardOpen = true"
+          @page-selected="handlePageSelected"
+          class="hidden w-full sm:flex lg:hidden" />
+      </div>
 
       <ProductCard
-        v-if="
-          isProductCardOpen &&
-          productItem &&
-          !isMobile &&
-          route.path === '/advertisements' &&
-          !isFilterCardOpen
-        "
+        v-if="isProductCardOpen && productItem && !isFilterCardOpen"
         :product-item="productItem"
         :is-product-card-open="isProductCardOpen"
         @close-product-card="handleCloseProductCard"
         class="hidden sm:flex lg:hidden" />
 
-      <Filter
+      <ManuallyAddOffer
         v-if="
-          isFilterCardOpen &&
+          showAddOfferModal &&
           !isMobile &&
           route.path === '/advertisements' &&
-          !isProductCardOpen
-        "
-        v-model:filters="filters"
-        @filtered-items-came="handleFilteredItemsCame"
-        :is-filter-card-open="isFilterCardOpen"
-        v-model:pagination="pagination"
-        @close-filter-card="isFilterCardOpen = false"
-        class="hidden w-full sm:inline-block lg:hidden" />
+          !isProductCardOpen &&
+          !isFilterCardOpen
+        " />
+      <!--      <Filter-->
+      <!--        v-if="isFilterCardOpen && !isMobile && !isProductCardOpen"-->
+      <!--        :is-filter-card-open="isFilterCardOpen"-->
+      <!--        @close-filter-card="isFilterCardOpen = false"-->
+      <!--        class="hidden w-full sm:inline-block xl:hidden" />-->
     </div>
-
     <div
-      v-if="!isFilterCardOpen && !isProductCardOpen"
+      v-if="!isFilterCardOpen && !isProductCardOpen && !showAddOfferModal"
       class="hidden h-screen w-full min-w-[360px] flex-col justify-between border-l border-[#D0D4DB] bg-[#F9FAFB] sm:w-[360px] lg:flex"></div>
     <ProductCard
-      v-if="productItem && !isMobile && route.path === '/advertisements'"
+      v-if="productItem && !isMobile && !showAddOfferModal"
       :product-item="productItem"
       :is-product-card-open="isProductCardOpen"
       @close-product-card="handleCloseProductCard"
       class="flex w-full sm:hidden lg:flex" />
+
+    <ManuallyAddOffer v-if="!isMobile && showAddOfferModal" />
     <Filter
-      v-if="!isMobile"
-      v-model:filters="filters"
-      @filtered-items-came="handleFilteredItemsCame"
+      v-if="!isMobile && !showAddOfferModal"
       :is-filter-card-open="isFilterCardOpen"
-      v-model:pagination="pagination"
       @close-filter-card="isFilterCardOpen = false"
       class="inline-block w-full sm:hidden lg:flex" />
   </div>
   <Filter
     v-if="isMobile"
-    v-model:filters="filters"
-    @filtered-items-came="handleFilteredItemsCame"
     :is-filter-card-open="isFilterCardOpen"
-    v-model:pagination="pagination"
     @close-filter-card="isFilterCardOpen = false"
     class="flex w-full sm:hidden lg:inline-block" />
 </template>

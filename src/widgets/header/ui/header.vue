@@ -1,15 +1,24 @@
 <script setup lang="ts">
-  import { computed, nextTick, ref, watch } from 'vue';
+  import { nextTick, onMounted, ref, watch } from 'vue';
   import { getButtonList } from '../lib/button-list';
   import { Button } from '@/shared/ui/button';
   import BurgerMenu from './burger-menu.vue';
   import Search from './assets/search.vue';
   import { Input } from '@/shared/ui/input';
-  import { useRoute, useRouter } from 'vue-router';
-  import { useDebounceFn } from '@vueuse/core';
+  import { useRouter } from 'vue-router';
+  import { useUnit } from 'effector-vue/composition';
+  import {
+    $selectedSortType,
+    searchTermInputed,
+    sortTypeSelected,
+  } from '@/widgets/header/model/header-modal';
+  import { myRequestsQuery } from '@/entities/requests';
 
-  const route = useRoute();
   const router = useRouter();
+
+  const searchTerm = ref('');
+
+  const handleSubmit = useUnit(searchTermInputed);
 
   const isBurgerMenuOpen = ref(false);
 
@@ -18,28 +27,26 @@
   const formFocused = ref(false);
   const scrollableContainer = ref();
 
+  const { start: handleMount, data: requests } = useUnit(myRequestsQuery);
+  const handleSortTypeSelected = useUnit(sortTypeSelected);
+  const selectedSortType = useUnit($selectedSortType);
+
+  onMounted(handleMount);
+
   function handleSubmitSearch(event: Event) {
     event.preventDefault();
     if (searchTerm.value !== '') {
-      handleInput();
+      handleSubmit(searchTerm.value);
     }
   }
 
-  const searchTerm = ref('');
-
-  const emit = defineEmits(['submitSearch', 'submitLogin', 'createClicked']);
-
-  const handleInput = useDebounceFn(() => {
-    emit('submitSearch', searchTerm.value);
-  }, 500);
-
-  function handleWheel(event: WheelEvent) {
-    event.preventDefault();
-    scrollableContainer.value.scrollBy({
-      left: event.deltaY < 0 ? 30 : -30,
-      behaviour: 'smooth',
-    });
-  }
+  const emit = defineEmits([
+    'submitSearch',
+    'submitLogin',
+    'createClicked',
+    'openSidebar',
+    'buttonClicked',
+  ]);
 
   watch(visibleSearch, (newValue) => {
     if (newValue) {
@@ -48,14 +55,38 @@
       });
       nextTick(() => {
         document.getElementById('search')?.focus();
-        router.push('/search-history');
+        router.push('/advertisements');
       });
     }
   });
 
-  const activeButton = computed(() => {
-    return buttonList.value.find((button) => button.link === route.path);
-  });
+  const scrollToButton = (index: number) => {
+    if (!scrollableContainer.value) {
+      console.error('scrollableContainer is null!');
+      return;
+    }
+
+    const buttonElement = scrollableContainer.value.children[index];
+    const buttonWidth = buttonElement.offsetWidth;
+    const containerWidth = scrollableContainer.value.offsetWidth;
+    const scrollPosition = scrollableContainer.value.scrollLeft;
+
+    const targetPosition = buttonElement.offsetLeft;
+
+    const offset = 170;
+
+    if (targetPosition < scrollPosition) {
+      scrollableContainer.value.scrollTo({
+        left: targetPosition - offset,
+        behavior: 'smooth',
+      });
+    } else if (targetPosition > scrollPosition + containerWidth - buttonWidth) {
+      scrollableContainer.value.scrollTo({
+        left: targetPosition - containerWidth + buttonWidth + offset,
+        behavior: 'smooth',
+      });
+    }
+  };
 </script>
 
 <template>
@@ -63,7 +94,7 @@
     class="w-full flex-col items-center justify-between border-b border-r border-[#D0D4DB] md:max-w-[356px]">
     <div class="flex w-full items-center justify-between px-4 pt-4">
       <div v-if="!visibleSearch" class="flex flex-row items-center">
-        <BurgerMenu v-model="isBurgerMenuOpen" />
+        <BurgerMenu @click="emit('openSidebar')" v-model="isBurgerMenuOpen" />
         <div class="ml-4 flex w-[5.75rem] items-center">
           <RouterLink to="/" class="flex w-full items-center">
             <img src="./assets/logo.svg" alt="logo" class="logo w-full" />
@@ -108,7 +139,7 @@
           :key="visibleSearch ? 'true' : 'false'"
           v-model="searchTerm"
           @keydown.enter="handleSubmitSearch"
-          @input="handleInput"
+          @input="handleSubmitSearch"
           id="search"
           type="text"
           @focus="formFocused = true"
@@ -116,27 +147,40 @@
           class="border-0 py-0 focus:outline-none" />
       </form>
     </div>
-    <div class="flex w-full items-center justify-between gap-6 py-4 pl-4">
+    <div class="flex w-full items-center py-4 pl-4">
       <div
         ref="scrollableContainer"
-        class="no-scrollbar overflow-x-auto whitespace-nowrap"
-        @wheel="handleWheel">
+        class="no-scrollbar overflow-x-auto whitespace-nowrap">
         <RouterLink
-          v-for="button of buttonList"
+          v-for="(button, index) in buttonList"
           :key="button.label"
           :to="button?.link"
-          class="mr-4 inline-block focus:outline-none">
+          @click="scrollToButton(index)"
+          class="mr-4 focus:outline-none">
           <Button
             variant="outline"
+            @click="
+              () => {
+                handleSortTypeSelected(button.status);
+                emit('buttonClicked', index);
+              }
+            "
             :class="{
               'border-[#0017FC] bg-[#1778EA] bg-opacity-10 text-[#0017FC] hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10 hover:text-[#0017FC]':
-                button.link === activeButton?.link,
-              'border-[#D0D4DB] bg-[#F9FAFB] text-[#858FA3] hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10 hover:text-[#0017FC]':
-                button.link !== activeButton?.link,
+                selectedSortType === button.status,
             }"
             class="max-h-[28px] rounded-lg"
             size="sm">
             {{ button.label }}
+            <template v-if="button.link === '/' && requests?.length">
+              ({{
+                button.status >= 0
+                  ? requests?.filter(
+                      (request) => request.status === button.status,
+                    ).length
+                  : requests?.length
+              }})
+            </template>
           </Button>
         </RouterLink>
       </div>
