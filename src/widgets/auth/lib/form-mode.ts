@@ -5,7 +5,7 @@ type TFormMode = 'phoneOrEmail' | 'details' | 'company' | 'verification';
 export const handleNextForm = createEvent<TFormMode>();
 export const handleRegistrationFulfilled = createEvent();
 
-export const $formMode = createStore<TFormMode>('phoneOrEmail').reset(
+export const $formMode = createStore<TFormMode>('verification').reset(
   handleRegistrationFulfilled,
 );
 

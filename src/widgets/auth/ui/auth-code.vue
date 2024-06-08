@@ -76,9 +76,8 @@
   };
 
   loginUser.finished.success.watch(({ result }) => {
-    if (result.data?.access) {
-      localStorage.setItem('token', result.data?.access);
-      emit('onLogin', true);
+    if ((result as CustomAxiosResponse).response?.status === 201) {
+      nextModal('verification');
     } else if ((result as CustomAxiosResponse).response?.status === 429) {
       showCaptcha.value = true;
       loginError.value = true;
@@ -103,6 +102,7 @@
           <FormLabel>Телефон или почта</FormLabel>
           <FormControl>
             <Input
+              autofocus
               autocomplete="tel"
               v-if="inputMode === 'phone'"
               v-mask="'+7 (###) ###-##-##'"
@@ -112,6 +112,7 @@
               placeholder="Телефон или почта"
               v-bind="componentField" />
             <Input
+              autofocus
               v-else
               autocomplete="email"
               @update:model-value="(payload) => handleInput(payload.toString())"
@@ -124,18 +125,6 @@
         </FormItem>
       </FormField>
 
-      <FormField v-slot="{ componentField }" name="password">
-        <FormItem>
-          <FormLabel>Пароль</FormLabel>
-          <FormControl>
-            <Input
-              type="password"
-              placeholder="Ваш пароль"
-              v-bind="componentField" />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
       <VerifyCaptcha
         @captcha-verified="handleCaptchaVerified"
         v-if="showCaptcha" />

@@ -38,7 +38,6 @@ export function usePhoneOrEmailForm(): {
   const schema = toTypedSchema(
     z.object({
       value: z.string({ required_error: 'Введите телефон или почту' }),
-      password: z.string({ required_error: 'Введите пароль' }),
     }),
   );
 

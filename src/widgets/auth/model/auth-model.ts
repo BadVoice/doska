@@ -13,20 +13,17 @@ interface IFormValues {
 
 interface IAuthFormValues {
   value: string;
-  password: string;
   captchaToken?: string;
 }
 
 interface SendDetailsParams {
   email?: string;
   phone?: string;
-  password: string;
   first_name: string;
   captchaToken?: string;
 }
 
 export const valueInputed = createEvent<string>();
-export const formPrevClicked = createEvent();
 export const detailsFormSubmitted = createEvent<IFormValues>();
 export const authFormSubmitted = createEvent<IAuthFormValues>();
 
@@ -37,39 +34,26 @@ export const $inputMode = createStore<TInputMode>('email');
 
 export const registerUser = createMutation({
   handler: async (data: SendDetailsParams) =>
-    $api.user.createUser(
-      Object.assign(
-        {
-          password: data.password,
-          first_name: data.first_name,
-          recaptcha: data.captchaToken,
-        },
-        data.email && { email: data.email },
-        data.phone && { phone: data.phone },
-      ),
-    ),
+    $api.user.createAuthUser({
+      username: data.email ?? data.phone ?? '',
+      recaptcha: data.captchaToken,
+    }),
 });
 
 export const loginUser = createMutation({
-  handler: async (data: IAuthFormValues) =>
-  {
-    if(data.value.includes( '@' ))
-    {
-     return $api.token.tokenCreate({
+  handler: async (data: IAuthFormValues) => {
+    if (data.value.includes('@')) {
+      return $api.user.createAuthUser({
         username: data.value,
-        password: data.password,
         recaptcha: data.captchaToken,
-      })
-    }
-    else
-    {
-      return $api.token.tokenCreate({
-        username: data.value.replace(/[^+\d]/g, '' ),
-        password: data.password,
+      });
+    } else {
+      return $api.user.createAuthUser({
+        username: data.value.replace(/[^+\d]/g, '').replace(/\+/g, ''),
         recaptcha: data.captchaToken,
-      })
+      });
     }
-  }
+  },
 });
 
 sample({
@@ -83,8 +67,7 @@ sample({
       email:
         src.$inputMode === 'email' ? src.$authFormValues?.value : undefined,
       phone:
-        src.$inputMode === 'phone' ? src.$authFormValues?.value.replace(/[^+\d]/g, '') : undefined,
-      password: src.$authFormValues?.password ?? '',
+        src.$inputMode === 'phone' ? src.$authFormValues?.value : undefined,
       first_name: clk.name ?? '',
       captchaToken: clk.captchaToken,
     }) as const,
