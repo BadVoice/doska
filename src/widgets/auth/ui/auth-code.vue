@@ -110,7 +110,7 @@
     <div
       class="inset-x-0 bottom-0 flex w-full flex-col gap-y-3 border-t border-[#CCD0D9] bg-white p-4">
       <Button @click="onSubmit" class="w-full text-[17px] font-semibold"
-        >Войти</Button
+        >Получить код</Button
       >
     </div>
   </div>

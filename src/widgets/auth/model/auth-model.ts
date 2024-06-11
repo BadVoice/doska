@@ -9,7 +9,10 @@ import {
 } from '@/widgets/auth/model/verification-model';
 import './verification-model';
 import { spread } from 'patronum';
-import { $formMode } from '@/widgets/auth/lib/form-mode';
+import {
+  $formMode,
+  handleRegistrationFulfilled,
+} from '@/widgets/auth/lib/form-mode';
 import type { VerifyUserResponse } from '@/shared/api/generated/Api';
 
 export type TInputMode = 'email' | 'phone';
@@ -86,6 +89,13 @@ sample({
     $formMode,
     saveTokensFx: saveTokensFx,
   }),
+});
+
+sample({
+  source: $authMode,
+  clock: verifyUserMutation.finished.success,
+  filter: (src, clk) => [200].includes(clk.result.status) && src === 'login',
+  target: handleRegistrationFulfilled,
 });
 
 sample({
