@@ -2,12 +2,11 @@
   import { Button } from '@/shared/ui';
   import { Clipboard, ClipboardCheck } from 'lucide-vue-next';
   import { ref } from 'vue';
-  import type { SearchPagination } from '@/shared/api/generated/Api';
 
   const copied = ref(false);
 
   defineProps<{
-    pagination: SearchPagination;
+    pagination: any;
   }>();
 
   function handleCopy() {

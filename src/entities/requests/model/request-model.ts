@@ -14,7 +14,7 @@ export const myRequestsQuery = createQuery({
     );
 
     if (params) {
-      const response = await $api.bids.getBids({ ...params });
+      const response = await $api.bids.getBids(params);
       return response.data;
     }
 
@@ -34,5 +34,11 @@ export const deleteRequestMutation = createMutation({
 });
 
 export const editRequestMutation = createMutation({
-  handler: (bid: Bid) => $api.bids.updateBid(parseInt(bid?.id ?? '0'), { name: bid.name, status: 3, amount: bid.amount, category: bid.category})
+  handler: (bid: Bid) =>
+    $api.bids.updateBid(parseInt(bid?.id ?? '0'), {
+      name: bid.name,
+      status: 3,
+      amount: bid.amount,
+      category: bid.category,
+    }),
 });

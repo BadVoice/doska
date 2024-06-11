@@ -11,9 +11,8 @@
   import { usePhoneOrEmailForm } from '@/widgets/auth/lib/auth-schema';
   import {
     $inputMode,
-    $phoneOrEmail,
     authFormSubmitted,
-    loginUser,
+    authUser,
     valueInputed,
   } from '@/widgets/auth/model/auth-model';
   import { useUnit } from 'effector-vue/composition';
@@ -24,7 +23,6 @@
   const nextModal = useUnit(handleNextForm);
   const handleInput = useUnit(valueInputed);
   const inputMode = useUnit($inputMode);
-  const value = useUnit($phoneOrEmail);
   const loginError = ref(false);
   const showCaptcha = ref(false);
 
@@ -55,21 +53,7 @@
     }
   };
 
-  const onRegister = () => {
-    form.validate();
-    if (Object.keys(form.errors.value).length <= 0) {
-      nextModal(inputMode.value === 'phone' ? 'verification' : 'details');
-
-      const values = {
-        ...form.values,
-        captchaToken: captchaToken.value,
-      };
-
-      authFormSubmitted(values);
-    }
-  };
-
-  loginUser.finished.success.watch(({ result }) => {
+  authUser.finished.success.watch(({ result }) => {
     if ([201, 200].includes(result.status)) {
       nextModal('verification');
     } else if (result.response?.status === 429) {
