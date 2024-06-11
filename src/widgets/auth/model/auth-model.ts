@@ -100,6 +100,19 @@ sample({
 });
 
 sample({
+  source: { $phoneOrEmail, $inputMode },
+  clock: authFormSubmitted,
+  fn: (src, clk) => ({
+    captchaToken: clk.captchaToken,
+    value:
+      src.$inputMode === 'phone'
+        ? src.$phoneOrEmail.replace(/[^+\d]/g, '').slice(0, 12)
+        : src.$phoneOrEmail,
+  }),
+  target: [$authFormValues, authUser.start],
+});
+
+sample({
   source: $phoneOrEmail,
   fn: (src) =>
     src.startsWith('+') || !isNaN(parseInt(src[0]))

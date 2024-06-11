@@ -23,3 +23,10 @@ sample({
   fn: () => true,
   target: $isVerifyCaptchaVisible,
 });
+
+sample({
+  clock: verifyUserMutation.finished.success,
+  filter: (clk: any) => [429].includes(clk.result.response?.status),
+  fn: () => true,
+  target: $isVerifyCaptchaVisible,
+});

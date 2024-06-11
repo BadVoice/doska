@@ -53,7 +53,7 @@
     }
   };
 
-  authUser.finished.success.watch(({ result }) => {
+  authUser.finished.success.watch(({ result }: any) => {
     if ([201, 200].includes(result.status)) {
       nextModal('verification');
     } else if (result.response?.status === 429) {

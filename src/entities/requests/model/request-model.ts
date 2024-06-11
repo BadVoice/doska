@@ -1,9 +1,16 @@
 import { createMutation, createQuery } from '@farfetched/core';
 import { $api } from '@/shared/api';
-import type { Bid, FullRequestParams } from '@/shared/api/generated/Api';
+import type { Bid } from '@/shared/api/generated/Api';
+
+export interface IRequestsQueryParams {
+  search?: string;
+  article?: string;
+  amount?: number;
+  destinations?: number[];
+}
 
 export const myRequestsQuery = createQuery({
-  handler: async (params?: FullRequestParams) => {
+  handler: async (params?: IRequestsQueryParams) => {
     const bids = (await $api.bids.getBids()).data;
     const brands = (await $api.brands.getBrands()).data;
     const categories = (await $api.categories.getCategories()).data;

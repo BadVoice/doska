@@ -4,7 +4,11 @@ import { not, spread } from 'patronum';
 
 import { $api } from '@/shared/api/api';
 
-import { deleteRequestMutation, editRequestMutation, myRequestsQuery } from '@/entities/requests';
+import {
+  deleteRequestMutation,
+  editRequestMutation,
+  myRequestsQuery,
+} from '@/entities/requests';
 
 import type { Bid, Brand } from '@/shared/api/generated/Api';
 import { searchQuery } from '@/entities/offer';
@@ -70,11 +74,14 @@ sample({
     mutation: editRequestMutation.start,
     $requestViewMode,
   }),
-})
+});
 
 keepFresh(myRequestsQuery, {
   automatically: true,
-  triggers: [deleteRequestMutation.finished.success, editRequestMutation.finished.success],
+  triggers: [
+    deleteRequestMutation.finished.success,
+    editRequestMutation.finished.success,
+  ],
 });
 
 sample({
@@ -89,14 +96,9 @@ sample({
   fn: (clk: FormValues) =>
     ({
       filterMutation: {
-        secure: true,
-        format: 'json',
-        path: '/bids',
-        query: {
-          search: clk.name,
-          amount: clk.count,
-          article: clk.article,
-        },
+        search: clk.name,
+        amount: parseInt(clk.count ?? '1'),
+        article: clk.article,
       },
       $filterOpened: false,
     }) as const,
