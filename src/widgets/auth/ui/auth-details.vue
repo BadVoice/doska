@@ -9,18 +9,18 @@
     Input,
   } from '@/shared/ui';
   import { useAuthForm } from '@/widgets/auth/lib/auth-schema';
+  import { handleNextForm } from '@/widgets/auth/lib/form-mode';
   import {
     $inputMode,
     detailsFormSubmitted,
   } from '@/widgets/auth/model/auth-model';
-  import { useUnit } from 'effector-vue/composition';
-  import VerifyCaptcha from '@/widgets/auth/ui/verify-captcha.vue';
-  import { ref } from 'vue';
-  import { handleNextForm } from '@/widgets/auth/lib/form-mode';
   import {
     $isVerifyCaptchaVisible,
     captchaVerified,
   } from '@/widgets/auth/model/verification-model';
+  import VerifyCaptcha from '@/widgets/auth/ui/verify-captcha.vue';
+  import { useUnit } from 'effector-vue/composition';
+  import { ref } from 'vue';
 
   const inputMode = useUnit($inputMode);
   const nextModal = useUnit(handleNextForm);

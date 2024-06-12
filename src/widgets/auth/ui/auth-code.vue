@@ -9,20 +9,18 @@
     Input,
   } from '@/shared/ui';
   import { usePhoneOrEmailForm } from '@/widgets/auth/lib/auth-schema';
+  import { handleNextForm } from '@/widgets/auth/lib/form-mode';
   import {
-    $inputMode,
     authFormSubmitted,
     authUser,
     valueInputed,
   } from '@/widgets/auth/model/auth-model';
+  import VerifyCaptcha from '@/widgets/auth/ui/verify-captcha.vue';
   import { useUnit } from 'effector-vue/composition';
   import { ref } from 'vue';
-  import VerifyCaptcha from '@/widgets/auth/ui/verify-captcha.vue';
-  import { handleNextForm } from '@/widgets/auth/lib/form-mode';
 
   const nextModal = useUnit(handleNextForm);
   const handleInput = useUnit(valueInputed);
-  const inputMode = useUnit($inputMode);
   const loginError = ref(false);
   const showCaptcha = ref(false);
 
@@ -82,17 +80,6 @@
             <Input
               autofocus
               autocomplete="tel"
-              v-if="inputMode === 'phone'"
-              v-mask="'+7 (###) ###-##-##'"
-              @update:model-value="(payload) => handleInput(payload.toString())"
-              class="h-fit rounded-[8px] border border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
-              type="text"
-              placeholder="Телефон или почта"
-              v-bind="componentField" />
-            <Input
-              autofocus
-              v-else
-              autocomplete="email"
               @update:model-value="(payload) => handleInput(payload.toString())"
               class="h-fit rounded-[8px] border border-[#D0D4DB] px-4 py-2 text-[16px] placeholder:text-[#858FA3]"
               type="text"

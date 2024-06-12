@@ -97,24 +97,19 @@ sample({
 });
 
 sample({
-  source: { $phoneOrEmail, $inputMode },
+  source: $phoneOrEmail,
   clock: authFormSubmitted,
   fn: (src, clk) => ({
     captchaToken: clk.captchaToken,
-    value:
-      src.$inputMode === 'phone'
-        ? src.$phoneOrEmail.replace(/[^+\d]/g, '').slice(0, 12)
-        : src.$phoneOrEmail,
+    value: src,
   }),
   target: [$authFormValues, authUser.start],
 });
 
 sample({
   source: $phoneOrEmail,
-  fn: (src) =>
-    src.startsWith('+') || !isNaN(parseInt(src[0]))
-      ? ('phone' as const)
-      : ('email' as const),
+  clock: authFormSubmitted,
+  fn: (src) => (src.startsWith('+') ? ('phone' as const) : ('email' as const)),
   target: $inputMode,
 });
 
