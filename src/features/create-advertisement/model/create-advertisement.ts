@@ -1,9 +1,9 @@
+import { myRequestsQuery } from '@/entities/requests';
 import { $api } from '@/shared/api';
 import type { Bid, Offer } from '@/shared/api/generated/Api';
 import { createMutation, createQuery, keepFresh } from '@farfetched/core';
 import { createEvent, createStore, sample } from 'effector';
 import { spread } from 'patronum';
-import { myRequestsQuery } from '@/entities/requests';
 
 type TFormMode = 'selectType' | 'form';
 type TAdvertisementType = 'buy' | 'sell';
@@ -12,10 +12,9 @@ export interface FormValues {
   name: string;
   article: string;
   count: string;
-  brand?: number;
   price?: number;
-  category: number;
   available?: number;
+  destination?: number;
 }
 
 const createOfferMutation = createMutation({
@@ -23,22 +22,20 @@ const createOfferMutation = createMutation({
 });
 
 const createBidMutation = createMutation({
-  handler: (data: Bid) =>
+  handler: (data: Bid & { destination: number }) =>
     $api.bids.createBid({
       name: data.name,
       article: data.article || 'Не указано',
       amount: data.amount,
-      brand: data.brand,
-      category: data.category,
+      brand: 1,
+      category: 1,
       status: 0,
+      destinations: [data.destination],
     }),
 });
 
-export const getCategories = createQuery({
-  handler: () => $api.categories.getCategories(),
-});
-export const getBrands = createQuery({
-  handler: () => $api.brands.getBrands(),
+export const getDestinations = createQuery({
+  handler: () => $api.destinations.getDestinations(),
 });
 
 export const advertisementTypeSelected = createEvent<TAdvertisementType>();
@@ -55,7 +52,7 @@ export const $formMode = createStore<TFormMode>('selectType').reset([
 
 sample({
   clock: createAdvertisementMounted,
-  target: [getCategories.start, getBrands.start],
+  target: getDestinations.start,
 });
 
 sample({
@@ -78,8 +75,7 @@ sample({
     name: clk.name,
     article: clk.article,
     amount: parseInt(clk?.count ?? '1'),
-    category: clk.category,
-    brand: clk.brand,
+    destination: clk.destination!,
   }),
   target: [createBidMutation.start, formClosed],
 });
@@ -91,10 +87,9 @@ sample({
   fn: (_, clk) => ({
     name: clk.name,
     amount: parseInt(clk?.count ?? '1'),
-    category: clk.category,
-    brand: clk.brand,
     price: clk.price!,
     delivery_time: clk.available,
+    destination: clk.destination!,
   }),
   target: [createOfferMutation.start, formClosed],
 });

@@ -5,8 +5,7 @@ import * as z from 'zod';
 
 export function useCreateAdvertisementForm(mode: 'sell' | 'buy' | null): {
   form: FormContext<any, {}>;
-  category: Ref<number | undefined>;
-  brand: Ref<number | undefined>;
+  destination: Ref<number | undefined>;
 } {
   const buySchema = toTypedSchema(
     z.object({
@@ -20,8 +19,7 @@ export function useCreateAdvertisementForm(mode: 'sell' | 'buy' | null): {
           invalid_type_error: 'Введите количество',
         })
         .min(1, 'Введите количество'),
-      category: z.number({ required_error: 'Выберите категорию' }),
-      brand: z.number().optional(),
+      destination: z.number({ required_error: 'Выберите назначение' }),
     }),
   );
 
@@ -37,8 +35,7 @@ export function useCreateAdvertisementForm(mode: 'sell' | 'buy' | null): {
           invalid_type_error: 'Введите количество',
         })
         .min(1, 'Введите количество'),
-      category: z.number({ required_error: 'Выберите категорию' }),
-      brand: z.number().optional(),
+      destination: z.number({ required_error: 'Выберите назначение' }),
       price: z.number({ required_error: 'Введите цену' }),
       available: z.number({ required_error: 'Введите наличие' }),
     }),
@@ -48,12 +45,10 @@ export function useCreateAdvertisementForm(mode: 'sell' | 'buy' | null): {
     validationSchema: mode === 'sell' ? sellSchema : buySchema,
   });
 
-  const [category] = form.defineField('category');
-  const [brand] = form.defineField('brand');
+  const [destination] = form.defineField('destination');
 
   return {
     form,
-    category,
-    brand,
+    destination,
   };
 }

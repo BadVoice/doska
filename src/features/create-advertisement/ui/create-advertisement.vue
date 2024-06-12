@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { cn } from '@/shared/lib';
   import {
     Button,
     FormControl,
@@ -8,8 +9,15 @@
     FormMessage,
     Input,
   } from '@/shared/ui';
-  import { ChevronDown, X } from 'lucide-vue-next';
+  import { ScrollArea } from '@/shared/ui/scroll-area';
+  import {
+    Listbox,
+    ListboxButton,
+    ListboxOption,
+    ListboxOptions,
+  } from '@headlessui/vue';
   import { useUnit } from 'effector-vue/composition';
+  import { ChevronDown, X } from 'lucide-vue-next';
   import { onMounted, onUnmounted } from 'vue';
   import { useCreateAdvertisementForm } from '../lib/create-form';
   import {
@@ -19,17 +27,8 @@
     createAdvertisementMounted,
     formClosed,
     formSubmitted,
-    getBrands,
-    getCategories,
+    getDestinations,
   } from '../model/create-advertisement';
-  import {
-    Listbox,
-    ListboxButton,
-    ListboxOption,
-    ListboxOptions,
-  } from '@headlessui/vue';
-  import { cn } from '@/shared/lib';
-  import { ScrollArea } from '@/shared/ui/scroll-area';
 
   const emit = defineEmits(['close']);
   const { advertisementTypeSelected: handleSelectedType, $formMode: formMode } =
@@ -38,12 +37,11 @@
       $formMode,
     });
 
-  const { data: categories } = useUnit(getCategories);
-  const { data: brands } = useUnit(getBrands);
+  const { data: destinations } = useUnit(getDestinations);
 
   const advertisementType = useUnit($advertisementType);
 
-  const { form, category, brand } = useCreateAdvertisementForm(
+  const { form, destination } = useCreateAdvertisementForm(
     advertisementType.value,
   );
 
@@ -199,10 +197,10 @@
             </FormItem>
           </FormField>
 
-          <div class="relative inline-block text-left">
-            <Listbox v-model="category">
+          <div class="relative mb-5 inline-block text-left">
+            <Listbox v-model="destination">
               <p class="pb-2 text-[14px] font-semibold text-[#101828]">
-                Категория
+                Назначение
               </p>
               <ListboxButton
                 class="inline-flex w-full justify-between rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium hover:bg-gray-50">
@@ -210,60 +208,13 @@
                   :class="
                     cn(
                       'text-[16px] font-normal tracking-wide text-[#858FA3]',
-                      category && 'text-black',
+                      destination && 'text-black',
                     )
                   ">
                   {{
-                    categories?.data?.find((value) => value.id === category)
-                      ?.name ?? 'Категория'
-                  }}
-                </p>
-                <ChevronDown color="#858FA3" class="h-5 w-5" />
-              </ListboxButton>
-
-              <transition
-                leave-active-class="transition ease-in duration-100"
-                leave-from-class="opacity-100"
-                leave-to-class="opacity-0">
-                <ListboxOptions
-                  class="absolute z-10 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                  <ListboxOption
-                    v-if="categories?.data"
-                    v-for="item in categories?.data"
-                    :value="item.id">
-                    <li
-                      :class="
-                        cn(
-                          'mx-1 my-1 cursor-pointer select-none rounded py-2 pl-3 pr-9 text-gray-900 hover:bg-opacity-90',
-                          category === parseInt(item?.id ?? '0') &&
-                            'bg-gray-200 text-black',
-                        )
-                      ">
-                      <span class="block truncate font-normal">
-                        {{ item.name }}
-                      </span>
-                    </li>
-                  </ListboxOption>
-                </ListboxOptions>
-              </transition>
-            </Listbox>
-          </div>
-
-          <div class="relative mb-5 inline-block text-left">
-            <Listbox v-model="brand">
-              <p class="pb-2 text-[14px] font-semibold text-[#101828]">Бренд</p>
-              <ListboxButton
-                class="inline-flex w-full justify-between rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium hover:bg-gray-50">
-                <p
-                  :class="
-                    cn(
-                      'text-[16px] font-normal tracking-wide text-[#858FA3]',
-                      brand && 'text-black',
-                    )
-                  ">
-                  {{
-                    brands?.data?.find((value) => value.id === brand)?.name ??
-                    'Бренд'
+                    destinations?.data?.find(
+                      (value) => value.id === destination,
+                    )?.name ?? 'Назначение'
                   }}
                 </p>
                 <ChevronDown color="#858FA3" class="h-5 w-5" />
@@ -276,14 +227,14 @@
                 <ListboxOptions
                   class="absolute w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                   <ListboxOption
-                    v-if="brands?.data"
-                    v-for="item in brands?.data"
+                    v-if="destinations?.data"
+                    v-for="item in destinations?.data"
                     :value="item.id">
                     <li
                       :class="
                         cn(
                           'mx-1 my-1 cursor-pointer select-none rounded py-2 pl-3 pr-9 text-gray-900 hover:bg-opacity-90',
-                          brand === parseInt(item?.id ?? '0') &&
+                          destination === parseInt(item?.id ?? '0') &&
                             'bg-gray-200 text-black',
                         )
                       ">
