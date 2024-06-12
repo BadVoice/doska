@@ -1,3 +1,4 @@
+import { $selectedAdvertisementId } from '@/entities/advertisement/model/advertisement-model';
 import { createMutation, keepFresh } from '@farfetched/core';
 import { createEvent, createStore, sample } from 'effector';
 import { not, spread } from 'patronum';
@@ -10,8 +11,8 @@ import {
   myRequestsQuery,
 } from '@/entities/requests';
 
-import type { Bid, Brand } from '@/shared/api/generated/Api';
 import { searchQuery } from '@/entities/offer';
+import type { Bid, Brand } from '@/shared/api/generated/Api';
 
 type TSelectScreenMode = 'offers' | 'selectBrand' | 'history' | null;
 
@@ -108,12 +109,23 @@ sample({
 sample({
   clock: requestClicked,
   filter: (clk) => !!clk.brandName && clk.brandName !== 'Не указано',
-  fn: (clk) =>
-    ({
+  fn: (clk) => {
+    const data = {
       search: clk.name,
       brand: clk.brandName ?? '',
-    }) as const,
-  target: [searchQuery.start, $searchQS],
+    };
+
+    return {
+      search: data,
+      qs: data,
+      id: clk.id,
+    } as const;
+  },
+  target: spread({
+    search: searchQuery.start,
+    qs: $searchQS,
+    id: $selectedAdvertisementId,
+  }),
 });
 
 sample({

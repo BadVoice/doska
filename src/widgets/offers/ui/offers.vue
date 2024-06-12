@@ -1,10 +1,11 @@
 <script setup lang="ts">
   import { Button } from '@/shared/ui/button';
 
-  import { onMounted, ref } from 'vue';
-  import type { Item } from '@/shared/api/generated/Api';
   import { OfferList, searchQuery } from '@/entities/offer';
+  import type { Item } from '@/shared/api/generated/Api';
+  import { onMounted, ref } from 'vue';
 
+  import { $filterValues } from '@/features/filter';
   import {
     Pagination,
     PaginationEllipsis,
@@ -13,16 +14,12 @@
     PaginationNext,
     PaginationPrev,
   } from '@/shared/ui/pagination';
-  import { useUnit } from 'effector-vue/composition';
   import { ScrollArea } from '@/shared/ui/scroll-area';
-  import { $filterValues } from '@/features/filter';
-  import { useRoute } from 'vue-router';
   import { offerAddButtonClicked } from '@/widgets/offers';
+  import { useUnit } from 'effector-vue/composition';
   import { Plus } from 'lucide-vue-next';
 
   defineProps<{ class: string }>();
-
-  const route = useRoute();
 
   const isMobile = ref(false);
   const page = ref(1);

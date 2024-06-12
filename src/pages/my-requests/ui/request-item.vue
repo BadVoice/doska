@@ -1,19 +1,18 @@
 <script lang="ts" setup>
-  import { ref } from 'vue';
-  import { cn } from '@/shared/lib';
-  import { Button, Popover, PopoverContent, PopoverTrigger } from '@/shared/ui';
-  import { PopoverClose } from 'radix-vue';
+  import type { BidWithName } from '@/entities/requests';
   import {
+    archiveRequestClicked,
     deleteRequestClicked,
     editRequestSelected,
     requestClicked,
     requestViewModeChanged,
-    archiveRequestClicked
   } from '@/pages/my-requests/model/my-requests-model';
+  import { cn } from '@/shared/lib';
+  import { Button, Popover, PopoverContent, PopoverTrigger } from '@/shared/ui';
   import { useUnit } from 'effector-vue/composition';
-  import type { BidWithName } from '@/entities/requests';
+  import { PopoverClose } from 'radix-vue';
+  import { ref } from 'vue';
   import { useRoute } from 'vue-router';
-  import { advertisementClicked } from '@/entities/advertisement';
 
   defineProps<{
     status: { color: string; text: string }[];
@@ -33,26 +32,12 @@
   const changeViewMode = useUnit(requestViewModeChanged);
 
   const popoverOpened = ref(false);
-  const handleSelected = useUnit(advertisementClicked);
 
   const handleClick = (item: BidWithName) => {
     if (!item) return null;
 
     handleRequestClicked(item);
     changeViewMode('offers');
-    handleSelected({
-      id: item.id,
-      article: item.article,
-      brand: item.brand?.toString() ?? '',
-    });
-
-    // if (!item.brandName || item.brandName === 'Не указано') {
-    //   requestClickedOnChange(item);
-    //   changeViewMode('selectBrand');
-    // } else {
-    //   requestClicked(item);
-    //   changeViewMode('offers');
-    // }
   };
   const handleClickOnChange = (item: BidWithName) => {
     handleEditRequest(item);
@@ -88,7 +73,7 @@
             >
           </PopoverTrigger>
           <PopoverContent
-            class="flex h-fit overflow-hidden w-[150px] flex-col justify-center rounded-[10px] p-0">
+            class="flex h-fit w-[150px] flex-col justify-center overflow-hidden rounded-[10px] p-0">
             <PopoverClose class="flex flex-col gap-y-0">
               <Button
                 @click="changeViewMode('history')"
