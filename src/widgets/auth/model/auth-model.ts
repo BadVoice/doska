@@ -1,19 +1,19 @@
 import { $api } from '@/shared/api';
-import { createMutation } from '@farfetched/core';
-import { createEffect, createEvent, createStore, sample } from 'effector';
+import type { VerifyUserResponse } from '@/shared/api/generated/Api';
+import {
+  $formMode,
+  handleRegistrationFulfilled,
+} from '@/widgets/auth/lib/form-mode';
 import {
   $isVerifyCaptchaVisible,
   $verifyCaptchaValue,
   verificationCodeComplete,
   verifyUserMutation,
 } from '@/widgets/auth/model/verification-model';
-import './verification-model';
+import { createMutation } from '@farfetched/core';
+import { createEffect, createEvent, createStore, sample } from 'effector';
 import { spread } from 'patronum';
-import {
-  $formMode,
-  handleRegistrationFulfilled,
-} from '@/widgets/auth/lib/form-mode';
-import type { VerifyUserResponse } from '@/shared/api/generated/Api';
+import './verification-model';
 
 export type TInputMode = 'email' | 'phone';
 
@@ -61,19 +61,6 @@ export const updateUser = createMutation({
 
 const saveTokensFx = createEffect((response: VerifyUserResponse) => {
   localStorage.setItem('token', response.access ?? '');
-});
-
-sample({
-  source: { $phoneOrEmail, $inputMode },
-  clock: authFormSubmitted,
-  fn: (src, clk) => ({
-    captchaToken: clk.captchaToken,
-    value:
-      src.$inputMode === 'phone'
-        ? src.$phoneOrEmail.replace(/[^+\d]/g, '').slice(0, 12)
-        : src.$phoneOrEmail,
-  }),
-  target: [$authFormValues, authUser.start],
 });
 
 sample({
