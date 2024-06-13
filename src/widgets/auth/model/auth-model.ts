@@ -48,6 +48,8 @@ export const $inputMode = createStore<TInputMode>('email');
 
 export const authUser = createMutation({
   handler: async (data: IAuthFormValues) => {
+    await Promise.resolve(() => localStorage.removeItem('token'));
+
     return $api.user.createAuthUser({
       username: data.value,
       recaptcha: data.captchaToken,

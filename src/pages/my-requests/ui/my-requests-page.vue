@@ -14,6 +14,7 @@
   import { ScrollArea } from '@/shared/ui/scroll-area';
   import { useRoute, useRouter } from 'vue-router';
   import { $selectedSortType } from '@/widgets/header';
+  import { $selectedAdvertisementId } from '@/entities/advertisement';
 
   const emit = defineEmits(['handleData']);
   const router = useRouter();

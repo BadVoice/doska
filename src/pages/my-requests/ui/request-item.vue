@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+  import { $selectedAdvertisementId } from '@/entities/advertisement';
   import type { BidWithName } from '@/entities/requests';
   import {
     archiveRequestClicked,
@@ -29,6 +30,8 @@
   const handleEditRequest = useUnit(editRequestSelected);
   const handleArchiveRequest = useUnit(archiveRequestClicked);
 
+  const selectedRequest = useUnit($selectedAdvertisementId);
+
   const changeViewMode = useUnit(requestViewModeChanged);
 
   const popoverOpened = ref(false);
@@ -50,8 +53,7 @@
     :class="
       cn(
         'flex flex-col items-start justify-between gap-y-1 rounded-lg border-2 bg-white p-4 pr-5 duration-200 hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10',
-        route.query['search'] === item.name &&
-          route.query['active-pre-search'] === item.brandName &&
+        selectedRequest === item.id &&
           'border-[#0017FC] bg-[#1778EA] bg-opacity-10',
       )
     "
