@@ -37,7 +37,6 @@
     if (!item) return null;
 
     handleRequestClicked(item);
-    changeViewMode('offers');
   };
   const handleClickOnChange = (item: BidWithName) => {
     handleEditRequest(item);

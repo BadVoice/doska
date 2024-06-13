@@ -1,29 +1,29 @@
 <script setup lang="ts">
   import { onMounted, ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
 
   import { CreateAdvertisement } from '@/features/create-advertisement';
-import { Filter } from '@/features/filter';
-import { ProductCard } from '@/pages/home';
-import type { Item } from '@/shared/api/generated/Api';
-import { Auth, authFormOpened } from '@/widgets/auth';
-import { Header } from '@/widgets/header';
-import { ManuallyAddOffer, Offers } from '@/widgets/offers';
-import { Sidebar } from '@/widgets/sidebar';
+  import { Filter } from '@/features/filter';
+  import { ProductCard } from '@/pages/home';
+  import type { Item } from '@/shared/api/generated/Api';
+  import { Auth, authFormOpened } from '@/widgets/auth';
+  import { Header } from '@/widgets/header';
+  import { ManuallyAddOffer, Offers } from '@/widgets/offers';
+  import { Sidebar } from '@/widgets/sidebar';
 
   import { $selectedAdvertisement } from '@/entities/advertisement';
-import { searchQuery } from '@/entities/offer';
-import { RequestHistory, SelectBrand } from '@/pages/my-requests';
-import {
-$requestViewMode,
-requestViewModeChanged,
-} from '@/pages/my-requests/model/my-requests-model';
-import {
-ChangeCompany,
-changeCompanyVisibleChanged,
-} from '@/widgets/change-company';
-import { $showAddOfferModal } from '@/widgets/offers/model/offers-model';
-import { useUnit } from 'effector-vue/composition';
+  import { searchQuery } from '@/entities/offer';
+  import { RequestHistory, SelectBrand } from '@/pages/my-requests';
+  import {
+    $requestViewMode,
+    requestViewModeChanged,
+  } from '@/pages/my-requests/model/my-requests-model';
+  import {
+    ChangeCompany,
+    changeCompanyVisibleChanged,
+  } from '@/widgets/change-company';
+  import { $showAddOfferModal } from '@/widgets/offers/model/offers-model';
+  import { useUnit } from 'effector-vue/composition';
 
   const route = useRoute();
   const router = useRouter();

@@ -27,8 +27,6 @@ const createBidMutation = createMutation({
       name: data.name,
       article: data.article || 'Не указано',
       amount: data.amount,
-      brand: 1,
-      category: 1,
       status: 0,
       destinations: [data.destination],
     }),

@@ -1,10 +1,17 @@
 <script lang="ts" setup>
   import { Button } from '@/shared/ui/button';
   import { X } from 'lucide-vue-next';
+  import { defineProps, onMounted, ref, watch } from 'vue';
   import { useFilter } from '../lib/schema';
   import FilterInput from './filter-input.vue';
-  import { defineProps, onMounted, ref, watch } from 'vue';
 
+  import { searchQuery } from '@/entities/offer';
+  import {
+    $filterValues,
+    filterSubmitted,
+  } from '@/features/filter/model/filter-model';
+  import SelectAll from '@/features/filter/ui/select-all.vue';
+  import { ScrollArea } from '@/shared/ui/scroll-area';
   import {
     Listbox,
     ListboxButton,
@@ -12,13 +19,6 @@
     ListboxOptions,
   } from '@headlessui/vue';
   import { useUnit } from 'effector-vue/composition';
-  import { searchQuery } from '@/entities/offer';
-  import SelectAll from '@/features/filter/ui/select-all.vue';
-  import { ScrollArea } from '@/shared/ui/scroll-area';
-  import {
-    $filterValues,
-    filterSubmitted,
-  } from '@/features/filter/model/filter-model';
 
   defineProps<{
     isFilterCardOpen: boolean;
@@ -172,29 +172,22 @@
                 leave-to-class="opacity-0">
                 <ListboxOptions
                   class="absolute z-10 mt-1 max-h-36 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                  <RecycleScroller
-                    class="scroller flex h-full flex-col"
-                    :items="data?.data?.filters?.cities"
-                    :item-size="46"
-                    key-field="id"
-                    v-slot="{ item }">
-                    <ListboxOption
-                      :key="item.id"
-                      :value="item.id"
-                      as="template">
-                      <li
-                        class="mx-1 my-1 cursor-pointer select-none bg-gray-50 text-black rounded py-2 pl-3 pr-9 "
-                        :class="{
-                          '!bg-blue-200 hover:!bg-blue-100 !text-gray-900': selectedCities.some(
-                            (city) => city === item.id,
-                          ),
-                        }">
-                        <span class="block truncate font-normal">
-                          {{ item.title }}</span
-                        >
-                      </li>
-                    </ListboxOption>
-                  </RecycleScroller>
+                  <ListboxOption
+                    v-for="item in data?.data?.filters?.cities"
+                    :key="item.id"
+                    :value="item.id"
+                    as="template">
+                    <li
+                      class="mx-1 my-1 cursor-pointer select-none rounded bg-gray-50 py-2 pl-3 pr-9 text-black"
+                      :class="{
+                        '!bg-blue-200 !text-gray-900 hover:!bg-blue-100':
+                          selectedCities.some((city) => city === item.id),
+                      }">
+                      <span class="block truncate font-normal">
+                        {{ item.title }}</span
+                      >
+                    </li>
+                  </ListboxOption>
                 </ListboxOptions>
               </transition>
             </Listbox>
@@ -238,26 +231,20 @@
                 leave-to-class="opacity-0">
                 <ListboxOptions
                   class="absolute z-10 mt-1 max-h-36 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                  <RecycleScroller
-                    class="scroller flex h-full flex-col"
-                    :items="data?.data?.filters?.vendors"
-                    :item-size="46"
-                    key-field="id"
-                    v-slot="{ item }">
-                    <ListboxOption :key="item" :value="item" as="template">
-                      <li
-                        class="mx-1 my-1 cursor-pointer select-none bg-gray-50 text-black rounded py-2 pl-3 pr-9 "
-                        :class="{
-                          '!bg-blue-200 hover:!bg-blue-100 !text-gray-900': selectedVendors.some(
-                            (vendor) => vendor === item,
-                          ),
-                        }">
-                        <span class="block truncate font-normal">{{
-                          item
-                        }}</span>
-                      </li>
-                    </ListboxOption>
-                  </RecycleScroller>
+                  <ListboxOption
+                    v-for="item in data?.data?.filters?.vendors"
+                    :key="item"
+                    :value="item"
+                    as="template">
+                    <li
+                      class="mx-1 my-1 cursor-pointer select-none rounded bg-gray-50 py-2 pl-3 pr-9 text-black"
+                      :class="{
+                        '!bg-blue-200 !text-gray-900 hover:!bg-blue-100':
+                          selectedVendors.some((vendor) => vendor === item),
+                      }">
+                      <span class="block truncate font-normal">{{ item }}</span>
+                    </li>
+                  </ListboxOption>
                 </ListboxOptions>
               </transition>
             </Listbox>
@@ -284,26 +271,20 @@
                 leave-to-class="opacity-0">
                 <ListboxOptions
                   class="absolute top-0 z-10 mt-1 max-h-36 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                  <RecycleScroller
-                    class="scroller flex h-full flex-col"
-                    :items="data?.data?.filters?.brands"
-                    :item-size="46"
-                    key-field="id"
-                    v-slot="{ item }">
-                    <ListboxOption :key="item" :value="item" as="template">
-                      <li
-                        class="mx-1 my-1 cursor-pointer select-none bg-gray-50 text-black rounded py-2 pl-3 pr-9 "
-                        :class="{
-                          '!bg-blue-200 hover:!bg-blue-100 !text-gray-900': selectedBrands.some(
-                            (brand) => brand === item,
-                          ),
-                        }">
-                        <span class="block truncate font-normal">{{
-                          item
-                        }}</span>
-                      </li>
-                    </ListboxOption>
-                  </RecycleScroller>
+                  <ListboxOption
+                    v-for="item in data?.data?.filters?.brands"
+                    :key="item"
+                    :value="item"
+                    as="template">
+                    <li
+                      class="mx-1 my-1 cursor-pointer select-none rounded bg-gray-50 py-2 pl-3 pr-9 text-black"
+                      :class="{
+                        '!bg-blue-200 !text-gray-900 hover:!bg-blue-100':
+                          selectedBrands.some((brand) => brand === item),
+                      }">
+                      <span class="block truncate font-normal">{{ item }}</span>
+                    </li>
+                  </ListboxOption>
                 </ListboxOptions>
               </transition>
             </Listbox>

@@ -1,6 +1,6 @@
 import { $api } from '@/shared/api';
-import { createEvent, sample } from 'effector';
 import { createQuery } from '@farfetched/core';
+import { createEvent, sample } from 'effector';
 
 export const mounted = createEvent();
 export const getBrands = createQuery({
