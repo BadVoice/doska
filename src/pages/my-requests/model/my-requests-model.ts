@@ -231,5 +231,3 @@ keepFresh(myRequestsQuery, {
   automatically: true,
   triggers: [bidMutation.finished.success],
 });
-
-debug(requestClicked);

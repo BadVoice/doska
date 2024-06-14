@@ -16,6 +16,7 @@ app.use(router);
 app.use(VueVirtualScroller);
 
 const unlogger = attachLogger();
+  unlogger();
 
 if (import.meta.env.PROD) {
   unlogger();

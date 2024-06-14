@@ -206,17 +206,17 @@
       </div>
       <router-view
         v-if="
-          !isAuthOpen &&
-          !isSidebarOpen &&
-          isMobile &&
-          !isProductCardOpen &&
-          !isFilterCardOpen &&
-          !isAuthOpen &&
-          !isSidebarOpen &&
-          !requestViewMode &&
-          !isCreateAdvertisementOpen
+          (!isAuthOpen &&
+            !isSidebarOpen &&
+            isMobile &&
+            !isProductCardOpen &&
+            !isFilterCardOpen &&
+            !isAuthOpen &&
+            !isSidebarOpen &&
+            !requestViewMode &&
+            !isCreateAdvertisementOpen) ||
+          (!isAuthOpen && !isMobile && !isSidebarOpen)
         " />
-      <router-view v-if="!isAuthOpen && !isMobile && !isSidebarOpen" />
       <SelectBrand
         v-if="
           isMobile && !isSidebarOpen && requestViewMode === 'selectBrand'

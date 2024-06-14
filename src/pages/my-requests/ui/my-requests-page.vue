@@ -1,20 +1,19 @@
 <script setup lang="ts">
+  import { myRequestsQuery } from '@/entities/requests';
+  import type { Bid } from '@/shared/api/generated/Api';
   import { Button } from '@/shared/ui';
-  import { onBeforeUnmount, onMounted } from 'vue';
+  import { ScrollArea } from '@/shared/ui/scroll-area';
+  import { $selectedSortType } from '@/widgets/header';
   import { useUnit } from 'effector-vue/composition';
+  import { onBeforeUnmount } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
   import {
     $filterOpened,
     $searchQS,
     filterVisibilityChanged,
   } from '../model/my-requests-model';
-  import RequestItem from './request-item.vue';
-  import type { Bid } from '@/shared/api/generated/Api';
   import FilterForm from './filter-form.vue';
-  import { myRequestsQuery } from '@/entities/requests';
-  import { ScrollArea } from '@/shared/ui/scroll-area';
-  import { useRoute, useRouter } from 'vue-router';
-  import { $selectedSortType } from '@/widgets/header';
-  import { $selectedAdvertisementId } from '@/entities/advertisement';
+  import RequestItem from './request-item.vue';
 
   const emit = defineEmits(['handleData']);
   const router = useRouter();
@@ -25,14 +24,8 @@
     filterVisibilityChanged: changeFilterVisibility,
   } = useUnit({ $filterOpened, filterVisibilityChanged });
 
-  const {
-    start: handleMount,
-    data: requests,
-    pending,
-  } = useUnit(myRequestsQuery);
+  const { data: requests, pending } = useUnit(myRequestsQuery);
   const selectedSortType = useUnit($selectedSortType);
-
-  onMounted(handleMount);
 
   const status = [
     { color: '#FF9900', text: 'Создана' },

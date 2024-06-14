@@ -1,6 +1,7 @@
-import { createMutation, createQuery } from '@farfetched/core';
 import { $api } from '@/shared/api';
 import type { Bid } from '@/shared/api/generated/Api';
+import { createMutation, createQuery } from '@farfetched/core';
+import { debug } from 'patronum';
 
 export interface IRequestsQueryParams {
   search?: string;
@@ -49,3 +50,5 @@ export const editRequestMutation = createMutation({
       category: bid.category,
     }),
 });
+
+debug(myRequestsQuery.start);
