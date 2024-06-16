@@ -13,14 +13,12 @@
   import { useUnit } from 'effector-vue/composition';
   import { PopoverClose } from 'radix-vue';
   import { ref } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { historyClicked } from '../model/history-model';
 
-  defineProps<{
+  const props = defineProps<{
     status: { color: string; text: string }[];
     item: BidWithName;
   }>();
-
-  const route = useRoute();
 
   function renderFile(file: File) {
     return URL.createObjectURL(file);
@@ -29,10 +27,16 @@
   const handleRequestClicked = useUnit(requestClicked);
   const handleEditRequest = useUnit(editRequestSelected);
   const handleArchiveRequest = useUnit(archiveRequestClicked);
+  const handleHistory = useUnit(historyClicked);
 
   const selectedRequest = useUnit($selectedAdvertisementId);
 
   const changeViewMode = useUnit(requestViewModeChanged);
+
+  function handleHistoryClicked() {
+    handleHistory(props.item);
+    changeViewMode('history');
+  }
 
   const popoverOpened = ref(false);
 
@@ -77,7 +81,7 @@
             class="flex h-fit w-[150px] flex-col justify-center overflow-hidden rounded-[10px] p-0">
             <PopoverClose class="flex flex-col gap-y-0">
               <Button
-                @click="changeViewMode('history')"
+                @click="handleHistoryClicked()"
                 variant="ghost"
                 class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
                 <p class="w-full text-[14px] font-semibold">История заявки</p>

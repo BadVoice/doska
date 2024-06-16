@@ -1,13 +1,15 @@
 <script lang="ts" setup>
-  import { ChevronLeft, Plus, SlidersHorizontal } from 'lucide-vue-next';
+  import { requestViewModeChanged } from '@/pages/my-requests/model/my-requests-model';
   import { Button } from '@/shared/ui';
   import { ScrollArea } from '@/shared/ui/scroll-area';
-  import { useUnit } from 'effector-vue/composition';
   import { offerAddButtonClicked } from '@/widgets/offers';
-  import { requestViewModeChanged } from '@/pages/my-requests/model/my-requests-model';
+  import { useUnit } from 'effector-vue/composition';
+  import { Plus, SlidersHorizontal } from 'lucide-vue-next';
+  import { historyQuery } from '../model/history-model';
 
   const changeViewMode = useUnit(requestViewModeChanged);
   const handleAddManuallyClick = useUnit(offerAddButtonClicked);
+  const { data: history } = useUnit(historyQuery);
 </script>
 
 <template>
@@ -33,11 +35,11 @@
       <div class="mb-5 flex flex-col gap-y-4">
         <div
           class="flex w-full cursor-default flex-col items-start justify-between gap-y-1 rounded-lg border border-[#D0D4DB] bg-white p-4 duration-200 hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10"
-          v-for="_ in 5">
+          v-for="item in history">
           <div class="flex w-full flex-col">
             <div class="flex w-full flex-row items-center justify-between">
               <h3 class="text-[14px] font-medium text-[#101828]">
-                Дверь Toyota Camry 2012-2017 50
+                {{ item.name }}
               </h3>
               <Button size="icon" variant="ghost" class="h-[24px] w-[24px]">
                 <span
@@ -46,24 +48,30 @@
                 >
               </Button>
             </div>
-            <h3 class="text-[16px] font-bold text-[#101828]">10 500Р</h3>
+            <h3 class="text-[16px] font-bold text-[#101828]">
+              {{ item.price }}
+            </h3>
           </div>
           <div class="flex w-full flex-row justify-between">
             <p class="text-[14px] font-normal text-[#667085]">
-              2360-2910210, Toyota
+              {{ item.company }}
             </p>
-            <p class="text-[14px] font-normal text-[#667085]">Москва, 9 дней</p>
-            <p class="text-[14px] font-normal text-[#667085]">ТехноСтройСнаб</p>
-            <p class="text-[14px] font-normal text-[#101828]">1 шт</p>
+            <p class="text-[14px] font-normal text-[#667085]">
+              {{ item.delivery_time }}
+            </p>
+            <!--<p class="text-[14px] font-normal text-[#667085]">{{ item. }}</p>-->
+            <p class="text-[14px] font-normal text-[#101828]">
+              {{ item.amount }}
+            </p>
           </div>
 
           <!--        <div v-if="item?.photo" class="flex flex-row gap-x-2">-->
           <!--          <img :src="item?.photo" alt="Photo" class="h-[48px] w-[48px]" />-->
           <!--        </div>-->
-          <div class="flex items-center gap-x-1">
+          <!--<div class="flex items-center gap-x-1">
             <span class="mt-0.5 h-2 w-[9px] rounded-full bg-green-500" />
-            <p class="text-[15px] text-green-500">Куплено</p>
-          </div>
+            <p class="text-[15px] text-green-500">{{ item. }}</p>
+          </div>-->
         </div>
       </div>
     </ScrollArea>

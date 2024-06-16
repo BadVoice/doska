@@ -2,9 +2,11 @@ import type { FormContext } from 'vee-validate';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
+import type { Ref } from 'vue';
 
 export function useOfferForm(): {
   form: FormContext<any, {}>;
+  destination: Ref<number | undefined>;
 } {
   const schema = toTypedSchema(
     z
@@ -20,7 +22,7 @@ export function useOfferForm(): {
         deliveryFrom: z.number().nonnegative().optional(),
         deliveryTo: z.number().nonnegative().optional(),
         article: z.string().optional(),
-        purpose: z.string().optional(),
+        destination: z.number().optional(),
       })
       .refine((values) => {
         if (values.deliveryFrom && values.deliveryTo) {
@@ -35,7 +37,10 @@ export function useOfferForm(): {
     validationSchema: schema,
   });
 
+  const [destination] = form.defineField('destination');
+
   return {
     form,
+    destination,
   };
 }

@@ -1,8 +1,8 @@
+import { $api } from '@/shared/api';
+import type { Confirmation } from '@/shared/api/generated/Api';
+import { createMutation, createQuery } from '@farfetched/core';
 import { createEvent, createStore, sample } from 'effector';
 import { not } from 'patronum';
-import { createMutation } from '@farfetched/core';
-import type { Confirmation } from '@/shared/api/generated/Api';
-import { $api } from '@/shared/api';
 
 interface FormValues {
   supplier: string;
@@ -16,6 +16,10 @@ interface FormValues {
 
 export const createOfferMutation = createMutation({
   handler: (data: Confirmation) => $api.confirmations.createConfirmation(data),
+});
+
+export const getDestinations = createQuery({
+  handler: () => $api.destinations.getDestinations(),
 });
 
 export const offerAddButtonClicked = createEvent();
@@ -41,4 +45,10 @@ sample({
       delivery_time: clk.deliveryTo,
     }) as Confirmation,
   target: createOfferMutation.start,
+});
+
+sample({
+  source: $showAddOfferModal,
+  filter: (src) => src,
+  target: getDestinations.start,
 });

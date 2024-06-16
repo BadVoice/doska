@@ -1,7 +1,7 @@
 import { $selectedAdvertisementId } from '@/entities/advertisement/model/advertisement-model';
 import { createMutation, keepFresh } from '@farfetched/core';
 import { createEffect, createEvent, createStore, sample } from 'effector';
-import { debug, not, spread } from 'patronum';
+import { not, spread } from 'patronum';
 
 import { $api } from '@/shared/api/api';
 
@@ -146,6 +146,13 @@ sample({
 });
 
 sample({
+  clock: searchQuery.finished.success,
+  filter: (clk) => [200].includes(clk.result.status),
+  fn: () => 'offers' as const,
+  target: $requestViewMode,
+});
+
+sample({
   clock: requestViewModeChanged,
   target: $requestViewMode,
 });
@@ -189,7 +196,6 @@ sample({
 
 const getBidWithBrandNameFx = createEffect(
   async (bid: Bid): Promise<BidWithName> => {
-    const bids = (await $api.bids.getBids()).data;
     const brands = (await $api.brands.getBrands()).data;
     const categories = (await $api.categories.getCategories()).data;
 
