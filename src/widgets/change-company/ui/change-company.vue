@@ -1,19 +1,25 @@
 <script lang="ts" setup>
+  import { companySelected } from '@/entities/company';
+  import { type Company } from '@/shared/api/generated/Api';
+  import { Button } from '@/shared/ui';
+  import { ScrollArea } from '@/shared/ui/scroll-area';
   import { useUnit } from 'effector-vue/composition';
+  import { ChevronLeft } from 'lucide-vue-next';
   import {
     $isChangeCompanyVisible,
     changeCompanyVisibleChanged,
     companiesQuery,
-    companyChoosed,
   } from '../model/change-company-model';
-  import { Button } from '@/shared/ui';
-  import { ChevronLeft } from 'lucide-vue-next';
-  import { ScrollArea } from '@/shared/ui/scroll-area';
 
   const isSwitchCompanyVisible = useUnit($isChangeCompanyVisible);
   const changeCompanyVisible = useUnit(changeCompanyVisibleChanged);
-  const handleCompanyChoosed = useUnit(companyChoosed);
+  const handleCompanyChoosed = useUnit(companySelected);
   const { data: companies } = useUnit(companiesQuery);
+
+  function handleSelected(company: Company) {
+    handleCompanyChoosed(company);
+    changeCompanyVisible(false);
+  }
 </script>
 
 <template>
@@ -31,7 +37,7 @@
       <div class="flex flex-col gap-y-4 px-4">
         <div
           v-for="company in companies"
-          @click="handleCompanyChoosed(company)"
+          @click="handleSelected(company)"
           class="rounded-lg border-2 border-[#E0E7EF] bg-white px-3 py-1 transition-all duration-100 hover:border-[#0017FC] hover:bg-opacity-90">
           <p class="text-[15px]">{{ company.name }}</p>
           <p class="text-[14px] text-[#757575]">{{ company.email }}</p>

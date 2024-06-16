@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { $selectedCompany } from '@/entities/company';
   import { myRequestsQuery } from '@/entities/requests';
   import type { Bid } from '@/shared/api/generated/Api';
   import { Button } from '@/shared/ui';
@@ -26,6 +27,7 @@
 
   const { data: requests, pending } = useUnit(myRequestsQuery);
   const selectedSortType = useUnit($selectedSortType);
+  const selectedCompany = useUnit($selectedCompany);
 
   const status = [
     { color: '#FF9900', text: 'Создана' },
@@ -86,8 +88,11 @@
         <div class="my-4 flex flex-col gap-y-2 px-4">
           <RequestItem
             v-for="item in selectedSortType >= 0
-              ? requests.filter(
-                  (request) => request.status === selectedSortType,
+              ? requests.filter((request) =>
+                  selectedCompany
+                    ? request.status === selectedSortType &&
+                      request.company === selectedCompany.id
+                    : request.status === selectedSortType,
                 )
               : requests"
             :item="item as Bid"
