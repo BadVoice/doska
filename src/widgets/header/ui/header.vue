@@ -1,18 +1,20 @@
 <script setup lang="ts">
-  import { nextTick, onMounted, ref, watch } from 'vue';
-  import { getButtonList } from '../lib/button-list';
+  import { myRequestsQuery } from '@/entities/requests';
+  import { $isAuthorized } from '@/entities/session';
   import { Button } from '@/shared/ui/button';
-  import BurgerMenu from './burger-menu.vue';
-  import Search from './assets/search.vue';
   import { Input } from '@/shared/ui/input';
-  import { useRouter } from 'vue-router';
-  import { useUnit } from 'effector-vue/composition';
   import {
     $selectedSortType,
     searchTermInputed,
     sortTypeSelected,
   } from '@/widgets/header/model/header-modal';
-  import { myRequestsQuery } from '@/entities/requests';
+  import { useUnit } from 'effector-vue/composition';
+  import { ChevronLeft, ChevronRight } from 'lucide-vue-next';
+  import { nextTick, onMounted, ref, watch } from 'vue';
+  import { useRouter } from 'vue-router';
+  import { getButtonList } from '../lib/button-list';
+  import Search from './assets/search.vue';
+  import BurgerMenu from './burger-menu.vue';
 
   const router = useRouter();
 
@@ -26,10 +28,13 @@
   const buttonList = getButtonList(visibleSearch);
   const formFocused = ref(false);
   const scrollableContainer = ref();
+  const scrolledButtonIndex = ref(0);
 
   const { start: handleMount, data: requests } = useUnit(myRequestsQuery);
   const handleSortTypeSelected = useUnit(sortTypeSelected);
   const selectedSortType = useUnit($selectedSortType);
+
+  const userAuthorized = useUnit($isAuthorized);
 
   onMounted(handleMount);
 
@@ -65,6 +70,11 @@
       console.error('scrollableContainer is null!');
       return;
     }
+
+    if (index > buttonList.value.length - 1 || index < 0) {
+      return;
+    }
+    scrolledButtonIndex.value = index;
 
     const buttonElement = scrollableContainer.value.children[index];
     const buttonWidth = buttonElement.offsetWidth;
@@ -118,10 +128,18 @@
         <Button @click="visibleSearch = true" size="icon" variant="ghost">
           <Search />
         </Button>
-        <Button @click="emit('submitLogin', true)" size="icon" variant="ghost">
+        <Button
+          @click="emit('submitLogin', true)"
+          v-if="!userAuthorized"
+          size="icon"
+          variant="ghost">
           <img src="./assets/login.svg" alt="login" />
         </Button>
-        <Button size="icon" variant="ghost" @click="$emit('createClicked')">
+        <Button
+          size="icon"
+          variant="ghost"
+          class="w-fit"
+          @click="$emit('createClicked')">
           <img src="./assets/create.svg" alt="create" />
         </Button>
       </div>
@@ -147,42 +165,57 @@
           class="border-0 py-0 focus:outline-none" />
       </form>
     </div>
-    <div class="flex w-full items-center py-4 pl-4">
-      <div
-        ref="scrollableContainer"
-        class="no-scrollbar overflow-x-auto whitespace-nowrap">
-        <RouterLink
-          v-for="(button, index) in buttonList"
-          :key="button.label"
-          :to="button?.link"
-          @click="scrollToButton(index)"
-          class="mr-4 focus:outline-none">
-          <Button
-            variant="outline"
-            @click="
-              () => {
-                handleSortTypeSelected(button.status);
-                emit('buttonClicked', index);
-              }
-            "
-            :class="{
-              'border-[#0017FC] bg-[#1778EA] bg-opacity-10 text-[#0017FC] hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10 hover:text-[#0017FC]':
-                selectedSortType === button.status,
-            }"
-            class="max-h-[28px] rounded-lg"
-            size="sm">
-            {{ button.label }}
-            <template v-if="button.link === '/' && requests?.length">
-              ({{
-                button.status >= 0
-                  ? requests?.filter(
-                      (request) => request.status === button.status,
-                    ).length
-                  : requests?.length
-              }})
-            </template>
-          </Button>
-        </RouterLink>
+    <div class="flex items-center px-1">
+      <Button
+        class="h-full w-fit cursor-pointer p-0"
+        variant="ghost"
+        @click="scrollToButton(scrolledButtonIndex - 2)">
+        <ChevronLeft />
+      </Button>
+
+      <div class="flex w-full items-center py-4 pr-4">
+        <div
+          ref="scrollableContainer"
+          class="no-scrollbar relative overflow-x-auto whitespace-nowrap">
+          <RouterLink
+            v-for="(button, index) in buttonList"
+            :key="button.label"
+            :to="button?.link"
+            @click="scrollToButton(index)"
+            class="mr-4 focus:outline-none">
+            <Button
+              variant="outline"
+              @click="
+                () => {
+                  handleSortTypeSelected(button.status);
+                  emit('buttonClicked', index);
+                }
+              "
+              :class="{
+                'border-[#0017FC] bg-[#1778EA] bg-opacity-10 text-[#0017FC] hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10 hover:text-[#0017FC]':
+                  selectedSortType === button.status,
+              }"
+              class="max-h-[28px] rounded-lg"
+              size="sm">
+              {{ button.label }}
+              <template v-if="button.link === '/' && requests?.length">
+                ({{
+                  button.status >= 0
+                    ? requests?.filter(
+                        (request) => request.status === button.status,
+                      ).length
+                    : requests?.length
+                }})
+              </template>
+            </Button>
+          </RouterLink>
+        </div>
+        <Button
+          class="h-full w-fit cursor-pointer p-0"
+          variant="ghost"
+          @click="scrollToButton(scrolledButtonIndex + 2)">
+          <ChevronRight />
+        </Button>
       </div>
     </div>
   </div>

@@ -1,14 +1,14 @@
 <script setup lang="ts">
   import { Button } from '@/shared/ui';
-  import { useUnit } from 'effector-vue/composition';
   import {
     $formMode,
     handleRegistrationFulfilled,
   } from '@/widgets/auth/lib/form-mode';
-  import CreateCompany from '@/widgets/auth/ui/create-company.vue';
   import AuthCode from '@/widgets/auth/ui/auth-code.vue';
-  import VerificationCode from '@/widgets/auth/ui/verification-code.vue';
   import AuthDetails from '@/widgets/auth/ui/auth-details.vue';
+  import CreateCompany from '@/widgets/auth/ui/create-company.vue';
+  import VerificationCode from '@/widgets/auth/ui/verification-code.vue';
+  import { useUnit } from 'effector-vue/composition';
 
   const emit = defineEmits(['submitCloseAuth']);
   const formMode = useUnit($formMode);

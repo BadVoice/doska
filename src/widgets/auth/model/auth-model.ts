@@ -1,5 +1,8 @@
 import { $api } from '@/shared/api';
+import { unauthorizedErrorHappened } from '@/shared/api/api';
 import type { VerifyUserResponse } from '@/shared/api/generated/Api';
+import { toast } from '@/shared/ui/toast';
+import { $showAuth } from '@/widgets/auth';
 import {
   $formMode,
   handleRegistrationFulfilled,
@@ -12,7 +15,7 @@ import {
 } from '@/widgets/auth/model/verification-model';
 import { createMutation } from '@farfetched/core';
 import { createEffect, createEvent, createStore, sample } from 'effector';
-import { spread } from 'patronum';
+import { debounce, spread } from 'patronum';
 import './verification-model';
 
 export type TInputMode = 'email' | 'phone';
@@ -47,18 +50,37 @@ export const $authFormValues = createStore<IAuthFormValues | null>(null);
 export const $inputMode = createStore<TInputMode>('email');
 
 export const authUser = createMutation({
-  handler: async (data: IAuthFormValues) => {
-    localStorage.removeItem('token');
+  handler: async (data: IAuthFormValues) =>
+    $api.user.createAuthUser(
+      {
+        username: data.value,
+        recaptcha: data.captchaToken,
+      },
+      {
+        transformRequest: (data, headers) => {
+          delete headers['Authorization'];
 
-    return $api.user.createAuthUser({
-      username: data.value,
-      recaptcha: data.captchaToken,
-    });
-  },
+          return JSON.stringify(data);
+        },
+      },
+    ),
 });
 
 export const updateUser = createMutation({
   handler: async (data: SendDetailsParams) => $api.user.updateUser(data),
+});
+
+const notifyUnauthorizedError = createEffect(() => {
+  toast({
+    title: 'Авторизуйтесь, чтобы получить доступ',
+    variant: 'destructive',
+  });
+});
+
+sample({
+  clock: debounce(unauthorizedErrorHappened, 500),
+  fn: () => true,
+  target: [notifyUnauthorizedError, $showAuth],
 });
 
 const saveTokensFx = createEffect((response: VerifyUserResponse) => {

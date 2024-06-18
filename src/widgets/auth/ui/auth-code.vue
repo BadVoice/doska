@@ -34,8 +34,8 @@
 
   const { form } = usePhoneOrEmailForm();
 
-  const onSubmit = () => {
-    form.validate();
+  const onSubmit = async () => {
+    await form.validate();
     if (Object.keys(form.errors.value).length <= 0) {
       if (showCaptcha.value && !captchaToken.value) {
         loginError.value = true;

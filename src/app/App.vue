@@ -18,6 +18,8 @@
     $requestViewMode,
     requestViewModeChanged,
   } from '@/pages/my-requests/model/my-requests-model';
+  import { Toaster } from '@/shared/ui/toast';
+  import { $showAuth, handleShowAuthChanged } from '@/widgets/auth';
   import {
     ChangeCompany,
     changeCompanyVisibleChanged,
@@ -89,7 +91,8 @@
   });
 
   const isMobile = ref(false);
-  const isAuthOpen = ref(false);
+  const isAuthOpen = useUnit($showAuth);
+  const changeAuthVisibility = useUnit(handleShowAuthChanged);
 
   const checkIsMobile = () => {
     isMobile.value = window.innerWidth < 640;
@@ -150,31 +153,29 @@
   }
 
   function handleAddCompany() {
-    isAuthOpen.value = true;
+    changeAuthVisibility(true);
     openAuthForm('company');
   }
 </script>
 
 <template>
+  <Toaster />
   <div class="flex flex-row bg-white">
     <div class="flex h-[100vh] w-full flex-col items-center sm:max-w-[356px]">
       <Header
         v-if="
-          isMobile &&
-          !isProductCardOpen &&
-          !isFilterCardOpen &&
-          !isAuthOpen &&
-          !isSidebarOpen &&
-          !isCreateAdvertisementOpen
+          (isMobile &&
+            !isProductCardOpen &&
+            !isFilterCardOpen &&
+            !isAuthOpen &&
+            !isSidebarOpen &&
+            !isCreateAdvertisementOpen) ||
+          (!isMobile && !isAuthOpen && !isSidebarOpen)
         "
-        @submit-login="isAuthOpen = true"
+        @submit-login="changeAuthVisibility()"
         @open-sidebar="isSidebarOpen = true"
         @create-clicked="isCreateAdvertisementOpen = true" />
-      <Header
-        v-if="!isMobile && !isAuthOpen && !isSidebarOpen"
-        @submit-login="isAuthOpen = true"
-        @open-sidebar="isSidebarOpen = true"
-        @create-clicked="isCreateAdvertisementOpen = true" />
+
       <div
         v-if="
           isMobile &&
@@ -221,7 +222,9 @@
         v-if="
           isMobile && !isSidebarOpen && requestViewMode === 'selectBrand'
         " />
-      <Auth v-if="isAuthOpen" @submit-close-auth="isAuthOpen = false" />
+      <Auth
+        v-if="isAuthOpen"
+        @submit-close-auth="changeAuthVisibility(false)" />
 
       <Sidebar
         v-if="isSidebarOpen && !isAuthOpen"

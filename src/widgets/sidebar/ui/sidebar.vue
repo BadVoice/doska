@@ -32,7 +32,7 @@
       action: () => emit('navigate', 'my-offers'),
     },
     {
-      label: 'Переключить аккаунт',
+      label: 'Переключить компанию',
       icon: logoutIcon,
       action: () => emit('navigate', 'change-company'),
     },
