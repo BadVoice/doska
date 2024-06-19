@@ -1,35 +1,35 @@
 <script setup lang="ts">
   import { cn } from '@/shared/lib';
-import {
-Button,
-FormControl,
-FormField,
-FormItem,
-FormLabel,
-FormMessage,
-Input,
-} from '@/shared/ui';
-import { ScrollArea } from '@/shared/ui/scroll-area';
-import {
-Listbox,
-ListboxButton,
-ListboxOption,
-ListboxOptions,
-} from '@headlessui/vue';
-import { useUnit } from 'effector-vue/composition';
-import { ChevronDown, X } from 'lucide-vue-next';
-import { onMounted, onUnmounted } from 'vue';
-import { useCreateAdvertisementForm } from '../lib/create-form';
-import { createBidVisibilityChanged } from '../lib/show-create';
-import {
-$advertisementType,
-$formMode,
-advertisementTypeSelected,
-createAdvertisementMounted,
-formClosed,
-formSubmitted,
-getDestinations,
-} from '../model/create-advertisement';
+  import {
+    Button,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+    Input,
+  } from '@/shared/ui';
+  import { ScrollArea } from '@/shared/ui/scroll-area';
+  import {
+    Listbox,
+    ListboxButton,
+    ListboxOption,
+    ListboxOptions,
+  } from '@headlessui/vue';
+  import { useUnit } from 'effector-vue/composition';
+  import { ChevronDown, X } from 'lucide-vue-next';
+  import { onMounted, onUnmounted } from 'vue';
+  import { useCreateAdvertisementForm } from '../lib/create-form';
+  import { createBidVisibilityChanged } from '../lib/show-create';
+  import {
+    $advertisementType,
+    $formMode,
+    advertisementTypeSelected,
+    createAdvertisementMounted,
+    formClosed,
+    formSubmitted,
+    getDestinations,
+  } from '../model/create-advertisement';
 
   const { advertisementTypeSelected: handleSelectedType, $formMode: formMode } =
     useUnit({
