@@ -52,7 +52,7 @@
     'closeOffers',
   ]);
 
-  const { data } = useUnit(searchQuery);
+  const { data, pending } = useUnit(searchQuery);
 
   const handleItemClick = (item: Item) => {
     if (!item) {
@@ -76,7 +76,7 @@
 </script>
 
 <template>
-  <div class="flex w-full flex-col sm:max-h-[100vh]">
+  <div class="flex w-full flex-col sm:max-h-[100vh]" v-if="!pending">
     <div class="w-full min-w-[350px]">
       <div
         class="flex items-center border-b border-r border-[#D0D4DB] bg-white p-4 pr-5">

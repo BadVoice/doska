@@ -1,20 +1,23 @@
 <script setup lang="ts">
   import { myRequestsQuery } from '@/entities/requests';
-  import { $isAuthorized } from '@/entities/session';
-  import { Button } from '@/shared/ui/button';
-  import { Input } from '@/shared/ui/input';
-  import {
-    $selectedSortType,
-    searchTermInputed,
-    sortTypeSelected,
-  } from '@/widgets/header/model/header-modal';
-  import { useUnit } from 'effector-vue/composition';
-  import { ChevronLeft, ChevronRight } from 'lucide-vue-next';
-  import { nextTick, onMounted, ref, watch } from 'vue';
-  import { useRouter } from 'vue-router';
-  import { getButtonList } from '../lib/button-list';
-  import Search from './assets/search.vue';
-  import BurgerMenu from './burger-menu.vue';
+import { $isAuthorized } from '@/entities/session';
+import { createBidVisibilityChanged } from '@/features/create-advertisement';
+import { Button } from '@/shared/ui/button';
+import { Input } from '@/shared/ui/input';
+import { useUnit } from 'effector-vue/composition';
+import { ChevronLeft, ChevronRight } from 'lucide-vue-next';
+import { nextTick, onMounted, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import { getButtonList } from '../lib/button-list';
+import {
+$selectedSortType,
+$showSearch,
+searchTermInputed,
+searchVisibilityChanged,
+sortTypeSelected
+} from '../model/header-modal';
+import Search from './assets/search.vue';
+import BurgerMenu from './burger-menu.vue';
 
   const router = useRouter();
 
@@ -24,19 +27,23 @@
 
   const isBurgerMenuOpen = ref(false);
 
-  const visibleSearch = ref(false);
+const visibleSearch = useUnit($showSearch);
+  const changeSearchVisible = useUnit(searchVisibilityChanged);
   const buttonList = getButtonList(visibleSearch);
   const formFocused = ref(false);
   const scrollableContainer = ref();
   const scrolledButtonIndex = ref(0);
 
   const { start: handleMount, data: requests } = useUnit(myRequestsQuery);
+  const isAuthorized = useUnit($isAuthorized);
   const handleSortTypeSelected = useUnit(sortTypeSelected);
   const selectedSortType = useUnit($selectedSortType);
 
+  const handleCreateClicked = useUnit(createBidVisibilityChanged);
+
   const userAuthorized = useUnit($isAuthorized);
 
-  onMounted(handleMount);
+  onMounted(() => isAuthorized.value && handleMount);
 
   function handleSubmitSearch(event: Event) {
     event.preventDefault();
@@ -48,7 +55,6 @@
   const emit = defineEmits([
     'submitSearch',
     'submitLogin',
-    'createClicked',
     'openSidebar',
     'buttonClicked',
   ]);
@@ -115,7 +121,7 @@
         <Button
           class="-ml-2"
           v-if="visibleSearch"
-          @click="visibleSearch = false"
+          @click="changeSearchVisible(false)"
           size="icon"
           variant="ghost">
           <img
@@ -125,7 +131,7 @@
         </Button>
       </RouterLink>
       <div v-if="!visibleSearch" class="flex items-center gap-0">
-        <Button @click="visibleSearch = true" size="icon" variant="ghost">
+        <Button @click="changeSearchVisible(true)" size="icon" variant="ghost">
           <Search />
         </Button>
         <Button
@@ -139,7 +145,7 @@
           size="icon"
           variant="ghost"
           class="w-fit"
-          @click="$emit('createClicked')">
+          @click="handleCreateClicked">
           <img src="./assets/create.svg" alt="create" />
         </Button>
       </div>

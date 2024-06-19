@@ -6,9 +6,12 @@ import NProgress from 'nprogress';
 export const unauthorizedErrorHappened = createEvent();
 
 function handleRequest(config: InternalAxiosRequestConfig<any>) {
+  const token = localStorage.getItem('token');
+
   if (token) {
     config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`;
   }
+
   NProgress.start();
   return config;
 }
@@ -30,7 +33,6 @@ function handleResponseFullfilled(response: AxiosResponse<any, any>) {
   return response;
 }
 
-const token = localStorage.getItem('token');
 export const $api = new Api({
   baseURL: '/core/api/v1',
   // baseURL: 'https://virtserver.swaggerhub.com/riderufa/qrq_core/1.0.0',

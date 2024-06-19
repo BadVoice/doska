@@ -12,7 +12,10 @@ import {
 } from '@/entities/requests';
 
 import { searchQuery } from '@/entities/offer';
+import { createBidVisibilityChanged } from '@/features/create-advertisement';
 import type { Bid, Brand } from '@/shared/api/generated/Api';
+import { handleShowAuthChanged } from '@/widgets/auth';
+import { searchVisibilityChanged } from '@/widgets/header';
 
 type TSelectScreenMode = 'offers' | 'selectBrand' | 'history' | null;
 
@@ -48,7 +51,12 @@ export const $filterOpened = createStore(false);
 export const resetRequestViewMode = createEvent();
 export const $requestViewMode = createStore<TSelectScreenMode | null>(
   null,
-).reset(resetRequestViewMode);
+).reset(
+  resetRequestViewMode,
+  handleShowAuthChanged,
+  createBidVisibilityChanged,
+  searchVisibilityChanged,
+);
 
 export const $searchQS = createStore<{ search: string; brand: string } | null>(
   null,

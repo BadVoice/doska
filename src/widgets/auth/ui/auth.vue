@@ -2,6 +2,7 @@
   import { Button } from '@/shared/ui';
   import {
     $formMode,
+    $isCreateCompanySingle,
     handleRegistrationFulfilled,
   } from '@/widgets/auth/lib/form-mode';
   import AuthCode from '@/widgets/auth/ui/auth-code.vue';
@@ -13,10 +14,10 @@
   const emit = defineEmits(['submitCloseAuth']);
   const formMode = useUnit($formMode);
   const handleExit = useUnit(handleRegistrationFulfilled);
+  const isCreateCompanySingle = useUnit($isCreateCompanySingle);
 
   function backForm() {
     handleExit();
-    emit('submitCloseAuth', false);
   }
 
   handleRegistrationFulfilled.watch(() => {
@@ -34,7 +35,9 @@
           class="h-6 w-6 select-none"
           alt="arrow" />
       </Button>
-      <p class="cursor-default text-[18px] font-semibold">Вход</p>
+      <p class="cursor-default text-[18px] font-semibold">
+        {{ isCreateCompanySingle ? 'Создание компании' : 'Вход' }}
+      </p>
     </div>
   </div>
   <div

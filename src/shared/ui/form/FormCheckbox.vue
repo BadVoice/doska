@@ -5,11 +5,16 @@
   defineProps<{
     name: string;
     label: string;
+    default?: boolean;
   }>();
 </script>
 
 <template>
-  <FormField v-slot="{ value, handleChange }" type="checkbox" :name="name">
+  <FormField
+    :default="default"
+    v-slot="{ value, handleChange }"
+    type="checkbox"
+    :name="name">
     <FormItem class="flex flex-row items-start gap-x-3 space-y-0">
       <FormControl>
         <Checkbox :checked="value" @update:checked="handleChange" />

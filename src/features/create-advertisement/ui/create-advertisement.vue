@@ -1,36 +1,36 @@
 <script setup lang="ts">
   import { cn } from '@/shared/lib';
-  import {
-    Button,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-    Input,
-  } from '@/shared/ui';
-  import { ScrollArea } from '@/shared/ui/scroll-area';
-  import {
-    Listbox,
-    ListboxButton,
-    ListboxOption,
-    ListboxOptions,
-  } from '@headlessui/vue';
-  import { useUnit } from 'effector-vue/composition';
-  import { ChevronDown, X } from 'lucide-vue-next';
-  import { onMounted, onUnmounted } from 'vue';
-  import { useCreateAdvertisementForm } from '../lib/create-form';
-  import {
-    $advertisementType,
-    $formMode,
-    advertisementTypeSelected,
-    createAdvertisementMounted,
-    formClosed,
-    formSubmitted,
-    getDestinations,
-  } from '../model/create-advertisement';
+import {
+Button,
+FormControl,
+FormField,
+FormItem,
+FormLabel,
+FormMessage,
+Input,
+} from '@/shared/ui';
+import { ScrollArea } from '@/shared/ui/scroll-area';
+import {
+Listbox,
+ListboxButton,
+ListboxOption,
+ListboxOptions,
+} from '@headlessui/vue';
+import { useUnit } from 'effector-vue/composition';
+import { ChevronDown, X } from 'lucide-vue-next';
+import { onMounted, onUnmounted } from 'vue';
+import { useCreateAdvertisementForm } from '../lib/create-form';
+import { createBidVisibilityChanged } from '../lib/show-create';
+import {
+$advertisementType,
+$formMode,
+advertisementTypeSelected,
+createAdvertisementMounted,
+formClosed,
+formSubmitted,
+getDestinations,
+} from '../model/create-advertisement';
 
-  const emit = defineEmits(['close']);
   const { advertisementTypeSelected: handleSelectedType, $formMode: formMode } =
     useUnit({
       advertisementTypeSelected,
@@ -40,6 +40,7 @@
   const { data: destinations } = useUnit(getDestinations);
 
   const advertisementType = useUnit($advertisementType);
+  const handleCloseModal = useUnit(createBidVisibilityChanged);
 
   const { form, destination } = useCreateAdvertisementForm(
     advertisementType.value,
@@ -49,13 +50,14 @@
     await form.validate();
     console.log(form.errors.value);
     if (Object.keys(form.errors.value).length < 1) {
-      emit('close');
+      handleCloseModal(false);
+
       formSubmitted(form.values);
     }
   };
 
   function handleClose() {
-    emit('close');
+    handleCloseModal(false);
     formClosed();
   }
 

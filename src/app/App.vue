@@ -1,38 +1,38 @@
 <script setup lang="ts">
   import { onMounted, ref, watch } from 'vue';
-  import { useRoute, useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
   import { CreateAdvertisement } from '@/features/create-advertisement';
-  import { Filter } from '@/features/filter';
-  import { ProductCard } from '@/pages/home';
-  import type { Item } from '@/shared/api/generated/Api';
-  import { Auth, authFormOpened } from '@/widgets/auth';
-  import { Header } from '@/widgets/header';
-  import { ManuallyAddOffer, Offers } from '@/widgets/offers';
-  import { Sidebar } from '@/widgets/sidebar';
+import { Filter } from '@/features/filter';
+import { ProductCard } from '@/pages/home';
+import type { Item } from '@/shared/api/generated/Api';
+import { Auth } from '@/widgets/auth';
+import { Header } from '@/widgets/header';
+import { ManuallyAddOffer, Offers } from '@/widgets/offers';
+import { Sidebar } from '@/widgets/sidebar';
 
   import { $selectedAdvertisement } from '@/entities/advertisement';
-  import { searchQuery } from '@/entities/offer';
-  import { RequestHistory, SelectBrand } from '@/pages/my-requests';
-  import {
-    $requestViewMode,
-    requestViewModeChanged,
-  } from '@/pages/my-requests/model/my-requests-model';
-  import { Toaster } from '@/shared/ui/toast';
-  import { $showAuth, handleShowAuthChanged } from '@/widgets/auth';
-  import {
-    ChangeCompany,
-    changeCompanyVisibleChanged,
-  } from '@/widgets/change-company';
-  import { $showAddOfferModal } from '@/widgets/offers/model/offers-model';
-  import { useUnit } from 'effector-vue/composition';
+import { searchQuery } from '@/entities/offer';
+import { $showCreateAdvertisement } from '@/features/create-advertisement';
+import { RequestHistory, SelectBrand } from '@/pages/my-requests';
+import {
+$requestViewMode,
+requestViewModeChanged,
+} from '@/pages/my-requests/model/my-requests-model';
+import { Toaster } from '@/shared/ui/toast';
+import { $showAuth, addCompanyClicked, handleShowAuthChanged } from '@/widgets/auth';
+import {
+ChangeCompany,
+changeCompanyVisibleChanged,
+} from '@/widgets/change-company';
+import { $showAddOfferModal } from '@/widgets/offers';
+import { useUnit } from 'effector-vue/composition';
 
   const route = useRoute();
   const router = useRouter();
 
   const showAddOfferModal = useUnit($showAddOfferModal);
   const requestViewMode = useUnit($requestViewMode);
-  const openAuthForm = useUnit(authFormOpened);
   const selectedAdvertisement = useUnit($selectedAdvertisement);
   const changeSwitchCompanyVisible = useUnit(changeCompanyVisibleChanged);
 
@@ -79,8 +79,9 @@
 
   const isProductCardOpen = ref(false);
   const isFilterCardOpen = ref(false);
-  const isCreateAdvertisementOpen = ref(false);
   const isSidebarOpen = ref(false);
+  const handleAddCompany = useUnit(addCompanyClicked);
+  const isCreateAdvertisementOpen = useUnit($showCreateAdvertisement);
 
   watch([isProductCardOpen, isFilterCardOpen], () => {
     if (isProductCardOpen.value && isFilterCardOpen.value) {
@@ -151,11 +152,6 @@
   function handleCloseOffers() {
     changeRequestViewMode(null);
   }
-
-  function handleAddCompany() {
-    changeAuthVisibility(true);
-    openAuthForm('company');
-  }
 </script>
 
 <template>
@@ -173,8 +169,7 @@
           (!isMobile && !isAuthOpen && !isSidebarOpen)
         "
         @submit-login="changeAuthVisibility()"
-        @open-sidebar="isSidebarOpen = true"
-        @create-clicked="isCreateAdvertisementOpen = true" />
+        @open-sidebar="isSidebarOpen = true" />
 
       <div
         v-if="
@@ -198,7 +193,8 @@
             requestViewMode === 'offers' &&
             !isFilterCardOpen &&
             !isProductCardOpen &&
-            !isSidebarOpen
+            !isSidebarOpen &&
+            !isAuthOpen
           "
           @offer-clicked="handleItemClick"
           @open-filter="isFilterCardOpen = true"
@@ -231,9 +227,7 @@
         @close-sidebar="isSidebarOpen = false"
         @navigate="handleNavigate" />
       <ChangeCompany />
-      <CreateAdvertisement
-        v-if="isCreateAdvertisementOpen"
-        @close="isCreateAdvertisementOpen = false" />
+      <CreateAdvertisement v-if="isCreateAdvertisementOpen" />
     </div>
 
     <div v-if="!isMobile" class="w-full flex-grow bg-[#F9FAFB]">
@@ -246,7 +240,8 @@
           v-if="
             requestViewMode === 'offers' &&
             !isFilterCardOpen &&
-            !isProductCardOpen
+            !isProductCardOpen &&
+            !isAuthOpen
           "
           @offer-clicked="handleItemClick"
           @open-filter="isFilterCardOpen = true"
@@ -257,7 +252,7 @@
       <div class="hidden w-full min-w-full lg:flex">
         <Offers
           @close-offers="handleCloseOffers"
-          v-if="requestViewMode === 'offers'"
+          v-if="requestViewMode === 'offers' && !isAuthOpen"
           @offer-clicked="handleItemClick"
           @open-filter="isFilterCardOpen = true"
           @page-selected="handlePageSelected"
@@ -297,13 +292,13 @@
 
     <ManuallyAddOffer v-if="!isMobile && showAddOfferModal" />
     <Filter
-      v-if="!isMobile && !showAddOfferModal"
+      v-if="!isMobile && !showAddOfferModal && !isAuthOpen"
       :is-filter-card-open="isFilterCardOpen"
       @close-filter-card="isFilterCardOpen = false"
       class="inline-block w-full sm:hidden lg:flex" />
   </div>
   <Filter
-    v-if="isMobile"
+    v-if="isMobile && !isAuthOpen"
     :is-filter-card-open="isFilterCardOpen"
     @close-filter-card="isFilterCardOpen = false"
     class="flex w-full sm:hidden lg:inline-block" />
