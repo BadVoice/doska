@@ -110,7 +110,7 @@
       </div>
       <div class="flex w-full flex-col items-start justify-between gap-y-1">
         <div class="flex w-full flex-row justify-between">
-          <div class="flex w-full flex-row gap-x-2">
+          <div class="flex w-full justify-between gap-x-2 pr-4">
             <p class="text-xs font-normal text-[#858FA3]" v-if="item.article">
               {{ item.article }}
             </p>
@@ -120,11 +120,19 @@
             </p>
           </div>
           <div class="flex gap-x-1">
-            <p class="text-xs font-normal text-[#101828]" v-if="item.amount">
+            <p
+              class="whitespace-nowrap text-xs font-normal text-[#101828]"
+              v-if="item.amount">
               {{ item.amount }}
             </p>
-            <p class="text-xs font-normal text-[#101828]" v-else>Не указано</p>
-            <p class="text-xs font-normal text-[#101828]" v-if="item.amount">
+            <p
+              class="whitespace-nowrap text-xs font-normal text-[#101828]"
+              v-else>
+              Не указано
+            </p>
+            <p
+              class="whitespace-nowrap text-xs font-normal text-[#101828]"
+              v-if="item.amount">
               шт
             </p>
           </div>

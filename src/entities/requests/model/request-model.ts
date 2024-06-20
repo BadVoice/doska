@@ -25,19 +25,16 @@ export const myRequestsQuery = createQuery({
       categories.map((category) => [category.id, category.name]),
     );
 
-    if (params) {
-      const response = await $api.bids.getBids(params);
-      return response.data;
-    }
+    const results = bids.results?.map((bid) => ({
+      ...bid,
+      article: bid.article || 'Не указано',
+      brandName: brandsMap.get(bid.brand) || 'Не указано',
+      categoryName: categoriesMap.get(bid.category) || 'Не указано',
+    }));
 
     return {
       ...bids,
-      results: bids.results?.map((bid) => ({
-        ...bid,
-        article: bid.article || 'Не указано',
-        brandName: brandsMap.get(bid.brand) || 'Не указано',
-        categoryName: categoriesMap.get(bid.category) || 'Не указано',
-      })),
+      results: results,
     };
   },
 });

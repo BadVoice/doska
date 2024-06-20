@@ -1,7 +1,7 @@
 import { preSearchQuery } from '@/entities/offer';
 import { createEvent, createStore, sample } from 'effector';
 import { persist } from 'effector-storage/query';
-import { debounce, spread } from 'patronum';
+import { debounce } from 'patronum';
 
 export const searchTermInputed = createEvent<string>();
 export const sortTypeSelected = createEvent<number>();
@@ -12,9 +12,9 @@ export const $showSearch = createStore(false).on(
   (src, clk) => clk ?? !src,
 );
 
-export const $searchTerm = createStore<string | null>(null).reset(
-  searchVisibilityChanged,
-);
+export const $searchTerm = createStore<string | null>(null)
+  .reset(searchVisibilityChanged)
+  .on(searchTermInputed, (_, clk) => clk);
 export const $selectedSortType = createStore<number>(-1);
 sample({
   clock: sortTypeSelected,
@@ -24,12 +24,12 @@ sample({
 persist({ store: $selectedSortType, key: 'selectedStatus' });
 
 sample({
+  source: $selectedSortType,
   clock: debounce(searchTermInputed, 500),
-  fn: (clk) => ({
-    mutation: {
+  filter: (src) => src !== -2,
+  fn: (_, clk) =>
+    ({
       search: clk,
-    } as const,
-    $searchTerm: clk,
-  }),
-  target: spread({ mutation: preSearchQuery.start, $searchTerm }),
+    }) as const,
+  target: preSearchQuery.start,
 });

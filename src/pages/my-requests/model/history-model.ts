@@ -23,7 +23,7 @@ export const historyQuery = createQuery({
     ]);
 
     const returns = orderReturns.filter((orderReturn) =>
-      orders.map((order) => order.id).includes(orderReturn.order.toString()),
+      orders.map((order) => order.id).includes(orderReturn.order),
     );
 
     return [...confirmations, ...orders];

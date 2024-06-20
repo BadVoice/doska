@@ -110,17 +110,29 @@
           </p>
         </div>
       </div>
-      <ScrollArea v-else-if="!pending" class="h-[calc(100vh-186px)]">
-        <div class="my-4 flex flex-col gap-y-2 px-4">
-          <RequestItem
-            v-for="item in filteredList"
-            :item="item as Bid"
-            :status="status" />
-        </div>
-
+      <ScrollArea v-else class="h-[calc(100vh-186px)]">
+        <DynamicScroller
+          :items="filteredList"
+          :min-item-size="148"
+          v-slot="{ item, index, active }"
+          class="my-4 flex flex-col gap-y-2 px-4">
+          <DynamicScrollerItem
+            :item="item"
+            :active="active"
+            :data-index="index"
+            :size-dependencies="[item.name]">
+            <div class="pb-4">
+              <RequestItem :item="item as Bid" :status="status" />
+            </div>
+          </DynamicScrollerItem>
+        </DynamicScroller>
         <Pagination
           v-slot="{ page }"
-          :total="filteredList?.length"
+          :total="
+            searchValue === '' || !searchValue || searchValue === null
+              ? requests?.count
+              : filteredList?.length
+          "
           :sibling-count="0"
           show-edges
           :items-per-page="150"
@@ -153,7 +165,7 @@
         </Pagination>
       </ScrollArea>
 
-      <div
+      <!-- <div
         v-else
         class="flex h-full max-h-[calc(100vh-186px)] w-full scale-[2] items-center justify-center">
         <svg
@@ -173,7 +185,7 @@
             fill="currentColor"
             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
         </svg>
-      </div>
+      </div> -->
     </div>
   </template>
 </template>

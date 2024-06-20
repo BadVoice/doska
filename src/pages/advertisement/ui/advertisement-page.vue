@@ -25,7 +25,7 @@
   onMounted(() => {
     if (selectedAdvertisement.value && !preSearchData.value?.data) {
       router.push('/');
-    } else if (!searchOpened) {
+    } else if (!searchOpened.value) {
       router.push('/');
     }
   });
@@ -62,7 +62,7 @@
       <h3
         v-if="route.path === '/advertisements'"
         class="text-[18px] font-semibold">
-        {{ getAnnouncementText(preSearchData?.data.length ?? 0) }}
+        {{ getAnnouncementText(preSearchData?.data?.length ?? 0) }}
       </h3>
       <h3 v-else class="text-[18px] font-semibold">История поиска</h3>
     </div>

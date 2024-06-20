@@ -257,8 +257,8 @@
                   Бренд
                 </p>
                 <SelectAll
-                  :list="data?.data?.filters?.vendors"
-                  v-model="selectedVendors" />
+                  :list="data?.data?.filters?.brands"
+                  v-model="selectedBrands" />
               </div>
 
               <ListboxButton
@@ -270,7 +270,7 @@
                 leave-from-class="opacity-100"
                 leave-to-class="opacity-0">
                 <ListboxOptions
-                  class="absolute top-0 z-10 mt-1 max-h-36 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                  class="absolute top-8 z-10 mt-1 max-h-36 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                   <ListboxOption
                     v-for="item in data?.data?.filters?.brands"
                     :key="item"

@@ -1,7 +1,7 @@
 import { $selectedAdvertisementId } from '@/entities/advertisement/model/advertisement-model';
 import { createMutation, keepFresh } from '@farfetched/core';
 import { createEffect, createEvent, createStore, sample } from 'effector';
-import { debug, not, spread } from 'patronum';
+import { not, spread } from 'patronum';
 
 import { $api } from '@/shared/api/api';
 
@@ -97,8 +97,6 @@ sample({
   fn: (src) => ({ page: src.$currentPage }) as const,
   target: myRequestsQuery.start,
 });
-
-debug(myRequestsQuery.finished.success);
 
 keepFresh(myRequestsQuery, {
   automatically: true,
