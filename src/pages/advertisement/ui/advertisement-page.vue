@@ -1,31 +1,34 @@
 <script setup lang="ts">
   import { SearchHistory } from '@/widgets/search-history';
 
-  import { useRoute, useRouter } from 'vue-router';
-  import { AdvertisementList } from '@/entities/advertisement';
-  import type { PreSearchResponse } from '@/shared/api/generated/Api';
-  import { useUnit } from 'effector-vue/composition';
-  import { preSearchQuery, searchQuery } from '@/entities/offer';
-  import { $searchTerm } from '@/widgets/header/model/header-modal';
+  import {
+    $selectedAdvertisementId,
+    AdvertisementList,
+  } from '@/entities/advertisement';
+  import { preSearchQuery } from '@/entities/offer';
   import { ScrollArea } from '@/shared/ui/scroll-area';
-  import '../model/advertisement-page-model';
-  import { $selectedAdvertisementId } from '@/entities/advertisement/model/advertisement-model';
+  import { $searchTerm, $showSearch } from '@/widgets/header';
+  import { useUnit } from 'effector-vue/composition';
   import { onMounted } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
+  import '../model/advertisement-page-model';
 
   const route = useRoute();
   const router = useRouter();
 
   const searchValue = useUnit($searchTerm);
+  const searchOpened = useUnit($showSearch);
 
-  const { start: search, data: searchData } = useUnit(searchQuery);
   const { data: preSearchData } = useUnit(preSearchQuery);
   const selectedAdvertisement = useUnit($selectedAdvertisementId);
 
   onMounted(() => {
     if (selectedAdvertisement.value && !preSearchData.value?.data) {
       router.push('/');
+    } else if (!searchOpened) {
+      router.push('/');
     }
-  }); // watch(route, fetchSearchResult);
+  });
 
   function getAnnouncementText(count: number) {
     if (count === 0 || !count) {
@@ -50,30 +53,6 @@
     'advertisementItems',
     'advertisementFilters',
   ]);
-
-  const handleCardClicked = async (data: PreSearchResponse) => {
-    try {
-      const { article, brand } = data;
-      await router.push({
-        path: '/advertisements',
-        query: {
-          search: route.query.search,
-          'active-pre-search': brand,
-          'active-card': route.query['active-card'],
-        },
-      });
-      if (data) {
-        search({
-          search: article?.toString() ?? '',
-          page: searchData.value?.data.page,
-          page_size: 10,
-          brand: brand?.toString() ?? '',
-        });
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
 </script>
 
 <template>

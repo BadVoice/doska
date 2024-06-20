@@ -88,37 +88,55 @@ export interface AccessToken {
 }
 
 export interface Company {
-  id?: string;
+  id?: number;
   name?: string;
+  position?: string;
   email?: string;
   phone?: string;
+  /**
+   * dictionary:
+   *   * 0 Не определено
+   *   * 1 ООО
+   *   * 2 ИП
+   *   * 3 ПАО
+   *   * 4 АО
+   * @default 0
+   */
+  legal_form?: 0 | 1 | 2 | 3 | 4;
+  /**
+   * dictionary:
+   *   * 0 НДС
+   *   * 1 Без НДС
+   * @default 0
+   */
+  tax_system?: 0 | 1;
 }
 
 export type Companies = Company[];
 
 export interface Category {
-  id?: string;
+  id?: number;
   name?: string;
 }
 
 export type Categories = Category[];
 
 export interface Brand {
-  id?: string;
+  id?: number;
   name?: string;
 }
 
 export type Brands = Brand[];
 
 export interface Destination {
-  id?: string;
+  id?: number;
   name?: string;
 }
 
 export type Destinations = Destination[];
 
 export interface Nomenclature {
-  id?: string;
+  id?: number;
   name?: string;
   article?: string;
   /** nomenclature_id */
@@ -128,7 +146,7 @@ export interface Nomenclature {
 export type Nomenclatures = Nomenclature[];
 
 export interface Bid {
-  id?: string;
+  id?: number;
   /**
    * @format date-time
    * @example "2024-04-14T08:12:44.533679Z"
@@ -162,8 +180,15 @@ export interface Bid {
 
 export type Bids = Bid[];
 
+export interface BidPage {
+  count?: number;
+  next?: string;
+  previous?: string;
+  results?: Bid[];
+}
+
 export interface Offer {
-  id?: string;
+  id?: number;
   /**
    * @format date-time
    * @example "2024-04-14T08:12:44.533679Z"
@@ -201,7 +226,7 @@ export interface Offer {
 export type Offers = Offer[];
 
 export interface Confirmation {
-  id?: string;
+  id?: number;
   /**
    * @format date-time
    * @example "2024-04-14T08:12:44.533679Z"
@@ -226,7 +251,7 @@ export interface Confirmation {
 export type Confirmations = Confirmation[];
 
 export interface Order {
-  id?: string;
+  id?: number;
   /**
    * @format date-time
    * @example "2024-04-14T08:12:44.533679Z"
@@ -250,12 +275,14 @@ export interface Order {
   bid?: number;
   /** offer_id */
   offer?: number;
+  /** confirmation_id */
+  confirmation: number;
 }
 
 export type Orders = Order[];
 
 export interface OrderReturn {
-  id?: string;
+  id?: number;
   /**
    * @format date-time
    * @example "2024-04-14T08:12:44.533679Z"
@@ -277,7 +304,7 @@ export interface OrderReturn {
 export type OrderReturns = OrderReturn[];
 
 export interface Interest {
-  id?: string;
+  id?: number;
   /**
    * @format date-time
    * @example "2024-04-14T08:12:44.533679Z"
@@ -299,7 +326,7 @@ export interface Interest {
 export type Interests = Interest[];
 
 export interface QwepInterest {
-  id?: string;
+  id?: number;
   /**
    * @format date-time
    * @example "2024-04-14T08:12:44.533679Z"
@@ -319,6 +346,30 @@ export interface QwepInterest {
 }
 
 export type QwepInterests = QwepInterest[];
+
+export interface PutAccount {
+  id?: number;
+  title?: string;
+  is_active?: boolean;
+}
+
+export interface Account {
+  id?: number;
+  /**
+   * @format date-time
+   * @example "2024-04-14T08:12:44.533679Z"
+   */
+  created_at?: string;
+  account_id?: number;
+  vendor_id?: string;
+  branch_id?: string;
+  title?: string;
+  login?: string;
+  password?: string;
+  is_active?: boolean;
+}
+
+export type Accounts = Account[];
 
 export interface PreSearchRequest {
   search: string;
@@ -401,15 +452,12 @@ export interface Item {
   parsedDelivery?: string;
 }
 
-export interface SearchPagination {
+export interface SearchResponse {
   page?: number;
   pages?: number;
   has_next?: boolean;
   has_prev?: boolean;
   items_count?: number;
-}
-
-export interface SearchResponse extends SearchPagination {
   search_id?: string;
   items?: Item[];
   filters?: SearchResponseFilters;
@@ -418,17 +466,13 @@ export interface SearchResponse extends SearchPagination {
 export interface Vendor {
   id?: string;
   title?: string;
-  site?: string;
-  buskerUri?: string;
-  parameters?: string[];
-  cities?: string[];
-  carProgram?: boolean;
-  truckProgram?: boolean;
-  singleSession?: boolean;
-  checkout?: boolean;
-  synonyms?: string;
-  branches?: VendorBranches[];
-  data?: VendorData;
+  /**
+   * @format date-time
+   * @example "2024-04-14T08:12:44.533679Z"
+   */
+  created_at?: string;
+  is_active?: boolean;
+  qwep_vendors?: VendorQwepVendors[];
 }
 
 export type Vendors = Vendor[];
@@ -443,6 +487,10 @@ export interface Error {
 
 export interface InlineResponse204 {
   success?: boolean;
+}
+
+export interface NomenclaturesBody {
+  company_id?: number;
 }
 
 export interface CartBody {
@@ -493,32 +541,23 @@ export interface SearchResponseFilters {
   cities?: SearchResponseFiltersCities[];
 }
 
-export interface VendorBranches {
+export interface VendorQwepVendors {
   id?: string;
   title?: string;
-  site?: string;
-}
-
-export interface VendorData {
-  delivery?: string;
-  description?: string;
-  forPhysicFaces?: boolean;
-  hasPassengerProgram?: boolean;
-  hasTruckProgram?: boolean;
-  html?: string;
-  juristTitle?: string;
-  marks?: string;
-  officeAddress?: string;
-  parts?: string;
-  payment?: string;
-  phone?: string;
-  rating?: string;
-  regions?: string;
-  schedule?: string;
-  title?: string;
-  tutorial?: string;
-  warehouseAddress?: string;
-  website?: string;
+  qwep_id?: string;
+  display_name?: string;
+  url?: string;
+  basket?: string;
+  branches?: string;
+  single_session?: boolean;
+  checkout?: boolean;
+  is_active?: boolean;
+  vendor?: number;
+  /**
+   * @format date-time
+   * @example "2024-04-14T08:12:44.533679Z"
+   */
+  created_at?: string;
 }
 
 import type {
@@ -1339,11 +1378,21 @@ export class Api<
      * @request GET:/nomenclatures/
      * @secure
      */
-    getNomenclatures: (params: RequestParams = {}) =>
+    getNomenclatures: (
+      query?: {
+        /** поиск по наименованию, артикулу */
+        search?: string;
+      },
+      data?: NomenclaturesBody,
+      params: RequestParams = {},
+    ) =>
       this.request<Nomenclatures, Error>({
         path: `/nomenclatures/`,
         method: 'GET',
+        query: query,
+        body: data,
         secure: true,
+        type: ContentType.Json,
         format: 'json',
         ...params,
       }),
@@ -1449,9 +1498,9 @@ export class Api<
         /** список destination_id */
         destinations?: number[];
       },
-      params: RequestParams = {},
+      params: RequestParams & {page: number} = {page: 1},
     ) =>
-      this.request<Bids, Error>({
+      this.request<BidPage, Error>({
         path: `/bids/`,
         method: 'GET',
         query: query,
@@ -2088,10 +2137,17 @@ export class Api<
      * @request POST:/vendors
      * @secure
      */
-    getVendors: (params: RequestParams = {}) =>
+    getVendors: (
+      query?: {
+        /** поиск по наименованию */
+        search?: string;
+      },
+      params: RequestParams = {},
+    ) =>
       this.request<Vendors, Error>({
         path: `/vendors`,
         method: 'POST',
+        query: query,
         secure: true,
         format: 'json',
         ...params,
@@ -2267,6 +2323,105 @@ export class Api<
     deleteQwepInterest: (interestId: number, params: RequestParams = {}) =>
       this.request<InlineResponse204, Error>({
         path: `/qwep_interests/${interestId}`,
+        method: 'DELETE',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+  };
+  accounts = {
+    /**
+     * No description
+     *
+     * @tags QWEP
+     * @name GetAccounts
+     * @summary метод получения списка аккаунтов
+     * @request GET:/accounts/
+     * @secure
+     */
+    getAccounts: (params: RequestParams = {}) =>
+      this.request<Accounts, Error>({
+        path: `/accounts/`,
+        method: 'GET',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags QWEP
+     * @name CreateAccount
+     * @summary метод создания аккаунта
+     * @request POST:/accounts/
+     * @secure
+     */
+    createAccount: (data: Account, params: RequestParams = {}) =>
+      this.request<Account, Error>({
+        path: `/accounts/`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags QWEP
+     * @name GetAccount
+     * @summary метод получения интереса
+     * @request GET:/accounts/{account_id}
+     * @secure
+     */
+    getAccount: (accountId: number, params: RequestParams = {}) =>
+      this.request<Account, Error>({
+        path: `/accounts/${accountId}`,
+        method: 'GET',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags QWEP
+     * @name UpdateAccount
+     * @summary метод изменения аккаунта
+     * @request PUT:/accounts/{account_id}
+     * @secure
+     */
+    updateAccount: (
+      accountId: number,
+      data: PutAccount,
+      params: RequestParams = {},
+    ) =>
+      this.request<Account, Error>({
+        path: `/accounts/${accountId}`,
+        method: 'PUT',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags QWEP
+     * @name DeleteAccount
+     * @summary метод удаления аккаунта
+     * @request DELETE:/accounts/{account_id}
+     * @secure
+     */
+    deleteAccount: (accountId: number, params: RequestParams = {}) =>
+      this.request<InlineResponse204, Error>({
+        path: `/accounts/${accountId}`,
         method: 'DELETE',
         secure: true,
         format: 'json',

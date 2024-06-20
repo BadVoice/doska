@@ -1,7 +1,7 @@
 import { $selectedAdvertisementId } from '@/entities/advertisement/model/advertisement-model';
 import { createMutation, keepFresh } from '@farfetched/core';
 import { createEffect, createEvent, createStore, sample } from 'effector';
-import { not, spread } from 'patronum';
+import { debug, not, spread } from 'patronum';
 
 import { $api } from '@/shared/api/api';
 
@@ -12,8 +12,10 @@ import {
 } from '@/entities/requests';
 
 import { searchQuery } from '@/entities/offer';
+import { $isAuthorized } from '@/entities/session';
 import { createBidVisibilityChanged } from '@/features/create-advertisement';
 import type { Bid, Brand } from '@/shared/api/generated/Api';
+import { appMounted } from '@/shared/model';
 import { handleShowAuthChanged } from '@/widgets/auth';
 import { searchVisibilityChanged } from '@/widgets/header';
 
@@ -39,15 +41,17 @@ interface BidMutationData {
 }
 export const editRequestSelected = createEvent<BidWithName>();
 
-export const deleteRequestClicked = createEvent<string>();
+export const deleteRequestClicked = createEvent<number>();
 export const archiveRequestClicked = createEvent<Bid>();
 export const filterVisibilityChanged = createEvent<boolean | void>();
 export const filterSubmitted = createEvent<FormValues>();
 export const requestClicked = createEvent<BidWithName>();
 export const requestViewModeChanged = createEvent<TSelectScreenMode>();
+export const pageSelected = createEvent<number>();
 
 export const $filterOpened = createStore(false);
 
+export const $currentPage = createStore(1).on(pageSelected, (_, clk) => clk);
 export const resetRequestViewMode = createEvent();
 export const $requestViewMode = createStore<TSelectScreenMode | null>(
   null,
@@ -65,7 +69,7 @@ export const $searchQS = createStore<{ search: string; brand: string } | null>(
 sample({
   clock: deleteRequestClicked,
   fn: (clk) => ({
-    mutation: clk,
+    mutation: clk?.toString(),
     $requestViewMode: null,
   }),
   target: spread({
@@ -86,12 +90,32 @@ sample({
   }),
 });
 
+sample({
+  source: { $isAuthorized, $currentPage },
+  clock: appMounted,
+  filter: (src) => src.$isAuthorized,
+  fn: (src) => ({ page: src.$currentPage }) as const,
+  target: myRequestsQuery.start,
+});
+
+debug(myRequestsQuery.finished.success);
+
 keepFresh(myRequestsQuery, {
   automatically: true,
   triggers: [
     deleteRequestMutation.finished.success,
     editRequestMutation.finished.success,
+    $isAuthorized.updates,
   ],
+});
+
+sample({
+  clock: pageSelected,
+  fn: (clk) =>
+    ({
+      page: clk,
+    }) as const,
+  target: myRequestsQuery.start,
 });
 
 sample({
@@ -102,13 +126,15 @@ sample({
 });
 
 sample({
+  source: $currentPage,
   clock: filterSubmitted,
-  fn: (clk: FormValues) =>
+  fn: (src, clk: FormValues) =>
     ({
       filterMutation: {
         search: clk.name,
         amount: parseInt(clk.count ?? '1'),
         article: clk.article,
+        page: src,
       },
       $filterOpened: false,
     }) as const,
@@ -122,7 +148,7 @@ sample({
     ({
       $requestViewMode: 'selectBrand',
       editRequestSelected: clk,
-      id: clk.id,
+      id: clk.id?.toString(),
     }) as const,
   target: spread({
     $requestViewMode,
@@ -143,7 +169,7 @@ sample({
     return {
       search: data,
       qs: data,
-      id: clk.id,
+      id: clk.id?.toString(),
     } as const;
   },
   target: spread({
@@ -171,12 +197,15 @@ export const bidMutation = createMutation({
       console.log(data.brand.name);
       console.log('brand not found');
     } else {
-      const response = await $api.bids.updateBid(parseInt(data.bid.id ?? '0'), {
-        name: data.bid.name,
-        amount: data.bid.amount,
-        brand: parseInt(data.brand.id ?? ''),
-        category: data.bid.category ?? 1,
-      });
+      const response = await $api.bids.updateBid(
+        parseInt(data.bid.id?.toString() ?? '0'),
+        {
+          name: data.bid.name,
+          amount: data.bid.amount,
+          brand: parseInt(data.brand.id?.toString() ?? ''),
+          category: data.bid.category ?? 1,
+        },
+      );
       return response.data;
     }
   },
@@ -215,9 +244,7 @@ const getBidWithBrandNameFx = createEffect(
     return {
       ...bid,
       article: bid.article || 'Не указано',
-      // @ts-expect-error the backend expects a number, but returns a string as the id
       brandName: brandsMap.get(bid.brand) || 'Не указано',
-      // @ts-expect-error the backend expects a number, but returns a string as the id
       categoryName: categoriesMap.get(bid.category) || 'Не указано',
     };
   },

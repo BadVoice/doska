@@ -12,7 +12,9 @@ export const $showSearch = createStore(false).on(
   (src, clk) => clk ?? !src,
 );
 
-export const $searchTerm = createStore<string | null>(null);
+export const $searchTerm = createStore<string | null>(null).reset(
+  searchVisibilityChanged,
+);
 export const $selectedSortType = createStore<number>(-1);
 sample({
   clock: sortTypeSelected,
@@ -20,7 +22,6 @@ sample({
 });
 
 persist({ store: $selectedSortType, key: 'selectedStatus' });
-persist({ store: $searchTerm, key: 'search' });
 
 sample({
   clock: debounce(searchTermInputed, 500),

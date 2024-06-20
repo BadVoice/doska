@@ -1,25 +1,8 @@
-import { appMounted } from '@/shared/model';
-import { createEffect, createEvent, createStore, sample } from 'effector';
+import { createEvent, createStore, sample } from 'effector';
 
 export const userAuthorized = createEvent();
 
-export const $isAuthorized = createStore(false);
-
-const checkIsAuthorizedFx = createEffect(() => {
-  const token = localStorage.getItem('token');
-
-  return !!token;
-});
-
-sample({
-  clock: appMounted,
-  target: checkIsAuthorizedFx,
-});
-
-sample({
-  clock: checkIsAuthorizedFx.doneData,
-  target: $isAuthorized,
-});
+export const $isAuthorized = createStore(!!localStorage.getItem('token'));
 
 sample({
   clock: userAuthorized,

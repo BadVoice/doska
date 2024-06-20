@@ -1409,6 +1409,29 @@
         "tags": ["Nomenclatures"],
         "summary": "метод получения списка номенклатур",
         "operationId": "getNomenclatures",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "поиск по наименованию, артикулу",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/nomenclatures_body"
+              }
+            }
+          },
+          "required": false
+        },
         "responses": {
           "200": {
             "description": "успешный ответ со списком номенклатур",
@@ -1688,7 +1711,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Bids"
+                  "$ref": "#/components/schemas/BidPage"
                 }
               }
             }
@@ -3170,6 +3193,19 @@
         "tags": ["QWEP"],
         "summary": "метод получения списка поставщиков",
         "operationId": "getVendors",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "поиск по наименованию",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "успешный ответ с списком поставщиков",
@@ -3631,6 +3667,259 @@
           }
         ]
       }
+    },
+    "/accounts/": {
+      "get": {
+        "tags": ["QWEP"],
+        "summary": "метод получения списка аккаунтов",
+        "operationId": "getAccounts",
+        "responses": {
+          "200": {
+            "description": "успешный ответ со списком аккаунтов",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Accounts"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://test.qrq.ru/qwep/api/v1/",
+            "description": "test qwep server"
+          }
+        ]
+      },
+      "post": {
+        "tags": ["QWEP"],
+        "summary": "метод создания аккаунта",
+        "operationId": "createAccount",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Account"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "успешный ответ с созданным аккаунтом",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Account"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://test.qrq.ru/qwep/api/v1/",
+            "description": "test qwep server"
+          }
+        ]
+      }
+    },
+    "/accounts/{account_id}": {
+      "get": {
+        "tags": ["QWEP"],
+        "summary": "метод получения интереса",
+        "operationId": "getAccount",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "description": "идентификатор аккаунта",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "успешный ответ с аккаунтом",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Account"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://test.qrq.ru/qwep/api/v1/",
+            "description": "test qwep server"
+          }
+        ]
+      },
+      "put": {
+        "tags": ["QWEP"],
+        "summary": "метод изменения аккаунта",
+        "operationId": "updateAccount",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "description": "идентификатор аккаунта",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutAccount"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "успешный ответ с измененным аккаунтом",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Account"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://test.qrq.ru/qwep/api/v1/",
+            "description": "test qwep server"
+          }
+        ]
+      },
+      "delete": {
+        "tags": ["QWEP"],
+        "summary": "метод удаления аккаунта",
+        "operationId": "deleteAccount",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "description": "идентификатор аккаунта",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_204"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://test.qrq.ru/qwep/api/v1/",
+            "description": "test qwep server"
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -3812,10 +4101,13 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
+            "type": "integer",
             "readOnly": true
           },
           "name": {
+            "type": "string"
+          },
+          "position": {
             "type": "string"
           },
           "email": {
@@ -3823,6 +4115,18 @@
           },
           "phone": {
             "type": "string"
+          },
+          "legal_form": {
+            "type": "integer",
+            "description": "dictionary:\n  * 0 Не определено\n  * 1 ООО\n  * 2 ИП\n  * 3 ПАО\n  * 4 АО\n",
+            "default": 0,
+            "enum": [0, 1, 2, 3, 4]
+          },
+          "tax_system": {
+            "type": "integer",
+            "description": "dictionary:\n  * 0 НДС\n  * 1 Без НДС\n",
+            "default": 0,
+            "enum": [0, 1]
           }
         }
       },
@@ -3836,7 +4140,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
+            "type": "integer",
             "readOnly": true
           },
           "name": {
@@ -3854,7 +4158,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
+            "type": "integer",
             "readOnly": true
           },
           "name": {
@@ -3872,7 +4176,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
+            "type": "integer",
             "readOnly": true
           },
           "name": {
@@ -3890,7 +4194,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
+            "type": "integer",
             "readOnly": true
           },
           "name": {
@@ -3916,7 +4220,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
+            "type": "integer",
             "readOnly": true
           },
           "created_at": {
@@ -3978,12 +4282,32 @@
           "$ref": "#/components/schemas/Bid"
         }
       },
+      "BidPage": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "next": {
+            "type": "string"
+          },
+          "previous": {
+            "type": "string"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Bid"
+            }
+          }
+        }
+      },
       "Offer": {
         "required": ["amount", "name", "price"],
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
+            "type": "integer",
             "readOnly": true
           },
           "created_at": {
@@ -4057,7 +4381,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
+            "type": "integer",
             "readOnly": true
           },
           "created_at": {
@@ -4107,11 +4431,11 @@
         }
       },
       "Order": {
-        "required": ["amount", "name", "price"],
+        "required": ["amount", "confirmation", "name", "price"],
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
+            "type": "integer",
             "readOnly": true
           },
           "created_at": {
@@ -4152,6 +4476,10 @@
           "offer": {
             "type": "integer",
             "description": "offer_id"
+          },
+          "confirmation": {
+            "type": "integer",
+            "description": "confirmation_id"
           }
         }
       },
@@ -4166,7 +4494,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
+            "type": "integer",
             "readOnly": true
           },
           "created_at": {
@@ -4203,7 +4531,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
+            "type": "integer",
             "readOnly": true
           },
           "created_at": {
@@ -4257,7 +4585,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
+            "type": "integer",
             "readOnly": true
           },
           "created_at": {
@@ -4307,6 +4635,65 @@
         "type": "array",
         "items": {
           "$ref": "#/components/schemas/QwepInterest"
+        }
+      },
+      "PutAccount": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "title": {
+            "type": "string"
+          },
+          "is_active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Account": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "example": "2024-04-14T08:12:44.533679Z"
+          },
+          "account_id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "vendor_id": {
+            "type": "string"
+          },
+          "branch_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "login": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "writeOnly": true
+          },
+          "is_active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Accounts": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Account"
         }
       },
       "PreSearchRequest": {
@@ -4563,52 +4950,29 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "string",
+            "readOnly": true
           },
           "title": {
-            "type": "string"
+            "type": "string",
+            "readOnly": true
           },
-          "site": {
-            "type": "string"
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "example": "2024-04-14T08:12:44.533679Z"
           },
-          "buskerUri": {
-            "type": "string"
+          "is_active": {
+            "type": "boolean",
+            "readOnly": true
           },
-          "parameters": {
+          "qwep_vendors": {
             "type": "array",
+            "readOnly": true,
             "items": {
-              "type": "string"
+              "$ref": "#/components/schemas/Vendor_qwep_vendors"
             }
-          },
-          "cities": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "carProgram": {
-            "type": "boolean"
-          },
-          "truckProgram": {
-            "type": "boolean"
-          },
-          "singleSession": {
-            "type": "boolean"
-          },
-          "checkout": {
-            "type": "boolean"
-          },
-          "synonyms": {
-            "type": "string"
-          },
-          "branches": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Vendor_branches"
-            }
-          },
-          "data": {
-            "$ref": "#/components/schemas/Vendor_data"
           }
         }
       },
@@ -4640,6 +5004,14 @@
         "properties": {
           "success": {
             "type": "boolean"
+          }
+        }
+      },
+      "nomenclatures_body": {
+        "type": "object",
+        "properties": {
+          "company_id": {
+            "type": "integer"
           }
         }
       },
@@ -4770,7 +5142,7 @@
           }
         }
       },
-      "Vendor_branches": {
+      "Vendor_qwep_vendors": {
         "type": "object",
         "properties": {
           "id": {
@@ -4779,70 +5151,38 @@
           "title": {
             "type": "string"
           },
-          "site": {
-            "type": "string"
-          }
-        }
-      },
-      "Vendor_data": {
-        "type": "object",
-        "properties": {
-          "delivery": {
+          "qwep_id": {
             "type": "string"
           },
-          "description": {
+          "display_name": {
             "type": "string"
           },
-          "forPhysicFaces": {
+          "url": {
+            "type": "string"
+          },
+          "basket": {
+            "type": "string"
+          },
+          "branches": {
+            "type": "string"
+          },
+          "single_session": {
             "type": "boolean"
           },
-          "hasPassengerProgram": {
+          "checkout": {
             "type": "boolean"
           },
-          "hasTruckProgram": {
+          "is_active": {
             "type": "boolean"
           },
-          "html": {
-            "type": "string"
+          "vendor": {
+            "type": "integer"
           },
-          "juristTitle": {
-            "type": "string"
-          },
-          "marks": {
-            "type": "string"
-          },
-          "officeAddress": {
-            "type": "string"
-          },
-          "parts": {
-            "type": "string"
-          },
-          "payment": {
-            "type": "string"
-          },
-          "phone": {
-            "type": "string"
-          },
-          "rating": {
-            "type": "string"
-          },
-          "regions": {
-            "type": "string"
-          },
-          "schedule": {
-            "type": "string"
-          },
-          "title": {
-            "type": "string"
-          },
-          "tutorial": {
-            "type": "string"
-          },
-          "warehouseAddress": {
-            "type": "string"
-          },
-          "website": {
-            "type": "string"
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "example": "2024-04-14T08:12:44.533679Z"
           }
         }
       }

@@ -57,7 +57,7 @@
     :class="
       cn(
         'flex flex-col items-start justify-between gap-y-1 rounded-lg border-2 bg-white p-4 pr-5 duration-200 hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10',
-        selectedRequest === item.id &&
+        selectedRequest === item.id?.toString() &&
           'border-[#0017FC] bg-[#1778EA] bg-opacity-10',
       )
     "
@@ -94,7 +94,7 @@
               </Button>
               <Button
                 variant="ghost"
-                @click="deleteRequestClicked(item.id ?? '')"
+                @click="deleteRequestClicked(item.id ?? 0)"
                 class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
                 <p class="w-full text-[14px] font-semibold">Удалить заявку</p>
               </Button>

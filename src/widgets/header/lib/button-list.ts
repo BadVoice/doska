@@ -6,15 +6,15 @@ export function getButtonList(visibleSearch: Ref<boolean>) {
       return [
         {
           label: 'Объявления',
-          link: '/search-history',
-          active: false,
-          status: -2,
-        },
-        {
-          label: 'Заявки',
-          link: '/',
+          link: '/advertisements',
           active: false,
           status: -1,
+        },
+        {
+          label: 'Мои Заявки',
+          link: '/',
+          active: false,
+          status: -2,
         },
       ];
     } else {

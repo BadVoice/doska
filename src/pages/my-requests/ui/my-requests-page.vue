@@ -3,15 +3,25 @@
   import { myRequestsQuery } from '@/entities/requests';
   import type { Bid } from '@/shared/api/generated/Api';
   import { Button } from '@/shared/ui';
+  import {
+    Pagination,
+    PaginationEllipsis,
+    PaginationList,
+    PaginationListItem,
+    PaginationNext,
+    PaginationPrev,
+  } from '@/shared/ui/pagination';
   import { ScrollArea } from '@/shared/ui/scroll-area';
-  import { $selectedSortType } from '@/widgets/header';
+  import { $searchTerm, $selectedSortType } from '@/widgets/header';
   import { useUnit } from 'effector-vue/composition';
-  import { onBeforeUnmount } from 'vue';
+  import { computed, onBeforeUnmount } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import {
+    $currentPage,
     $filterOpened,
     $searchQS,
     filterVisibilityChanged,
+    pageSelected,
   } from '../model/my-requests-model';
   import FilterForm from './filter-form.vue';
   import RequestItem from './request-item.vue';
@@ -28,6 +38,7 @@
   const { data: requests, pending } = useUnit(myRequestsQuery);
   const selectedSortType = useUnit($selectedSortType);
   const selectedCompany = useUnit($selectedCompany);
+  const searchValue = useUnit($searchTerm);
 
   const status = [
     { color: '#FF9900', text: 'Создана' },
@@ -49,6 +60,21 @@
       },
     });
   });
+
+  const page = useUnit($currentPage);
+  const changePage = useUnit(pageSelected);
+
+  const filteredList = computed(() =>
+    (selectedSortType.value >= 0
+      ? requests.value?.results?.filter((request) =>
+          selectedCompany.value !== null && selectedCompany.value
+            ? request.status === selectedSortType.value &&
+              request.company === selectedCompany.value.id
+            : request.status === selectedSortType.value,
+        )
+      : requests.value?.results
+    )?.filter((request) => request.name.includes(searchValue.value ?? '')),
+  );
 </script>
 
 <template>
@@ -68,10 +94,10 @@
       </div>
     </div>
     <div
-      class="h-[calc(100vh-177px)] w-full border-r border-[#D0D4DB] bg-[#F9FAFB]">
+      class="h-[calc(100vh-186px)] w-full overflow-hidden border-r border-[#D0D4DB] bg-[#F9FAFB]">
       <div
         class="mx-auto flex flex-col items-center justify-center gap-y-6 p-4"
-        v-if="!requests?.length">
+        v-if="!requests?.results?.length">
         <img
           src="./assets/interfaceRequestIcon.svg"
           alt="interfaceRequestIcon"
@@ -84,25 +110,52 @@
           </p>
         </div>
       </div>
-      <ScrollArea v-else-if="!pending" class="h-full max-h-[calc(100vh-151px)]">
+      <ScrollArea v-else-if="!pending" class="h-[calc(100vh-186px)]">
         <div class="my-4 flex flex-col gap-y-2 px-4">
           <RequestItem
-            v-for="item in selectedSortType >= 0
-              ? requests.filter((request) =>
-                  selectedCompany
-                    ? request.status === selectedSortType &&
-                      request.company === selectedCompany.id
-                    : request.status === selectedSortType,
-                )
-              : requests"
+            v-for="item in filteredList"
             :item="item as Bid"
             :status="status" />
         </div>
+
+        <Pagination
+          v-slot="{ page }"
+          :total="filteredList?.length"
+          :sibling-count="0"
+          show-edges
+          :items-per-page="150"
+          :page="page"
+          @update:page="changePage"
+          class="mx-auto w-fit"
+          :default-page="1">
+          <PaginationList
+            v-slot="{ items }"
+            class="mx-auto mb-4 flex items-center gap-1">
+            <PaginationPrev />
+
+            <template v-for="(item, index) in items">
+              <PaginationListItem
+                v-if="item.type === 'page'"
+                :key="index"
+                :value="item.value"
+                as-child>
+                <Button
+                  class="h-10 w-10 p-0"
+                  :variant="item.value === page ? 'default' : 'outline'">
+                  {{ item.value }}
+                </Button>
+              </PaginationListItem>
+              <PaginationEllipsis v-else :key="item.type" :index="index" />
+            </template>
+
+            <PaginationNext />
+          </PaginationList>
+        </Pagination>
       </ScrollArea>
 
       <div
         v-else
-        class="flex h-full w-full scale-[2] items-center justify-center">
+        class="flex h-full max-h-[calc(100vh-186px)] w-full scale-[2] items-center justify-center">
         <svg
           class="h-5 w-5 animate-spin text-blue-500"
           xmlns="http://www.w3.org/2000/svg"

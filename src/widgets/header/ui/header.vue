@@ -6,7 +6,7 @@
   import { Input } from '@/shared/ui/input';
   import { useUnit } from 'effector-vue/composition';
   import { ChevronLeft, ChevronRight } from 'lucide-vue-next';
-  import { nextTick, onMounted, ref, watch } from 'vue';
+  import { nextTick, ref, watch } from 'vue';
   import { useRouter } from 'vue-router';
   import { getButtonList } from '../lib/button-list';
   import {
@@ -34,22 +34,17 @@
   const scrollableContainer = ref();
   const scrolledButtonIndex = ref(0);
 
-  const { start: handleMount, data: requests } = useUnit(myRequestsQuery);
-  const isAuthorized = useUnit($isAuthorized);
+  const { data: requests } = useUnit(myRequestsQuery);
   const handleSortTypeSelected = useUnit(sortTypeSelected);
   const selectedSortType = useUnit($selectedSortType);
 
   const handleCreateClicked = useUnit(createBidVisibilityChanged);
 
   const userAuthorized = useUnit($isAuthorized);
-
-  onMounted(() => isAuthorized.value && handleMount);
-
+  ``;
   function handleSubmitSearch(event: Event) {
     event.preventDefault();
-    if (searchTerm.value !== '') {
-      handleSubmit(searchTerm.value);
-    }
+    handleSubmit(searchTerm.value);
   }
 
   const emit = defineEmits([
@@ -108,7 +103,7 @@
 <template>
   <div
     class="w-full flex-col items-center justify-between border-b border-r border-[#D0D4DB] md:max-w-[356px]">
-    <div class="mb-3 flex w-full items-center justify-between px-4 pt-4">
+    <div class="flex w-full items-center justify-between px-4 pt-4">
       <div v-if="!visibleSearch" class="flex flex-row items-center">
         <BurgerMenu @click="emit('openSidebar')" v-model="isBurgerMenuOpen" />
         <div class="ml-4 flex w-[5.75rem] items-center">
@@ -171,7 +166,7 @@
           class="border-0 py-0 focus:outline-none" />
       </form>
     </div>
-    <div v-if="!visibleSearch" class="flex items-center px-1">
+    <div class="flex items-center px-1">
       <Button
         class="h-full w-fit cursor-pointer p-0"
         variant="ghost"
@@ -204,13 +199,13 @@
               class="max-h-[28px] rounded-lg"
               size="sm">
               {{ button.label }}
-              <template v-if="button.link === '/' && requests?.length">
+              <template v-if="button.link === '/' && requests?.results?.length">
                 ({{
                   button.status >= 0
-                    ? requests?.filter(
+                    ? requests?.results?.filter(
                         (request) => request.status === button.status,
                       ).length
-                    : requests?.length
+                    : requests?.results?.length
                 }})
               </template>
             </Button>
