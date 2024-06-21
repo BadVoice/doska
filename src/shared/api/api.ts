@@ -1,9 +1,36 @@
 import { Api } from '@/shared/api/generated/Api';
 import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
-import { createEvent } from 'effector';
+import {
+  createApi,
+  createEffect,
+  createEvent,
+  createStore,
+  sample,
+} from 'effector';
 import NProgress from 'nprogress';
+import { debounce, debug } from 'patronum';
 
 export const unauthorizedErrorHappened = createEvent();
+
+const requestSended = createEvent();
+const responseReceived = createEvent();
+
+const startProgressFx = createEffect(() => {
+  NProgress.start();
+});
+const endProgressFx = createEffect(() => {
+  NProgress.done();
+});
+
+sample({
+  clock: debounce(requestSended, 200),
+  target: startProgressFx,
+});
+
+sample({
+  clock: debounce(responseReceived, 200),
+  target: endProgressFx,
+});
 
 function handleRequest(config: InternalAxiosRequestConfig<any>) {
   const token = localStorage.getItem('token');
@@ -12,14 +39,14 @@ function handleRequest(config: InternalAxiosRequestConfig<any>) {
     config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`;
   }
 
-  NProgress.start();
+  requestSended();
   return config;
 }
 
 function handleResponseError(
   response: AxiosResponse<any, any> & { response: { status: number } },
 ) {
-  NProgress.done();
+  responseReceived();
 
   if (response.response.status === 401) {
     unauthorizedErrorHappened();
@@ -29,7 +56,8 @@ function handleResponseError(
 }
 
 function handleResponseFullfilled(response: AxiosResponse<any, any>) {
-  NProgress.done();
+  responseReceived();
+
   return response;
 }
 

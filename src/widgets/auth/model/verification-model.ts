@@ -1,4 +1,4 @@
-import { userAuthorized } from '@/entities/session';
+import { $isAuthorized } from '@/entities/session';
 import { $api } from '@/shared/api';
 import type { VerifyUser } from '@/shared/api/generated/Api';
 import { handleNextForm } from '@/widgets/auth/lib/form-mode';
@@ -28,7 +28,8 @@ export const $verifyCaptchaValue = createStore('').on(
 sample({
   clock: verifyUserMutation.finished.success,
   filter: (clk: any) => [200].includes(clk.result.status),
-  target: userAuthorized,
+  fn: () => !!localStorage.getItem('token'),
+  target: $isAuthorized,
 });
 
 sample({

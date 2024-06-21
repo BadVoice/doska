@@ -71,7 +71,8 @@
       @submit.prevent="onSubmit">
       <p class="text-[18px] font-semibold">Введите номер телефона или почту</p>
       <p v-if="loginError" class="text-[14px] font-semibold text-[#858FA3]">
-        Неверные данные, попробуйте еще раз или продолжите регистрацию.
+        Неверные данные, попробуйте еще раз или продолжите регистрацию. Если вы
+        авторизуетесь с помощью номера - номер должен начинатся с +79
       </p>
       <FormField v-slot="{ componentField }" name="value">
         <FormItem>

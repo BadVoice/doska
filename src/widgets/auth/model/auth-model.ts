@@ -113,7 +113,11 @@ sample({
   source: { $phoneOrEmail, $verifyCaptchaValue },
   clock: verificationCodeComplete,
   fn: (src, clk) => ({
-    username: src.$phoneOrEmail,
+    username: src.$phoneOrEmail.includes('@')
+      ? src.$phoneOrEmail
+      : src.$phoneOrEmail[0] === '8'
+        ? '+7' + src.$phoneOrEmail.slice(1)
+        : src.$phoneOrEmail,
     code: parseInt(clk.join().replace(/\D/g, '')),
     recaptcha: src.$verifyCaptchaValue,
   }),
@@ -125,7 +129,7 @@ sample({
   clock: authFormSubmitted,
   fn: (src, clk) => ({
     captchaToken: clk.captchaToken,
-    value: src,
+    value: src.includes('@') ? src : src[0] === '8' ? '+7' + src.slice(1) : src,
   }),
   target: [$authFormValues, authUser.start],
 });
@@ -133,7 +137,7 @@ sample({
 sample({
   source: $phoneOrEmail,
   clock: authFormSubmitted,
-  fn: (src) => (src.startsWith('+') ? ('phone' as const) : ('email' as const)),
+  fn: (src) => (src.includes('@') ? ('email' as const) : ('phone' as const)),
   target: $inputMode,
 });
 
