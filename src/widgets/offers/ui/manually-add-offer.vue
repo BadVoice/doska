@@ -114,7 +114,8 @@
                       :class="
                         cn(
                           'mx-1 my-1 cursor-pointer select-none rounded py-2 pl-3 pr-9 text-gray-900 hover:bg-gray-100 hover:bg-opacity-90',
-                          destination === parseInt(item?.id?.toString() ?? '0') &&
+                          destination ===
+                            parseInt(item?.id?.toString() ?? '0') &&
                             'bg-gray-200 text-black',
                         )
                       ">

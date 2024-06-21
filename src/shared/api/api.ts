@@ -1,14 +1,8 @@
 import { Api } from '@/shared/api/generated/Api';
 import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
-import {
-  createApi,
-  createEffect,
-  createEvent,
-  createStore,
-  sample,
-} from 'effector';
+import { createEffect, createEvent, sample } from 'effector';
 import NProgress from 'nprogress';
-import { debounce, debug } from 'patronum';
+import { debounce } from 'patronum';
 
 export const unauthorizedErrorHappened = createEvent();
 

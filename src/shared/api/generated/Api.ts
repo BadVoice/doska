@@ -1498,7 +1498,7 @@ export class Api<
         /** список destination_id */
         destinations?: number[];
       },
-      params: RequestParams & {page: number} = {page: 1},
+      params: RequestParams & { page: number } = { page: 1 },
     ) =>
       this.request<BidPage, Error>({
         path: `/bids/`,

@@ -2,22 +2,22 @@
   import { Button } from '@/shared/ui/button';
 
   import { OfferList, searchQuery } from '@/entities/offer';
-import type { Item } from '@/shared/api/generated/Api';
-import { onMounted, ref } from 'vue';
+  import type { Item } from '@/shared/api/generated/Api';
+  import { onMounted, ref } from 'vue';
 
   import { $filterValues } from '@/features/filter';
-import {
-Pagination,
-PaginationEllipsis,
-PaginationList,
-PaginationListItem,
-PaginationNext,
-PaginationPrev,
-} from '@/shared/ui/pagination';
-import { ScrollArea } from '@/shared/ui/scroll-area';
-import { offerAddButtonClicked } from '@/widgets/offers';
-import { useUnit } from 'effector-vue/composition';
-import { Plus } from 'lucide-vue-next';
+  import {
+    Pagination,
+    PaginationEllipsis,
+    PaginationList,
+    PaginationListItem,
+    PaginationNext,
+    PaginationPrev,
+  } from '@/shared/ui/pagination';
+  import { ScrollArea } from '@/shared/ui/scroll-area';
+  import { offerAddButtonClicked } from '@/widgets/offers';
+  import { useUnit } from 'effector-vue/composition';
+  import { Plus } from 'lucide-vue-next';
 
   defineProps<{ class: string }>();
 
