@@ -1,6 +1,6 @@
 import { myRequestsQuery } from '@/entities/requests';
 import { $api } from '@/shared/api';
-import type { Bid, Offer } from '@/shared/api/generated/Api';
+import type { Ad, Bid } from '@/shared/api/generated/Api';
 import { createMutation, createQuery, keepFresh } from '@farfetched/core';
 import { createEvent, createStore, sample } from 'effector';
 import { spread } from 'patronum';
@@ -18,7 +18,7 @@ export interface FormValues {
 }
 
 const createOfferMutation = createMutation({
-  handler: (data: Offer) => $api.offers.createOffer(data),
+  handler: (data: Ad) => $api.ads.createAd(data),
 });
 
 const createBidMutation = createMutation({

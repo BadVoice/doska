@@ -1,9 +1,10 @@
 import { $isAuthorized } from '@/entities/session';
 import { $api } from '@/shared/api';
 import type { VerifyUser } from '@/shared/api/generated/Api';
+import { toast } from '@/shared/ui/toast';
 import { handleNextForm } from '@/widgets/auth/lib/form-mode';
 import { createMutation } from '@farfetched/core';
-import { createEvent, createStore, sample } from 'effector';
+import { createEffect, createEvent, createStore, sample } from 'effector';
 
 export const verificationCodeComplete = createEvent<string[]>();
 export const captchaVerified = createEvent();
@@ -25,11 +26,24 @@ export const $verifyCaptchaValue = createStore('').on(
   (_, clk) => clk,
 );
 
+const notifyWrongCodeFx = createEffect(() => {
+  toast({
+    title: 'Неверный код',
+    variant: 'destructive',
+  });
+});
+
 sample({
   clock: verifyUserMutation.finished.success,
   filter: (clk: any) => [200].includes(clk.result.status),
   fn: () => !!localStorage.getItem('token'),
   target: $isAuthorized,
+});
+
+sample({
+  clock: verifyUserMutation.finished.success,
+  filter: (clk: any) => [400].includes(clk.result.response?.status),
+  target: notifyWrongCodeFx,
 });
 
 sample({

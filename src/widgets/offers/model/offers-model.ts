@@ -1,5 +1,5 @@
 import { $api } from '@/shared/api';
-import type { Confirmation } from '@/shared/api/generated/Api';
+import type { Offer } from '@/shared/api/generated/Api';
 import { createMutation, createQuery } from '@farfetched/core';
 import { createEvent, createStore, sample } from 'effector';
 import { not } from 'patronum';
@@ -15,7 +15,7 @@ interface FormValues {
 }
 
 export const createOfferMutation = createMutation({
-  handler: (data: Confirmation) => $api.confirmations.createConfirmation(data),
+  handler: (data: Offer) => $api.offers.createOffer(data),
 });
 
 export const getDestinations = createQuery({
@@ -43,7 +43,7 @@ sample({
       amount: clk.amount,
       category: clk.purpose,
       delivery_time: clk.deliveryTo,
-    }) as Confirmation,
+    }) as Offer,
   target: createOfferMutation.start,
 });
 

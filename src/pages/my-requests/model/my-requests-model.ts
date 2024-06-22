@@ -48,6 +48,7 @@ export const filterSubmitted = createEvent<FormValues>();
 export const requestClicked = createEvent<BidWithName>();
 export const requestViewModeChanged = createEvent<TSelectScreenMode>();
 export const pageSelected = createEvent<number>();
+export const publicationClicked = createEvent<BidWithName>();
 
 export const $filterOpened = createStore(false);
 
@@ -79,9 +80,26 @@ sample({
 });
 
 sample({
+  clock: publicationClicked,
+  fn: (clk) =>
+    ({
+      name: clk.name,
+      amount: clk.amount,
+      id: clk.id,
+      status: 1,
+    }) as const,
+  target: editRequestMutation.start,
+});
+
+sample({
   clock: archiveRequestClicked,
   fn: (clk) => ({
-    mutation: clk,
+    mutation: {
+      name: clk.name,
+      amount: clk.amount,
+      id: clk.id,
+      status: 3,
+    } as const,
     $requestViewMode: null,
   }),
   target: spread({

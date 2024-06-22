@@ -13,7 +13,7 @@
 </script>
 
 <template>
-  <div class="flex min-h-screen flex-col gap-y-4">
+  <div class="flex h-[100vh] flex-col gap-y-4">
     <div
       class="flex items-center justify-between border-b border-[#D0D4DB] px-5 py-3">
       <div class="flex cursor-pointer items-center gap-x-2">

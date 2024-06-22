@@ -28,6 +28,7 @@
     await form.validate();
     if (Object.keys(form.errors.value).length <= 0) {
       handleSubmit({ ...form.values });
+      handleClose();
     }
   };
 </script>
@@ -133,7 +134,10 @@
     </ScrollArea>
     <div
       class="w-full border-l border-t border-[#CCD0D9] bg-[#F9FAFB] bg-white p-4 md:min-w-[305px]">
-      <Button class="w-full text-[17px] font-semibold" type="submit">
+      <Button
+        class="w-full text-[17px] font-semibold"
+        type="submit"
+        @click="onSubmit">
         Добавить
       </Button>
     </div>

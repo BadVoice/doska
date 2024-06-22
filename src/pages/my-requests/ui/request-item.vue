@@ -5,6 +5,7 @@
     archiveRequestClicked,
     deleteRequestClicked,
     editRequestSelected,
+    publicationClicked,
     requestClicked,
     requestViewModeChanged,
   } from '@/pages/my-requests/model/my-requests-model';
@@ -15,7 +16,7 @@
   import { ref } from 'vue';
   import { historyClicked } from '../model/history-model';
 
-  const props = defineProps<{
+  defineProps<{
     status: { color: string; text: string }[];
     item: BidWithName;
   }>();
@@ -28,15 +29,11 @@
   const handleEditRequest = useUnit(editRequestSelected);
   const handleArchiveRequest = useUnit(archiveRequestClicked);
   const handleHistory = useUnit(historyClicked);
+  const handlePublicationClicked = useUnit(publicationClicked);
 
   const selectedRequest = useUnit($selectedAdvertisementId);
 
   const changeViewMode = useUnit(requestViewModeChanged);
-
-  function handleHistoryClicked() {
-    handleHistory(props.item);
-    changeViewMode('history');
-  }
 
   const popoverOpened = ref(false);
 
@@ -81,7 +78,15 @@
             class="flex h-fit w-[150px] flex-col justify-center overflow-hidden rounded-[10px] p-0">
             <PopoverClose class="flex flex-col gap-y-0">
               <Button
-                @click="handleHistoryClicked()"
+                v-if="item.status === 0"
+                @click="handlePublicationClicked(item)"
+                variant="ghost"
+                class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
+                <p class="w-full text-[14px] font-semibold">Опубликовать</p>
+              </Button>
+              <Button
+                v-if="item.status === 2"
+                @click="handleHistory(item)"
                 variant="ghost"
                 class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
                 <p class="w-full text-[14px] font-semibold">История заявки</p>
@@ -99,6 +104,7 @@
                 <p class="w-full text-[14px] font-semibold">Удалить заявку</p>
               </Button>
               <Button
+                v-if="item.status !== 3"
                 variant="ghost"
                 @click="handleArchiveRequest(item)"
                 class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">

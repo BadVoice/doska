@@ -14,11 +14,14 @@
   import { $selectedAdvertisement } from '@/entities/advertisement';
   import { searchQuery } from '@/entities/offer';
   import { $showCreateAdvertisement } from '@/features/create-advertisement';
-  import { RequestHistory, SelectBrand } from '@/pages/my-requests';
   import {
+    $currentPage,
     $requestViewMode,
+    $searchQS,
+    RequestHistory,
     requestViewModeChanged,
-  } from '@/pages/my-requests/model/my-requests-model';
+    SelectBrand,
+  } from '@/pages/my-requests';
   import { Toaster } from '@/shared/ui/toast';
   import {
     $showAuth,
@@ -39,6 +42,8 @@
   const requestViewMode = useUnit($requestViewMode);
   const selectedAdvertisement = useUnit($selectedAdvertisement);
   const changeSwitchCompanyVisible = useUnit(changeCompanyVisibleChanged);
+  const searchQS = useUnit($searchQS);
+  const selectedPage = useUnit($currentPage);
 
   const changeRequestViewMode = useUnit(requestViewModeChanged);
 
@@ -72,10 +77,10 @@
         vendor: vendorsArray,
         city_id: citiesArray,
       },
-      search: selectedAdvertisement.value?.article ?? '',
+      search: searchQS.value?.search ?? '',
       page: page,
       page_size: 10,
-      brand: selectedAdvertisement.value?.brand ?? '',
+      brand: searchQS.value?.brand ?? '',
     });
   }
 
@@ -192,6 +197,7 @@
         class="w-full flex-grow bg-[#F9FAFB]"
         v-if="isMobile && !isProductCardOpen && !isFilterCardOpen">
         <Offers
+          :current-page="selectedPage"
           @close-offers="handleCloseOffers"
           v-if="
             requestViewMode === 'offers' &&
@@ -240,6 +246,7 @@
 
       <div class="flex w-full min-w-full lg:hidden">
         <Offers
+          :current-page="selectedPage"
           @close-offers="handleCloseOffers"
           v-if="
             requestViewMode === 'offers' &&
@@ -255,6 +262,7 @@
 
       <div class="hidden w-full min-w-full lg:flex">
         <Offers
+          :current-page="selectedPage"
           @close-offers="handleCloseOffers"
           v-if="requestViewMode === 'offers' && !isAuthOpen"
           @offer-clicked="handleItemClick"

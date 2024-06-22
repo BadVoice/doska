@@ -36,16 +36,21 @@ interface SendDetailsParams {
   email?: string;
   phone?: string;
   first_name: string;
+  name?: string;
   captchaToken?: string;
 }
 
 export const valueInputed = createEvent<string>();
-export const detailsFormSubmitted = createEvent<IFormValues>();
+export const detailsFormSubmitted = createEvent<SendDetailsParams>();
 export const authFormSubmitted = createEvent<IAuthFormValues>();
 
 export const $authMode = createStore('login');
 export const $phoneOrEmail = createStore('').on(valueInputed, (_, clk) => clk);
 export const $authFormValues = createStore<IAuthFormValues | null>(null);
+export const $authDetailsValue = createStore<SendDetailsParams | null>(null).on(
+  detailsFormSubmitted,
+  (_, clk) => clk,
+);
 
 export const $inputMode = createStore<TInputMode>('email');
 
@@ -67,7 +72,8 @@ export const authUser = createMutation({
 });
 
 export const updateUser = createMutation({
-  handler: async (data: SendDetailsParams) => $api.user.updateUser(data),
+  handler: async (data: Omit<SendDetailsParams, 'name'>) =>
+    $api.user.updateUser(data),
 });
 
 const notifyUnauthorizedError = createEffect(() => {
@@ -152,9 +158,11 @@ sample({
   clock: detailsFormSubmitted,
   fn: (clk) =>
     ({
-      ...clk,
+      email: clk.email,
+      phone: clk.phone,
+      captchaToken: clk.captchaToken,
       first_name: clk.name,
-    }) as const,
+    }) as Omit<SendDetailsParams, 'name'>,
   target: updateUser.start,
 });
 

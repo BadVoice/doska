@@ -551,7 +551,7 @@
         "operationId": "createUserCompany",
         "requestBody": {
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
                 "$ref": "#/components/schemas/Company"
               }
@@ -1690,6 +1690,17 @@
             }
           },
           {
+            "name": "status",
+            "in": "query",
+            "description": "фильтр по статусу",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
             "name": "destinations",
             "in": "query",
             "description": "фильтр по назначениям",
@@ -1800,7 +1811,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Bid"
+                  "$ref": "#/components/schemas/BidWithHistory"
                 }
               }
             }
@@ -1923,11 +1934,11 @@
         ]
       }
     },
-    "/offers/": {
+    "/ads/": {
       "get": {
-        "tags": ["Offers"],
-        "summary": "метод получения списка предложений",
-        "operationId": "getOffers",
+        "tags": ["Ads"],
+        "summary": "метод получения списка объявлений",
+        "operationId": "getAds",
         "parameters": [
           {
             "name": "search",
@@ -1978,6 +1989,229 @@
             }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "успешный ответ со списком объявлений",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Ads"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": ["Ads"],
+        "summary": "метод создания объявления",
+        "operationId": "createAd",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Ad"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "успешный ответ с созданным объявлением",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Ad"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/ads/{ad_id}": {
+      "get": {
+        "tags": ["Ads"],
+        "summary": "метод получения объявления",
+        "operationId": "getAd",
+        "parameters": [
+          {
+            "name": "ad_id",
+            "in": "path",
+            "description": "идентификатор объявления",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "успешный ответ с объявлением",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Ad"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": ["Ads"],
+        "summary": "метод изменения объявления",
+        "operationId": "updateAd",
+        "parameters": [
+          {
+            "name": "ad_id",
+            "in": "path",
+            "description": "идентификатор объявления",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Ad"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "успешный ответ с измененным объявлением",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Ad"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": ["Ads"],
+        "summary": "метод удаления объявления",
+        "operationId": "deleteAd",
+        "parameters": [
+          {
+            "name": "ad_id",
+            "in": "path",
+            "description": "идентификатор объявления",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_204"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/offers/": {
+      "get": {
+        "tags": ["Offers"],
+        "summary": "метод получения списка предложений",
+        "operationId": "getOffers",
         "responses": {
           "200": {
             "description": "успешный ответ со списком предложений",
@@ -2114,7 +2348,7 @@
         ],
         "requestBody": {
           "content": {
-            "multipart/form-data": {
+            "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/Offer"
               }
@@ -2159,229 +2393,6 @@
             "name": "offer_id",
             "in": "path",
             "description": "идентификатор предложения",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "успешный ответ",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/inline_response_204"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "ошибка",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/confirmations/": {
-      "get": {
-        "tags": ["Confirmations"],
-        "summary": "метод получения списка подтверждений",
-        "operationId": "getConfirmations",
-        "responses": {
-          "200": {
-            "description": "успешный ответ со списком подтверждений",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Confirmations"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "ошибка",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "post": {
-        "tags": ["Confirmations"],
-        "summary": "метод создания подтверждения",
-        "operationId": "createConfirmation",
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "$ref": "#/components/schemas/Confirmation"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "description": "успешный ответ с созданным подтверждением",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Confirmation"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "ошибка",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/confirmations/{confirmation_id}": {
-      "get": {
-        "tags": ["Confirmations"],
-        "summary": "метод получения подтверждения",
-        "operationId": "getConfirmation",
-        "parameters": [
-          {
-            "name": "confirmation_id",
-            "in": "path",
-            "description": "идентификатор подтверждения",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "успешный ответ с подтверждением",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Confirmation"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "ошибка",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "put": {
-        "tags": ["Confirmations"],
-        "summary": "метод изменения подтверждения",
-        "operationId": "updateConfirmation",
-        "parameters": [
-          {
-            "name": "confirmation_id",
-            "in": "path",
-            "description": "идентификатор подтверждения",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Confirmation"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "успешный ответ с измененным подтверждением",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Confirmation"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "ошибка",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "delete": {
-        "tags": ["Confirmations"],
-        "summary": "метод удаления подтверждения",
-        "operationId": "deleteConfirmation",
-        "parameters": [
-          {
-            "name": "confirmation_id",
-            "in": "path",
-            "description": "идентификатор подтверждения",
             "required": true,
             "style": "simple",
             "explode": false,
@@ -4043,23 +4054,6 @@
           "$ref": "#/components/schemas/Profile"
         }
       },
-      "UserAuth": {
-        "required": ["password", "username"],
-        "type": "object",
-        "properties": {
-          "username": {
-            "type": "string",
-            "description": "email or phone"
-          },
-          "password": {
-            "type": "string"
-          },
-          "recaptcha": {
-            "type": "string",
-            "writeOnly": true
-          }
-        }
-      },
       "UserAuthRefresh": {
         "required": ["refresh"],
         "type": "object",
@@ -4074,17 +4068,6 @@
         "type": "object",
         "properties": {
           "token": {
-            "type": "string"
-          }
-        }
-      },
-      "Token": {
-        "type": "object",
-        "properties": {
-          "refresh": {
-            "type": "string"
-          },
-          "access": {
             "type": "string"
           }
         }
@@ -4276,10 +4259,70 @@
           }
         }
       },
-      "Bids": {
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/Bid"
+      "BidWithHistory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "example": "2024-04-14T08:12:44.533679Z"
+          },
+          "image": {
+            "type": "string",
+            "format": "binary",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "description": "dictionary:\n  * 0 Создана\n  * 1 Опубликована\n  * 2 Исполнена\n  * 3 Архивирована\n",
+            "default": 0,
+            "enum": [0, 1, 2, 3]
+          },
+          "name": {
+            "type": "string"
+          },
+          "article": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "integer"
+          },
+          "delivery_time": {
+            "type": "integer"
+          },
+          "description": {
+            "type": "string"
+          },
+          "company": {
+            "type": "integer",
+            "description": "company_id"
+          },
+          "category": {
+            "type": "integer",
+            "description": "category_id"
+          },
+          "brand": {
+            "type": "integer",
+            "description": "brand_id"
+          },
+          "destinations": {
+            "type": "array",
+            "description": "destination_id",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderWithHistory"
+            }
+          }
         }
       },
       "BidPage": {
@@ -4302,7 +4345,7 @@
           }
         }
       },
-      "Offer": {
+      "Ad": {
         "required": ["amount", "name", "price"],
         "type": "object",
         "properties": {
@@ -4370,13 +4413,13 @@
           }
         }
       },
-      "Offers": {
+      "Ads": {
         "type": "array",
         "items": {
-          "$ref": "#/components/schemas/Offer"
+          "$ref": "#/components/schemas/Ad"
         }
       },
-      "Confirmation": {
+      "Offer": {
         "required": ["name"],
         "type": "object",
         "properties": {
@@ -4418,20 +4461,20 @@
             "type": "integer",
             "description": "bid_id"
           },
-          "offer": {
+          "ad": {
             "type": "integer",
-            "description": "offer_id"
+            "description": "ad_id"
           }
         }
       },
-      "Confirmations": {
+      "Offers": {
         "type": "array",
         "items": {
-          "$ref": "#/components/schemas/Confirmation"
+          "$ref": "#/components/schemas/Offer"
         }
       },
       "Order": {
-        "required": ["amount", "confirmation", "name", "price"],
+        "required": ["amount", "name", "offer", "price"],
         "type": "object",
         "properties": {
           "id": {
@@ -4473,13 +4516,62 @@
             "type": "integer",
             "description": "bid_id"
           },
+          "ad": {
+            "type": "integer",
+            "description": "ad_id"
+          },
           "offer": {
             "type": "integer",
             "description": "offer_id"
-          },
-          "confirmation": {
+          }
+        }
+      },
+      "OrderWithHistory": {
+        "type": "object",
+        "properties": {
+          "id": {
             "type": "integer",
-            "description": "confirmation_id"
+            "readOnly": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "example": "2024-04-14T08:12:44.533679Z"
+          },
+          "status": {
+            "type": "integer",
+            "description": "dictionary:\n  * 0 Заказан\n  * 1 Исполнен\n",
+            "default": 0,
+            "enum": [0, 1]
+          },
+          "name": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "integer"
+          },
+          "price": {
+            "type": "number"
+          },
+          "delivery_time": {
+            "type": "integer"
+          },
+          "description": {
+            "type": "string"
+          },
+          "company": {
+            "type": "integer",
+            "description": "company_id"
+          },
+          "offer": {
+            "$ref": "#/components/schemas/Offer"
+          },
+          "order_returns": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderReturn"
+            }
           }
         }
       },

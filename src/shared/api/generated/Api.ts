@@ -63,24 +63,12 @@ export interface Profile {
 
 export type Profiles = Profile[];
 
-export interface UserAuth {
-  /** email or phone */
-  username: string;
-  password: string;
-  recaptcha?: string;
-}
-
 export interface UserAuthRefresh {
   refresh: string;
 }
 
 export interface UserAuthVerify {
   token: string;
-}
-
-export interface Token {
-  refresh?: string;
-  access?: string;
 }
 
 export interface AccessToken {
@@ -178,7 +166,39 @@ export interface Bid {
   destinations?: number[];
 }
 
-export type Bids = Bid[];
+export interface BidWithHistory {
+  id?: number;
+  /**
+   * @format date-time
+   * @example "2024-04-14T08:12:44.533679Z"
+   */
+  created_at?: string;
+  /** @format binary */
+  image?: File | null;
+  /**
+   * dictionary:
+   *   * 0 Создана
+   *   * 1 Опубликована
+   *   * 2 Исполнена
+   *   * 3 Архивирована
+   * @default 0
+   */
+  status?: 0 | 1 | 2 | 3;
+  name?: string;
+  article?: string;
+  amount?: number;
+  delivery_time?: number;
+  description?: string;
+  /** company_id */
+  company?: number;
+  /** category_id */
+  category?: number;
+  /** brand_id */
+  brand?: number;
+  /** destination_id */
+  destinations?: number[];
+  history?: OrderWithHistory[];
+}
 
 export interface BidPage {
   count?: number;
@@ -187,7 +207,7 @@ export interface BidPage {
   results?: Bid[];
 }
 
-export interface Offer {
+export interface Ad {
   id?: number;
   /**
    * @format date-time
@@ -223,9 +243,9 @@ export interface Offer {
   destinations?: number[];
 }
 
-export type Offers = Offer[];
+export type Ads = Ad[];
 
-export interface Confirmation {
+export interface Offer {
   id?: number;
   /**
    * @format date-time
@@ -244,11 +264,11 @@ export interface Confirmation {
   profile?: number;
   /** bid_id */
   bid?: number;
-  /** offer_id */
-  offer?: number;
+  /** ad_id */
+  ad?: number;
 }
 
-export type Confirmations = Confirmation[];
+export type Offers = Offer[];
 
 export interface Order {
   id?: number;
@@ -273,10 +293,35 @@ export interface Order {
   company?: number;
   /** bid_id */
   bid?: number;
+  /** ad_id */
+  ad?: number;
   /** offer_id */
-  offer?: number;
-  /** confirmation_id */
-  confirmation: number;
+  offer: number;
+}
+
+export interface OrderWithHistory {
+  id?: number;
+  /**
+   * @format date-time
+   * @example "2024-04-14T08:12:44.533679Z"
+   */
+  created_at?: string;
+  /**
+   * dictionary:
+   *   * 0 Заказан
+   *   * 1 Исполнен
+   * @default 0
+   */
+  status?: 0 | 1;
+  name?: string;
+  amount?: number;
+  price?: number;
+  delivery_time?: number;
+  description?: string;
+  /** company_id */
+  company?: number;
+  offer?: Offer;
+  order_returns?: OrderReturn[];
 }
 
 export type Orders = Order[];
@@ -1010,7 +1055,7 @@ export class Api<
         method: 'POST',
         body: data,
         secure: true,
-        type: ContentType.Json,
+        type: ContentType.FormData,
         format: 'json',
         ...params,
       }),
@@ -1495,10 +1540,12 @@ export class Api<
         article?: string;
         /** фильтр по количеству */
         amount?: number;
+        /** фильтр по статусу */
+        status?: number;
         /** список destination_id */
         destinations?: number[];
       },
-      params: RequestParams & { page: number } = { page: 1 },
+      params: RequestParams = {},
     ) =>
       this.request<BidPage, Error>({
         path: `/bids/`,
@@ -1539,7 +1586,7 @@ export class Api<
      * @secure
      */
     getBid: (bidId: number, params: RequestParams = {}) =>
-      this.request<Bid, Error>({
+      this.request<BidWithHistory, Error>({
         path: `/bids/${bidId}`,
         method: 'GET',
         secure: true,
@@ -1585,17 +1632,17 @@ export class Api<
         ...params,
       }),
   };
-  offers = {
+  ads = {
     /**
      * No description
      *
-     * @tags Offers
-     * @name GetOffers
-     * @summary метод получения списка предложений
-     * @request GET:/offers/
+     * @tags Ads
+     * @name GetAds
+     * @summary метод получения списка объявлений
+     * @request GET:/ads/
      * @secure
      */
-    getOffers: (
+    getAds: (
       query?: {
         /** поиск по наименованию, описанию */
         search?: string;
@@ -1608,10 +1655,105 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
+      this.request<Ads, Error>({
+        path: `/ads/`,
+        method: 'GET',
+        query: query,
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Ads
+     * @name CreateAd
+     * @summary метод создания объявления
+     * @request POST:/ads/
+     * @secure
+     */
+    createAd: (data: Ad, params: RequestParams = {}) =>
+      this.request<Ad, Error>({
+        path: `/ads/`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.FormData,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Ads
+     * @name GetAd
+     * @summary метод получения объявления
+     * @request GET:/ads/{ad_id}
+     * @secure
+     */
+    getAd: (adId: number, params: RequestParams = {}) =>
+      this.request<Ad, Error>({
+        path: `/ads/${adId}`,
+        method: 'GET',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Ads
+     * @name UpdateAd
+     * @summary метод изменения объявления
+     * @request PUT:/ads/{ad_id}
+     * @secure
+     */
+    updateAd: (adId: number, data: Ad, params: RequestParams = {}) =>
+      this.request<Ad, Error>({
+        path: `/ads/${adId}`,
+        method: 'PUT',
+        body: data,
+        secure: true,
+        type: ContentType.FormData,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Ads
+     * @name DeleteAd
+     * @summary метод удаления объявления
+     * @request DELETE:/ads/{ad_id}
+     * @secure
+     */
+    deleteAd: (adId: number, params: RequestParams = {}) =>
+      this.request<InlineResponse204, Error>({
+        path: `/ads/${adId}`,
+        method: 'DELETE',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+  };
+  offers = {
+    /**
+     * No description
+     *
+     * @tags Offers
+     * @name GetOffers
+     * @summary метод получения списка предложений
+     * @request GET:/offers/
+     * @secure
+     */
+    getOffers: (params: RequestParams = {}) =>
       this.request<Offers, Error>({
         path: `/offers/`,
         method: 'GET',
-        query: query,
         secure: true,
         format: 'json',
         ...params,
@@ -1670,7 +1812,7 @@ export class Api<
         method: 'PUT',
         body: data,
         secure: true,
-        type: ContentType.FormData,
+        type: ContentType.Json,
         format: 'json',
         ...params,
       }),
@@ -1687,105 +1829,6 @@ export class Api<
     deleteOffer: (offerId: number, params: RequestParams = {}) =>
       this.request<InlineResponse204, Error>({
         path: `/offers/${offerId}`,
-        method: 'DELETE',
-        secure: true,
-        format: 'json',
-        ...params,
-      }),
-  };
-  confirmations = {
-    /**
-     * No description
-     *
-     * @tags Confirmations
-     * @name GetConfirmations
-     * @summary метод получения списка подтверждений
-     * @request GET:/confirmations/
-     * @secure
-     */
-    getConfirmations: (params: RequestParams = {}) =>
-      this.request<Confirmations, Error>({
-        path: `/confirmations/`,
-        method: 'GET',
-        secure: true,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Confirmations
-     * @name CreateConfirmation
-     * @summary метод создания подтверждения
-     * @request POST:/confirmations/
-     * @secure
-     */
-    createConfirmation: (data: Confirmation, params: RequestParams = {}) =>
-      this.request<Confirmation, Error>({
-        path: `/confirmations/`,
-        method: 'POST',
-        body: data,
-        secure: true,
-        type: ContentType.FormData,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Confirmations
-     * @name GetConfirmation
-     * @summary метод получения подтверждения
-     * @request GET:/confirmations/{confirmation_id}
-     * @secure
-     */
-    getConfirmation: (confirmationId: number, params: RequestParams = {}) =>
-      this.request<Confirmation, Error>({
-        path: `/confirmations/${confirmationId}`,
-        method: 'GET',
-        secure: true,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Confirmations
-     * @name UpdateConfirmation
-     * @summary метод изменения подтверждения
-     * @request PUT:/confirmations/{confirmation_id}
-     * @secure
-     */
-    updateConfirmation: (
-      confirmationId: number,
-      data: Confirmation,
-      params: RequestParams = {},
-    ) =>
-      this.request<Confirmation, Error>({
-        path: `/confirmations/${confirmationId}`,
-        method: 'PUT',
-        body: data,
-        secure: true,
-        type: ContentType.Json,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Confirmations
-     * @name DeleteConfirmation
-     * @summary метод удаления подтверждения
-     * @request DELETE:/confirmations/{confirmation_id}
-     * @secure
-     */
-    deleteConfirmation: (confirmationId: number, params: RequestParams = {}) =>
-      this.request<InlineResponse204, Error>({
-        path: `/confirmations/${confirmationId}`,
         method: 'DELETE',
         secure: true,
         format: 'json',

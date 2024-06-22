@@ -14,6 +14,7 @@ export const myRequestsQuery = createQuery({
   handler: async (params?: IRequestsQueryParams) => {
     const bids = (
       await $api.bids.getBids(undefined, {
+        // @ts-ignore
         page: params?.page ?? 1,
       })
     ).data;
@@ -45,10 +46,5 @@ export const deleteRequestMutation = createMutation({
 
 export const editRequestMutation = createMutation({
   handler: (bid: Bid) =>
-    $api.bids.updateBid(parseInt(bid?.id?.toString() ?? '0'), {
-      name: bid.name,
-      status: 3,
-      amount: bid.amount,
-      category: bid.category,
-    }),
+    $api.bids.updateBid(parseInt(bid?.id?.toString() ?? '0'), bid),
 });

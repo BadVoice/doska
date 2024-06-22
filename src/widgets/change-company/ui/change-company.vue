@@ -46,11 +46,7 @@
       email: currentUser.value?.email,
       phone: currentUser.value?.phone,
     },
-    ...(companies.value?.forEach((c) => {
-      const company: any = c;
-      company.user = false;
-      return company;
-    }) ?? []),
+    ...(companies.value ?? []),
   ]);
 
   function handleSelected(companyOrUser: companyOrUser) {
@@ -82,11 +78,13 @@
           :class="
             cn(
               'rounded-lg border-2 border-[#E0E7EF] bg-white px-3 py-1 transition-all duration-100 hover:border-[#0017FC] hover:bg-opacity-90',
-              (!selectedCompany || selectedCompany === companyOrUser?.id) &&
+              ((!selectedCompany && companyOrUser.user) ||
+                selectedCompany?.id === companyOrUser?.id) &&
                 'border-[#0017FC]',
             )
           ">
           <p class="text-[15px]" v-if="companyOrUser.user">Пользователь</p>
+          <p class="text-[15px]" v-if="!companyOrUser.user">Компания</p>
           <p class="text-[15px]" v-if="companyOrUser.name">
             {{ companyOrUser.name }}
           </p>

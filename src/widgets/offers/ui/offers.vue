@@ -21,8 +21,11 @@
 
   defineProps<{ class: string }>();
 
+  const currentPage = defineModel<number>('currentPage', {
+    required: true,
+  });
+
   const isMobile = ref(false);
-  const page = ref(1);
 
   const filterValues = useUnit($filterValues);
   const handleAddOffer = useUnit(offerAddButtonClicked);
@@ -135,7 +138,7 @@
           :sibling-count="1"
           :show-edges="!isMobile"
           @update:page="(value) => $emit('page-selected', value)"
-          v-model:page="page"
+          v-model:page="currentPage"
           class="mx-auto gap-1 sm:-translate-x-1 sm:gap-2">
           <PaginationList v-slot="{ items }" class="flex items-center gap-1">
             <PaginationPrev v-if="data?.data.has_prev" />
