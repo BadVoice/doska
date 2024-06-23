@@ -126,7 +126,6 @@
   });
 
   function handleItemClick(item: Item) {
-    console.log('click on item');
     router.push({
       path: route.fullPath,
       query: {

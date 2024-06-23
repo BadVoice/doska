@@ -125,7 +125,7 @@
     </div>
 
     <ScrollArea
-      v-if="data?.data.items"
+      v-if="data?.data?.items"
       class="flex max-h-[calc(100vh-72px)] flex-col gap-y-4 px-4 max-sm:max-h-[calc(100vh-201px)]">
       <OfferList
         :offers-items="data?.data.items as any"

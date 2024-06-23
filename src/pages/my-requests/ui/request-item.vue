@@ -1,20 +1,21 @@
 <script lang="ts" setup>
   import { $selectedAdvertisementId } from '@/entities/advertisement';
   import type { BidWithName } from '@/entities/requests';
-  import {
-    archiveRequestClicked,
-    deleteRequestClicked,
-    editRequestSelected,
-    publicationClicked,
-    requestClicked,
-    requestViewModeChanged,
-  } from '@/pages/my-requests/model/my-requests-model';
   import { cn } from '@/shared/lib';
   import { Button, Popover, PopoverContent, PopoverTrigger } from '@/shared/ui';
   import { useUnit } from 'effector-vue/composition';
   import { PopoverClose } from 'radix-vue';
   import { ref } from 'vue';
   import { historyClicked } from '../model/history-model';
+  import {
+    archiveRequestClicked,
+    deleteRequestClicked,
+    editRequestSelected,
+    publicationClicked,
+    requestClicked,
+    requestCompleted,
+    requestViewModeChanged,
+  } from '../model/my-requests-model';
 
   defineProps<{
     status: { color: string; text: string }[];
@@ -28,6 +29,7 @@
   const handleRequestClicked = useUnit(requestClicked);
   const handleEditRequest = useUnit(editRequestSelected);
   const handleArchiveRequest = useUnit(archiveRequestClicked);
+  const handleCompleteRequest = useUnit(requestCompleted);
   const handleHistory = useUnit(historyClicked);
   const handlePublicationClicked = useUnit(publicationClicked);
 
@@ -83,6 +85,13 @@
                 variant="ghost"
                 class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
                 <p class="w-full text-[14px] font-semibold">Опубликовать</p>
+              </Button>
+              <Button
+                v-if="item.status === 1"
+                variant="ghost"
+                @click="handleCompleteRequest(item)"
+                class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
+                <p class="w-full text-[14px] font-semibold">Исполнить</p>
               </Button>
               <Button
                 v-if="item.status === 2"

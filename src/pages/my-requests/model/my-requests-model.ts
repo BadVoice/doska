@@ -1,6 +1,12 @@
 import { $selectedAdvertisementId } from '@/entities/advertisement/model/advertisement-model';
 import { createMutation, keepFresh } from '@farfetched/core';
-import { createEffect, createEvent, createStore, sample } from 'effector';
+import {
+  createEffect,
+  createEvent,
+  createStore,
+  sample,
+  type EventCallable,
+} from 'effector';
 import { not, spread } from 'patronum';
 
 import { $api } from '@/shared/api/api';
@@ -43,6 +49,7 @@ export const editRequestSelected = createEvent<BidWithName>();
 
 export const deleteRequestClicked = createEvent<number>();
 export const archiveRequestClicked = createEvent<Bid>();
+export const requestCompleted = createEvent<Bid>();
 export const filterVisibilityChanged = createEvent<boolean | void>();
 export const filterSubmitted = createEvent<FormValues>();
 export const requestClicked = createEvent<BidWithName>();
@@ -79,34 +86,23 @@ sample({
   }),
 });
 
-sample({
-  clock: publicationClicked,
-  fn: (clk) =>
-    ({
-      name: clk.name,
-      amount: clk.amount,
-      id: clk.id,
-      status: 1,
-    }) as const,
-  target: editRequestMutation.start,
-});
+function changeRequestStatus(event: EventCallable<Bid>, status: number) {
+  sample({
+    clock: event,
+    fn: (clk) =>
+      ({
+        name: clk.name,
+        amount: clk.amount,
+        id: clk.id,
+        status: status,
+      }) as Bid,
+    target: editRequestMutation.start,
+  });
+}
 
-sample({
-  clock: archiveRequestClicked,
-  fn: (clk) => ({
-    mutation: {
-      name: clk.name,
-      amount: clk.amount,
-      id: clk.id,
-      status: 3,
-    } as const,
-    $requestViewMode: null,
-  }),
-  target: spread({
-    mutation: editRequestMutation.start,
-    $requestViewMode,
-  }),
-});
+changeRequestStatus(publicationClicked, 1);
+changeRequestStatus(requestCompleted, 2);
+changeRequestStatus(archiveRequestClicked, 3);
 
 sample({
   source: { $isAuthorized, $currentPage },
