@@ -1229,10 +1229,17 @@ export class Api<
      * @request GET:/brands/
      * @secure
      */
-    getBrands: (params: RequestParams = {}) =>
+    getBrands: (
+      query?: {
+        /** поиск по наименованию */
+        search?: string;
+      },
+      params: RequestParams = {},
+    ) =>
       this.request<Brands, Error>({
         path: `/brands/`,
         method: 'GET',
+        query: query,
         secure: true,
         format: 'json',
         ...params,
@@ -1750,10 +1757,17 @@ export class Api<
      * @request GET:/offers/
      * @secure
      */
-    getOffers: (params: RequestParams = {}) =>
+    getOffers: (
+      query?: {
+        /** фильтр по заявке */
+        bid?: number;
+      },
+      params: RequestParams = {},
+    ) =>
       this.request<Offers, Error>({
         path: `/offers/`,
         method: 'GET',
+        query: query,
         secure: true,
         format: 'json',
         ...params,

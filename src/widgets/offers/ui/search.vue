@@ -1,31 +1,31 @@
 <script setup lang="ts">
   import { Button } from '@/shared/ui/button';
 
-  import { OfferList } from '@/entities/offer';
-  import type { Item, Offer } from '@/shared/api/generated/Api';
-  import { computed, onMounted, ref } from 'vue';
+  import { searchQuery, ItemList } from '@/entities/offer';
+import type { Item } from '@/shared/api/generated/Api';
+import { onMounted, ref } from 'vue';
 
-  import { offersQuery } from '@/entities/offer';
   import { $filterValues } from '@/features/filter';
-  import {
-    Pagination,
-    PaginationEllipsis,
-    PaginationList,
-    PaginationListItem,
-    PaginationNext,
-    PaginationPrev,
-  } from '@/shared/ui/pagination';
-  import { ScrollArea } from '@/shared/ui/scroll-area';
-  import { offerAddButtonClicked } from '@/widgets/offers';
-  import { useUnit } from 'effector-vue/composition';
-  import { Plus } from 'lucide-vue-next';
+import {
+Pagination,
+PaginationEllipsis,
+PaginationList,
+PaginationListItem,
+PaginationNext,
+PaginationPrev,
+} from '@/shared/ui/pagination';
+import { ScrollArea } from '@/shared/ui/scroll-area';
+import { useUnit } from 'effector-vue/composition';
 
   defineProps<{ class: string }>();
+
+  const currentPage = defineModel<number>('currentPage', {
+    required: true,
+  });
 
   const isMobile = ref(false);
 
   const filterValues = useUnit($filterValues);
-  const handleAddOffer = useUnit(offerAddButtonClicked);
 
   function getAnnouncementText(count: number) {
     if (count === 0 || !count) {
@@ -45,9 +45,14 @@
     }
   }
 
-  const emit = defineEmits(['offerClicked', 'open-filter', 'closeOffers']);
+  const emit = defineEmits([
+    'offerClicked',
+    'open-filter',
+    'page-selected',
+    'closeOffers',
+  ]);
 
-  const { data, pending } = useUnit(offersQuery);
+  const { data, pending } = useUnit(searchQuery);
 
   const handleItemClick = (item: Item) => {
     if (!item) {
@@ -68,14 +73,10 @@
     checkIsMobile();
     window.addEventListener('resize', checkIsMobile);
   });
-
-  const itemsCount = computed(() => data.value?.data?.length);
-  const currentPage = ref(1);
-  const PAGE_LIMIT = 30;
 </script>
 
 <template>
-  <div class="flex w-full flex-col sm:max-h-[100vh]" v-if="!!data?.data">
+  <div class="flex w-full flex-col sm:max-h-[100vh]" v-if="!pending">
     <div class="w-full min-w-[350px]">
       <div
         class="flex items-center border-b border-r border-[#D0D4DB] bg-white p-4 pr-5">
@@ -92,28 +93,18 @@
 
         <div class="flex w-full items-center justify-between">
           <h3 class="text-[18px] font-semibold">
-            {{ getAnnouncementText(itemsCount ?? 0) }}
+            {{ getAnnouncementText(data?.data?.items_count ?? 0) }}
           </h3>
           <div class="flex gap-x-2">
             <Button
               v-if="
-                getAnnouncementText(itemsCount ?? 0) !== 'Нет предложений' ||
-                filterValues
+                getAnnouncementText(data?.data?.items_count ?? 0) !==
+                  'Нет предложений' || filterValues
               "
               @click="handleFilterClick"
               size="icon"
               variant="ghost">
               <img src="./assets/filterIcon.svg" alt="filterIcon" />
-            </Button>
-            <Button
-              v-if="
-                getAnnouncementText(itemsCount ?? 0) !== 'Нет предложений' ||
-                filterValues
-              "
-              @click="handleAddOffer()"
-              size="icon"
-              variant="ghost">
-              <Plus class="h-7 w-7" color="#0017FC" />
             </Button>
           </div>
         </div>
@@ -121,28 +112,23 @@
     </div>
 
     <ScrollArea
-      v-if="data?.data"
+      v-if="data?.data?.items"
       class="flex max-h-[calc(100vh-72px)] flex-col gap-y-4 px-4 max-sm:max-h-[calc(100vh-201px)]">
-      <OfferList
-        :offers-items="
-          data?.data.slice(
-            (currentPage - 1) * PAGE_LIMIT,
-            PAGE_LIMIT * currentPage,
-          ) as Offer[]
-        "
+      <ItemList
+        :offers-items="data?.data.items as any"
         @offer-clicked="handleItemClick" />
       <div class="mx-auto flex w-fit bg-[#F9FAFB] py-2">
         <Pagination
-          v-if="itemsCount ?? 0 > PAGE_LIMIT"
-          :total="itemsCount"
+          v-if="!!data?.data.pages"
           v-slot="{ page }"
+          :total="data?.data.items_count"
           :sibling-count="1"
           :show-edges="!isMobile"
-          @update:page="(value) => (currentPage = value)"
+          @update:page="(value) => $emit('page-selected', value)"
           v-model:page="currentPage"
           class="mx-auto gap-1 sm:-translate-x-1 sm:gap-2">
           <PaginationList v-slot="{ items }" class="flex items-center gap-1">
-            <PaginationPrev />
+            <PaginationPrev v-if="data?.data.has_prev" />
 
             <template v-for="(item, index) in items">
               <PaginationListItem
@@ -159,7 +145,7 @@
               <PaginationEllipsis v-else :key="item.type" :index="index" />
             </template>
 
-            <PaginationNext />
+            <PaginationNext v-if="data?.data.has_next" />
           </PaginationList>
         </Pagination>
       </div>

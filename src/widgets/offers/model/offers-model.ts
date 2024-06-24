@@ -1,3 +1,5 @@
+import { $selectedAdvertisementId } from '@/entities/advertisement';
+import { offersQuery } from '@/entities/offer';
 import { $api } from '@/shared/api';
 import type { Offer } from '@/shared/api/generated/Api';
 import { createMutation, createQuery } from '@farfetched/core';
@@ -12,6 +14,7 @@ interface FormValues {
   deliveryTo?: number | undefined;
   article?: string | undefined;
   purpose?: string | undefined;
+  price: number;
 }
 
 export const createOfferMutation = createMutation({
@@ -34,12 +37,14 @@ sample({
 });
 
 sample({
+  source: $selectedAdvertisementId,
   clock: formSubmitted,
-  fn: (clk) =>
+  fn: (src, clk) =>
     ({
+      bid: parseInt(src ?? '1'),
       name: clk.name,
       article: clk.article,
-      price: 0,
+      price: clk.price,
       amount: clk.amount,
       category: clk.purpose,
       delivery_time: clk.deliveryTo,
@@ -51,4 +56,15 @@ sample({
   source: $showAddOfferModal,
   filter: (src) => src,
   target: getDestinations.start,
+});
+
+sample({
+  source: $selectedAdvertisementId,
+  clock: createOfferMutation.finished.success,
+  filter: (_, clk) => [201].includes(clk.result.status),
+  fn: (id) =>
+    ({
+      bid: parseInt(id ?? '1'),
+    }) as const,
+  target: offersQuery.start,
 });

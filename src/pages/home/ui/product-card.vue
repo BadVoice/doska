@@ -11,12 +11,12 @@
   import { useUnit } from 'effector-vue/composition';
   import { X } from 'lucide-vue-next';
   import { ref } from 'vue';
-  import { offerBuyed } from '../model/home-model';
+  import { itemBuyed } from '../model/home-model';
 
   const api = ref<CarouselApi>();
   const totalCount = ref(0);
   const current = ref(0);
-  const handleOfferBuyed = useUnit(offerBuyed);
+  const handleOfferBuyed = useUnit(itemBuyed);
 
   defineProps<{
     productItem: Item;

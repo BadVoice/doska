@@ -4,11 +4,11 @@
 
   import { CreateAdvertisement } from '@/features/create-advertisement';
   import { Filter } from '@/features/filter';
-  import { ProductCard } from '@/pages/home';
+  import { OfferCard, ProductCard } from '@/pages/home';
   import type { Item } from '@/shared/api/generated/Api';
   import { Auth } from '@/widgets/auth';
   import { Header } from '@/widgets/header';
-  import { ManuallyAddOffer, Offers } from '@/widgets/offers';
+  import { ManuallyAddOffer, Offers, Search } from '@/widgets/offers';
   import { Sidebar } from '@/widgets/sidebar';
 
   import { $selectedAdvertisement } from '@/entities/advertisement';
@@ -34,6 +34,8 @@
   } from '@/widgets/change-company';
   import { $showAddOfferModal } from '@/widgets/offers';
   import { useUnit } from 'effector-vue/composition';
+  import { offerClicked } from '../entities/offer/model/offers-model';
+  import { type Offer } from '../shared/api/generated/Api';
 
   const route = useRoute();
   const router = useRouter();
@@ -85,6 +87,7 @@
   }
 
   const productItem = ref<Item>();
+  const offerItem = ref<Offer>();
 
   const isProductCardOpen = ref(false);
   const isFilterCardOpen = ref(false);
@@ -137,6 +140,21 @@
     isFilterCardOpen.value = false;
     productItem.value = item;
   }
+
+  function handleOfferClick(item: Offer) {
+    router.push({
+      path: route.fullPath,
+      query: {
+        ...route.query,
+        'active-card': item.id,
+      },
+    });
+    isProductCardOpen.value = true;
+    isFilterCardOpen.value = false;
+    offerItem.value = item;
+  }
+
+  offerClicked.watch(handleOfferClick);
 
   function handleCloseProductCard() {
     isProductCardOpen.value = false;
@@ -195,11 +213,11 @@
       <div
         class="w-full flex-grow bg-[#F9FAFB]"
         v-if="isMobile && !isProductCardOpen && !isFilterCardOpen">
-        <Offers
+        <Search
           :current-page="selectedPage"
           @close-offers="handleCloseOffers"
           v-if="
-            requestViewMode === 'offers' &&
+            requestViewMode === 'search' &&
             !isFilterCardOpen &&
             !isProductCardOpen &&
             !isSidebarOpen &&
@@ -244,11 +262,11 @@
       <SelectBrand v-else-if="requestViewMode === 'selectBrand'" />
 
       <div class="flex w-full min-w-full lg:hidden">
-        <Offers
+        <Search
           :current-page="selectedPage"
           @close-offers="handleCloseOffers"
           v-if="
-            requestViewMode === 'offers' &&
+            requestViewMode === 'search' &&
             !isFilterCardOpen &&
             !isProductCardOpen &&
             !isAuthOpen
@@ -260,19 +278,32 @@
       </div>
 
       <div class="hidden w-full min-w-full lg:flex">
-        <Offers
+        <Search
           :current-page="selectedPage"
+          @close-offers="handleCloseOffers"
+          v-if="requestViewMode === 'search' && !isAuthOpen"
+          @offer-clicked="handleItemClick"
+          @open-filter="isFilterCardOpen = true"
+          @page-selected="handlePageSelected"
+          class="hidden w-full sm:flex lg:hidden" />
+        <Offers
           @close-offers="handleCloseOffers"
           v-if="requestViewMode === 'offers' && !isAuthOpen"
           @offer-clicked="handleItemClick"
           @open-filter="isFilterCardOpen = true"
-          @page-selected="handlePageSelected"
           class="hidden w-full sm:flex lg:hidden" />
       </div>
 
       <ProductCard
         v-if="isProductCardOpen && productItem && !isFilterCardOpen"
         :product-item="productItem"
+        :is-product-card-open="isProductCardOpen"
+        @close-product-card="handleCloseProductCard"
+        class="hidden sm:flex lg:hidden" />
+
+      <OfferCard
+        v-if="isProductCardOpen && offerItem && !isFilterCardOpen"
+        :product-item="offerItem"
         :is-product-card-open="isProductCardOpen"
         @close-product-card="handleCloseProductCard"
         class="hidden sm:flex lg:hidden" />
@@ -297,6 +328,12 @@
     <ProductCard
       v-if="productItem && !isMobile && !showAddOfferModal"
       :product-item="productItem"
+      :is-product-card-open="isProductCardOpen"
+      @close-product-card="handleCloseProductCard"
+      class="flex w-full sm:hidden lg:flex" />
+    <OfferCard
+      v-if="offerItem && !isMobile && !showAddOfferModal"
+      :product-item="offerItem"
       :is-product-card-open="isProductCardOpen"
       @close-product-card="handleCloseProductCard"
       class="flex w-full sm:hidden lg:flex" />

@@ -1,6 +1,8 @@
+import { deleteOfferMutation } from '@/entities/offer';
 import { $api } from '@/shared/api';
 import type { Bid } from '@/shared/api/generated/Api';
 import { createMutation, createQuery } from '@farfetched/core';
+import { sample } from 'effector';
 
 export interface IRequestsQueryParams {
   search?: string;

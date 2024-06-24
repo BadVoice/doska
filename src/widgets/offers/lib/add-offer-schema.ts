@@ -13,6 +13,7 @@ export function useOfferForm(): {
       .object({
         supplier: z.string({ required_error: 'Введите поставщика' }),
         name: z.string({ required_error: 'Введите наименование' }),
+        price: z.number({ required_error: 'Введите цену' }),
         amount: z
           .number({
             required_error: 'Введите количество',

@@ -7,7 +7,8 @@ import { toast } from '@/shared/ui/toast';
 import { createMutation } from '@farfetched/core';
 import { createEffect, createEvent, sample } from 'effector';
 
-export const offerBuyed = createEvent<Item>();
+export const itemBuyed = createEvent<Item>();
+export const offerBuyed = createEvent<Offer>();
 
 const createOffer = createMutation({
   handler: (data: Offer) => $api.offers.createOffer(data),
@@ -19,7 +20,7 @@ const createOrder = createMutation({
 
 sample({
   source: { $selectedAdvertisementId, $selectedCompany, $searchQS },
-  clock: offerBuyed,
+  clock: itemBuyed,
   fn: (src, clk) =>
     Object.assign(
       {
@@ -35,7 +36,7 @@ sample({
 });
 
 sample({
-  clock: createOffer.finished.success,
+  clock: [createOffer.finished.success],
   filter: (clk) => [201].includes(clk.result.status),
   fn: (clk) =>
     ({
@@ -44,6 +45,19 @@ sample({
       amount: clk.result.data.amount,
       bid: clk.result.data.bid,
       price: clk.result.data.price,
+    }) as Order,
+  target: createOrder.start,
+});
+
+sample({
+  clock: offerBuyed,
+  fn: (clk) =>
+    ({
+      name: clk.name,
+      offer: clk.id,
+      amount: clk.amount,
+      bid: clk.bid,
+      price: clk.price,
     }) as Order,
   target: createOrder.start,
 });

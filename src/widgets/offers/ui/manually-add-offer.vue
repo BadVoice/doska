@@ -27,7 +27,7 @@
   const onSubmit = async () => {
     await form.validate();
     if (Object.keys(form.errors.value).length <= 0) {
-      handleSubmit({ ...form.values });
+      handleSubmit(form.values);
       handleClose();
     }
   };
@@ -70,6 +70,7 @@
             name="amount"
             label="Количество"
             placeholder="Количество" />
+          <FormInput number name="price" label="Цена" placeholder="Цена" />
 
           <div class="flex w-full flex-col justify-between gap-y-2">
             <p class="text-[13px] font-semibold text-[#101828]">Срок</p>

@@ -17,7 +17,7 @@ import {
   myRequestsQuery,
 } from '@/entities/requests';
 
-import { searchQuery } from '@/entities/offer';
+import { deleteOfferMutation, offersQuery } from '@/entities/offer';
 import { $isAuthorized } from '@/entities/session';
 import { createBidVisibilityChanged } from '@/features/create-advertisement';
 import type { Bid, Brand } from '@/shared/api/generated/Api';
@@ -25,7 +25,7 @@ import { appMounted } from '@/shared/model';
 import { handleShowAuthChanged } from '@/widgets/auth';
 import { searchVisibilityChanged } from '@/widgets/header';
 
-type TSelectScreenMode = 'offers' | 'selectBrand' | 'history' | null;
+type TSelectScreenMode = 'offers' | 'selectBrand' | 'history' | 'search' | null;
 
 export interface FormValues {
   name: string;
@@ -73,6 +73,17 @@ export const $requestViewMode = createStore<TSelectScreenMode | null>(
 export const $searchQS = createStore<{ search: string; brand: string } | null>(
   null,
 );
+
+sample({
+  source: $selectedAdvertisementId,
+  clock: deleteOfferMutation.finished.success,
+  filter: (_, clk) => [200].includes(clk.result.status),
+  fn: (id) =>
+    ({
+      bid: parseInt(id ?? '1'),
+    }) as const,
+  target: offersQuery.start,
+});
 
 sample({
   clock: deleteRequestClicked,
@@ -174,25 +185,24 @@ sample({
   filter: (clk) => !!clk.brand,
   fn: (clk) => {
     const data = {
-      search: clk.name,
-      brand: clk.brandName ?? '',
-    };
+      bid: clk.id ?? 1,
+    } as any;
 
     return {
-      search: data,
+      offers: data,
       qs: data,
       id: clk.id?.toString(),
     } as const;
   },
   target: spread({
-    search: searchQuery.start,
+    offers: offersQuery.start,
     qs: $searchQS,
     id: $selectedAdvertisementId,
   }),
 });
 
 sample({
-  clock: searchQuery.finished.success,
+  clock: offersQuery.finished.success,
   filter: (clk) => [200].includes(clk.result.status),
   fn: () => 'offers' as const,
   target: $requestViewMode,
