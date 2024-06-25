@@ -14,11 +14,12 @@
   import { ScrollArea } from '@/shared/ui/scroll-area';
   import { $searchTerm, $selectedSortType } from '@/widgets/header';
   import { useUnit } from 'effector-vue/composition';
-  import { computed, onBeforeUnmount } from 'vue';
+  import { computed, onBeforeUnmount, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import {
     $currentPage,
     $filterOpened,
+    $filteredRequests,
     $searchQS,
     filterVisibilityChanged,
     pageSelected,
@@ -64,17 +65,7 @@
   const page = useUnit($currentPage);
   const changePage = useUnit(pageSelected);
 
-  const filteredList = computed(() =>
-    (selectedSortType.value >= 0
-      ? requests.value?.results?.filter((request) =>
-          selectedCompany.value !== null && selectedCompany.value
-            ? request.status === selectedSortType.value &&
-              request.company === selectedCompany.value.id
-            : request.status === selectedSortType.value,
-        )
-      : requests.value?.results
-    )?.filter((request) => request.name.includes(searchValue.value ?? '')),
-  );
+  const filteredList = useUnit($filteredRequests);
 </script>
 
 <template>
@@ -97,7 +88,7 @@
       class="h-[calc(100vh-186px)] w-full overflow-hidden border-r border-[#D0D4DB] bg-[#F9FAFB]">
       <div
         class="mx-auto flex flex-col items-center justify-center gap-y-6 p-4"
-        v-if="!requests?.results?.length">
+        v-if="!filteredList?.length && !pending">
         <img
           src="./assets/interfaceRequestIcon.svg"
           alt="interfaceRequestIcon"
@@ -110,7 +101,7 @@
           </p>
         </div>
       </div>
-      <ScrollArea v-else class="h-[calc(100vh-186px)]">
+      <ScrollArea v-else class="h-[calc(100vh-186px)]" v-if="filteredList">
         <DynamicScroller
           :items="filteredList"
           :min-item-size="148"
@@ -127,6 +118,7 @@
           </DynamicScrollerItem>
         </DynamicScroller>
         <Pagination
+          v-if="!pending && filteredList.length > 150"
           v-slot="{ page }"
           :total="
             searchValue === '' || !searchValue || searchValue === null
@@ -164,28 +156,6 @@
           </PaginationList>
         </Pagination>
       </ScrollArea>
-
-      <!-- <div
-        v-else
-        class="flex h-full max-h-[calc(100vh-186px)] w-full scale-[2] items-center justify-center">
-        <svg
-          class="h-5 w-5 animate-spin text-blue-500"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24">
-          <circle
-            class="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            stroke-width="4"></circle>
-          <path
-            class="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-      </div> -->
     </div>
   </template>
 </template>

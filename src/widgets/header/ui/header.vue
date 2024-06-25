@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { myRequestsQuery } from '@/entities/requests';
+  import { myRequestsQuery, type BidWithName } from '@/entities/requests';
   import { $isAuthorized } from '@/entities/session';
   import { createBidVisibilityChanged } from '@/features/create-advertisement';
   import { Button } from '@/shared/ui/button';
@@ -19,6 +19,15 @@
   import Search from './assets/search.vue';
   import BurgerMenu from './burger-menu.vue';
 
+  withDefaults(
+    defineProps<{
+      requests: BidWithName[];
+    }>(),
+    {
+      requests: () => [],
+    },
+  );
+
   const router = useRouter();
 
   const searchTerm = ref('');
@@ -34,14 +43,13 @@
   const scrollableContainer = ref();
   const scrolledButtonIndex = ref(0);
 
-  const { data: requests } = useUnit(myRequestsQuery);
   const handleSortTypeSelected = useUnit(sortTypeSelected);
   const selectedSortType = useUnit($selectedSortType);
 
   const handleCreateClicked = useUnit(createBidVisibilityChanged);
 
   const userAuthorized = useUnit($isAuthorized);
-  ``;
+
   function handleSubmitSearch(event: Event) {
     event.preventDefault();
     handleSubmit(searchTerm.value);
@@ -199,13 +207,13 @@
               class="max-h-[28px] rounded-lg"
               size="sm">
               {{ button.label }}
-              <template v-if="button.link === '/' && requests?.results?.length">
+              <template v-if="button.link === '/' && requests?.length">
                 ({{
                   button.status >= 0
-                    ? requests?.results?.filter(
+                    ? requests.filter(
                         (request) => request.status === button.status,
                       ).length
-                    : requests?.results?.length
+                    : requests.length
                 }})
               </template>
             </Button>

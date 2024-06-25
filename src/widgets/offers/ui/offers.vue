@@ -78,7 +78,7 @@
   <div class="flex w-full flex-col sm:max-h-[100vh]" v-if="!!data?.data">
     <div class="w-full min-w-[350px]">
       <div
-        class="flex items-center border-b border-r border-[#D0D4DB] bg-white p-4 pr-5">
+        class="flex max-h-16 items-center border-b border-r border-[#D0D4DB] bg-white p-4 pr-5">
         <Button
           class="-ml-2 sm:hidden"
           @click="$emit('closeOffers')"
@@ -105,14 +105,7 @@
               variant="ghost">
               <img src="./assets/filterIcon.svg" alt="filterIcon" />
             </Button>
-            <Button
-              v-if="
-                getAnnouncementText(itemsCount ?? 0) !== 'Нет предложений' ||
-                filterValues
-              "
-              @click="handleAddOffer()"
-              size="icon"
-              variant="ghost">
+            <Button @click="handleAddOffer()" size="icon" variant="ghost">
               <Plus class="h-7 w-7" color="#0017FC" />
             </Button>
           </div>
@@ -133,7 +126,7 @@
         @offer-clicked="handleItemClick" />
       <div class="mx-auto flex w-fit bg-[#F9FAFB] py-2">
         <Pagination
-          v-if="itemsCount ?? 0 > PAGE_LIMIT"
+          v-if="(itemsCount ?? 0) > PAGE_LIMIT"
           :total="itemsCount"
           v-slot="{ page }"
           :sibling-count="1"
@@ -164,5 +157,21 @@
         </Pagination>
       </div>
     </ScrollArea>
+    <div v-if="data?.data?.length === 0">
+      <div
+        class="mx-auto flex flex-col items-center justify-center gap-y-6 p-4">
+        <img
+          src="./assets/interfaceRequestIcon.svg"
+          alt="interfaceRequestIcon"
+          class="mt-8" />
+        <div class="flex flex-col items-center gap-y-2">
+          <p class="text-[16px]">Ваш список предложений пуст</p>
+          <p class="text-center text-[12px] text-[#858FA3]">
+            Что бы создать предложение <br />
+            используйте «+» в верхней части экрана
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>

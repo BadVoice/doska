@@ -35,8 +35,8 @@ const notifyWrongCodeFx = createEffect(() => {
 
 sample({
   clock: verifyUserMutation.finished.success,
-  filter: (clk: any) => [200].includes(clk.result.status),
-  fn: () => !!localStorage.getItem('token'),
+  filter: (clk) => [200].includes(clk.result.status),
+  fn: () => true,
   target: $isAuthorized,
 });
 

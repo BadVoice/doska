@@ -1,11 +1,11 @@
 <script setup lang="ts">
   import { type Offer } from '@/shared/api/generated/Api';
-import { cn } from '@/shared/lib';
-import { Button } from '@/shared/ui/button';
-import { useUnit } from 'effector-vue/composition';
-import { Trash } from 'lucide-vue-next';
-import { useRoute } from 'vue-router';
-import { deleteOfferClicked, offerClicked } from '../model/offers-model';
+  import { cn } from '@/shared/lib';
+  import { Button } from '@/shared/ui/button';
+  import { useUnit } from 'effector-vue/composition';
+  import { Trash } from 'lucide-vue-next';
+  import { useRoute } from 'vue-router';
+  import { deleteOfferClicked, offerClicked } from '../model/offers-model';
 
   defineProps<{
     offersItems: Offer[];
@@ -43,7 +43,7 @@ import { deleteOfferClicked, offerClicked } from '../model/offers-model';
         </h3>
         <Button
           size="icon"
-          @click="deleteOffer(item.id ?? 1)"
+          @click.stop="deleteOffer(item.id ?? 1)"
           variant="ghost"
           class="h-[16px] w-[16px]">
           <Trash class="text-gray-700" />

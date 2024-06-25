@@ -13,6 +13,7 @@ export const getSelf = createQuery({
 
 sample({
   clock: appMounted,
+  filter: $isAuthorized,
   target: getSelf.start,
 });
 

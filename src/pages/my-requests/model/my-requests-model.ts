@@ -1,13 +1,15 @@
+import { $selectedCompany } from '@/entities/company';
 import { $selectedAdvertisementId } from '@/entities/advertisement/model/advertisement-model';
 import { createMutation, keepFresh } from '@farfetched/core';
 import {
+  combine,
   createEffect,
   createEvent,
   createStore,
   sample,
   type EventCallable,
 } from 'effector';
-import { not, spread } from 'patronum';
+import { debug, not, spread } from 'patronum';
 
 import { $api } from '@/shared/api/api';
 
@@ -18,12 +20,16 @@ import {
 } from '@/entities/requests';
 
 import { deleteOfferMutation, offersQuery } from '@/entities/offer';
-import { $isAuthorized } from '@/entities/session';
+import { $isAuthorized, userAuthorized } from '@/entities/session';
 import { createBidVisibilityChanged } from '@/features/create-advertisement';
 import type { Bid, Brand } from '@/shared/api/generated/Api';
 import { appMounted } from '@/shared/model';
 import { handleShowAuthChanged } from '@/widgets/auth';
-import { searchVisibilityChanged } from '@/widgets/header';
+import {
+  $searchTerm,
+  $selectedSortType,
+  searchVisibilityChanged,
+} from '@/widgets/header';
 
 type TSelectScreenMode = 'offers' | 'selectBrand' | 'history' | 'search' | null;
 
@@ -74,10 +80,33 @@ export const $searchQS = createStore<{ search: string; brand: string } | null>(
   null,
 );
 
+export const $filteredRequests = combine(
+  {
+    $selectedSortType,
+    $selectedCompany,
+    requests: myRequestsQuery.$data,
+    $searchTerm,
+  },
+  (shape) =>
+    (shape.$selectedSortType >= 0
+      ? shape.requests?.results?.filter(
+          (request) => request.status === shape.$selectedSortType,
+        )
+      : shape.requests?.results
+    )
+      ?.filter((request) =>
+        shape.$selectedCompany
+          ? request.company === shape.$selectedCompany
+          : true,
+      )
+      ?.filter((request) => request.name.includes(shape.$searchTerm ?? '')) ??
+    [],
+);
+
 sample({
   source: $selectedAdvertisementId,
   clock: deleteOfferMutation.finished.success,
-  filter: (_, clk) => [200].includes(clk.result.status),
+  filter: (_, clk) => [204].includes(clk.result.status),
   fn: (id) =>
     ({
       bid: parseInt(id ?? '1'),

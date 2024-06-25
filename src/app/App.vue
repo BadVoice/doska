@@ -16,6 +16,7 @@
   import { $showCreateAdvertisement } from '@/features/create-advertisement';
   import {
     $currentPage,
+    $filteredRequests,
     $requestViewMode,
     $searchQS,
     RequestHistory,
@@ -36,6 +37,7 @@
   import { useUnit } from 'effector-vue/composition';
   import { offerClicked } from '../entities/offer/model/offers-model';
   import { type Offer } from '../shared/api/generated/Api';
+  import type { BidWithName } from '@/entities/requests';
 
   const route = useRoute();
   const router = useRouter();
@@ -46,6 +48,7 @@
   const changeSwitchCompanyVisible = useUnit(changeCompanyVisibleChanged);
   const searchQS = useUnit($searchQS);
   const selectedPage = useUnit($currentPage);
+  const filteredRequests = useUnit($filteredRequests);
 
   const changeRequestViewMode = useUnit(requestViewModeChanged);
 
@@ -194,6 +197,7 @@
             !isCreateAdvertisementOpen) ||
           (!isMobile && !isAuthOpen && !isSidebarOpen)
         "
+        :requests="filteredRequests as BidWithName[]"
         @submit-login="changeAuthVisibility()"
         @open-sidebar="isSidebarOpen = true" />
 
