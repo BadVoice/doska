@@ -1,8 +1,13 @@
-import { advertisementClicked } from '@/entities/advertisement';
-import { searchQuery } from '@/entities/offer';
-import { $requestViewMode } from '@/pages/my-requests/model/my-requests-model';
+import {
+  $brandSelected,
+  $selectedRequestId,
+  advertisementClicked,
+} from '@/entities/advertisement';
+import { offersQuery, searchQuery } from '@/entities/offer';
+import { $requestViewMode } from '@/pages/my-requests';
+import { createOfferMutation } from '@/widgets/offers';
 import { sample } from 'effector';
-import { spread } from 'patronum';
+import { debug, spread } from 'patronum';
 
 sample({
   clock: advertisementClicked,
@@ -12,10 +17,21 @@ sample({
         search: clk.article ?? '',
         brand: clk.brand ?? '',
       },
-      $requestViewMode: 'offers',
+      $requestViewMode: 'search',
     }) as const,
   target: spread({
     mutation: searchQuery.start,
     $requestViewMode,
   }),
+});
+
+sample({
+  source: { $brandSelected, $selectedRequestId },
+  clock: advertisementClicked,
+  filter: (src) => src.$brandSelected,
+  fn: (src) =>
+    ({
+      bid: src.$selectedRequestId ?? 1,
+    }) as const,
+  target: offersQuery.start,
 });

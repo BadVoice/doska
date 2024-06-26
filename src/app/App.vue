@@ -38,6 +38,7 @@
   import { offerClicked } from '../entities/offer/model/offers-model';
   import { type Offer } from '../shared/api/generated/Api';
   import type { BidWithName } from '@/entities/requests';
+  import { AdvertisementPage } from '@/pages/advertisement';
 
   const route = useRoute();
   const router = useRouter();
@@ -46,7 +47,7 @@
   const requestViewMode = useUnit($requestViewMode);
   const selectedAdvertisement = useUnit($selectedAdvertisement);
   const changeSwitchCompanyVisible = useUnit(changeCompanyVisibleChanged);
-  const searchQS = useUnit($searchQS);
+  const searchQS = useUnit($selectedAdvertisement);
   const selectedPage = useUnit($currentPage);
   const filteredRequests = useUnit($filteredRequests);
 
@@ -82,7 +83,7 @@
         vendor: vendorsArray,
         city_id: citiesArray,
       },
-      search: searchQS.value?.search ?? '',
+      search: searchQS.value?.article ?? '',
       page: page,
       page_size: 10,
       brand: searchQS.value?.brand ?? '',
@@ -245,7 +246,7 @@
             !isCreateAdvertisementOpen) ||
           (!isAuthOpen && !isMobile && !isSidebarOpen)
         " />
-      <SelectBrand
+      <AdvertisementPage
         v-if="
           isMobile && !isSidebarOpen && requestViewMode === 'selectBrand'
         " />
@@ -263,14 +264,14 @@
 
     <div v-if="!isMobile" class="w-full flex-grow bg-[#F9FAFB]">
       <RequestHistory v-if="requestViewMode === 'history'" />
-      <SelectBrand v-else-if="requestViewMode === 'selectBrand'" />
+      <AdvertisementPage v-else-if="requestViewMode === 'selectBrand'" />
 
       <div class="flex w-full min-w-full lg:hidden">
         <Search
           :current-page="selectedPage"
           @close-offers="handleCloseOffers"
           v-if="
-            requestViewMode === 'search' &&
+            requestViewMode === 'offers' &&
             !isFilterCardOpen &&
             !isProductCardOpen &&
             !isAuthOpen
@@ -281,7 +282,7 @@
           class="hidden w-full sm:flex lg:hidden" />
       </div>
 
-      <div class="hidden w-full min-w-full lg:flex">
+      <div class="w-full min-w-full max-lg:hidden">
         <Search
           :current-page="selectedPage"
           @close-offers="handleCloseOffers"
@@ -289,13 +290,15 @@
           @offer-clicked="handleItemClick"
           @open-filter="isFilterCardOpen = true"
           @page-selected="handlePageSelected"
-          class="hidden w-full sm:flex lg:hidden" />
+          class="hidden w-full sm:flex" />
         <Offers
+          :current-page="selectedPage"
+          @page-selected="handlePageSelected"
           @close-offers="handleCloseOffers"
           v-if="requestViewMode === 'offers' && !isAuthOpen"
           @offer-clicked="handleItemClick"
           @open-filter="isFilterCardOpen = true"
-          class="hidden w-full sm:flex lg:hidden" />
+          class="hidden w-full sm:flex" />
       </div>
 
       <ProductCard

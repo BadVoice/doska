@@ -6,6 +6,7 @@
     $selectedAdvertisementId,
     advertisementClicked,
   } from '../model/advertisement-model';
+  import { $requestViewMode } from '@/pages/my-requests';
 
   defineProps<{
     searchResult: Readonly<PreSearchResponse[]>;
@@ -13,11 +14,17 @@
 
   const handleSelected = useUnit(advertisementClicked);
   const selectedItem = useUnit($selectedAdvertisementId);
+  const requestViewMode = useUnit($requestViewMode);
 
   const handleCardClick = (item: PreSearchResponse) => {
     if (!item) return;
 
-    handleSelected({ id: item.id, article: item.article, brand: item.brand });
+    handleSelected({
+      id: item.id,
+      article: item.article,
+      brand: item.brand,
+      selectBrand: requestViewMode.value === 'selectBrand',
+    });
   };
 </script>
 
@@ -26,7 +33,7 @@
     <div
       class="mx-auto flex w-full flex-col items-center justify-center gap-y-6 p-4">
       <DynamicScroller
-        class="flex w-full max-w-[324px] flex-col gap-y-4 max-sm:w-[100vw]"
+        class="flex w-full flex-col gap-y-4 max-sm:w-[100vw]"
         :items="searchResult"
         :min-item-size="91">
         <template v-slot="{ item, index, active }">

@@ -1,4 +1,4 @@
-import { $selectedAdvertisementId } from '@/entities/advertisement';
+import { $selectedRequestId } from '@/entities/advertisement';
 import { offersQuery } from '@/entities/offer';
 import { $api } from '@/shared/api';
 import type { Offer } from '@/shared/api/generated/Api';
@@ -37,11 +37,11 @@ sample({
 });
 
 sample({
-  source: $selectedAdvertisementId,
+  source: $selectedRequestId,
   clock: formSubmitted,
   fn: (src, clk) =>
     ({
-      bid: parseInt(src ?? '1'),
+      bid: src ?? 1,
       name: clk.name,
       article: clk.article,
       price: clk.price,
@@ -59,12 +59,12 @@ sample({
 });
 
 sample({
-  source: $selectedAdvertisementId,
+  source: $selectedRequestId,
   clock: createOfferMutation.finished.success,
   filter: (_, clk) => [201].includes(clk.result.status),
   fn: (id) =>
     ({
-      bid: parseInt(id ?? '1'),
+      bid: id ?? 1,
     }) as const,
   target: offersQuery.start,
 });

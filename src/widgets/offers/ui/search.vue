@@ -2,20 +2,20 @@
   import { Button } from '@/shared/ui/button';
 
   import { searchQuery, ItemList } from '@/entities/offer';
-import type { Item } from '@/shared/api/generated/Api';
-import { onMounted, ref } from 'vue';
+  import type { Item } from '@/shared/api/generated/Api';
+  import { onMounted, ref } from 'vue';
 
   import { $filterValues } from '@/features/filter';
-import {
-Pagination,
-PaginationEllipsis,
-PaginationList,
-PaginationListItem,
-PaginationNext,
-PaginationPrev,
-} from '@/shared/ui/pagination';
-import { ScrollArea } from '@/shared/ui/scroll-area';
-import { useUnit } from 'effector-vue/composition';
+  import {
+    Pagination,
+    PaginationEllipsis,
+    PaginationList,
+    PaginationListItem,
+    PaginationNext,
+    PaginationPrev,
+  } from '@/shared/ui/pagination';
+  import { ScrollArea } from '@/shared/ui/scroll-area';
+  import { useUnit } from 'effector-vue/composition';
 
   defineProps<{ class: string }>();
 

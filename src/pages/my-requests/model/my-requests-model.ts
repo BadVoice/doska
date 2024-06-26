@@ -1,5 +1,6 @@
+import { $selectedRequestId } from '@/entities/advertisement';
 import { $selectedCompany } from '@/entities/company';
-import { $selectedAdvertisementId } from '@/entities/advertisement/model/advertisement-model';
+import { $selectedAdvertisementId } from '@/entities/advertisement';
 import { createMutation, keepFresh } from '@farfetched/core';
 import {
   combine,
@@ -9,7 +10,7 @@ import {
   sample,
   type EventCallable,
 } from 'effector';
-import { debug, not, spread } from 'patronum';
+import { not, spread } from 'patronum';
 
 import { $api } from '@/shared/api/api';
 
@@ -19,8 +20,12 @@ import {
   myRequestsQuery,
 } from '@/entities/requests';
 
-import { deleteOfferMutation, offersQuery } from '@/entities/offer';
-import { $isAuthorized, userAuthorized } from '@/entities/session';
+import {
+  deleteOfferMutation,
+  offersQuery,
+  preSearchQuery,
+} from '@/entities/offer';
+import { $isAuthorized } from '@/entities/session';
 import { createBidVisibilityChanged } from '@/features/create-advertisement';
 import type { Bid, Brand } from '@/shared/api/generated/Api';
 import { appMounted } from '@/shared/model';
@@ -67,6 +72,7 @@ export const $filterOpened = createStore(false);
 
 export const $currentPage = createStore(1).on(pageSelected, (_, clk) => clk);
 export const resetRequestViewMode = createEvent();
+
 export const $requestViewMode = createStore<TSelectScreenMode | null>(
   null,
 ).reset(
@@ -102,6 +108,12 @@ export const $filteredRequests = combine(
       ?.filter((request) => request.name.includes(shape.$searchTerm ?? '')) ??
     [],
 );
+
+sample({
+  clock: requestClicked,
+  fn: (clk) => clk.id ?? null,
+  target: $selectedRequestId,
+});
 
 sample({
   source: $selectedAdvertisementId,
@@ -195,37 +207,19 @@ sample({
 
 sample({
   clock: requestClicked,
-  filter: (clk) => !clk.brand,
   fn: (clk) =>
     ({
+      preSearch: {
+        search: clk.article ?? '',
+      },
       $requestViewMode: 'selectBrand',
       editRequestSelected: clk,
       id: clk.id?.toString(),
     }) as const,
   target: spread({
+    preSearch: preSearchQuery.start,
     $requestViewMode,
     editRequestSelected,
-    id: $selectedAdvertisementId,
-  }),
-});
-
-sample({
-  clock: requestClicked,
-  filter: (clk) => !!clk.brand,
-  fn: (clk) => {
-    const data = {
-      bid: clk.id ?? 1,
-    } as any;
-
-    return {
-      offers: data,
-      qs: data,
-      id: clk.id?.toString(),
-    } as const;
-  },
-  target: spread({
-    offers: offersQuery.start,
-    qs: $searchQS,
     id: $selectedAdvertisementId,
   }),
 });
@@ -263,12 +257,10 @@ export const bidMutation = createMutation({
 });
 
 export const brandSelected = createEvent<Brand>();
-const $changedBid = createStore<BidWithName | null>(null);
-
-sample({
-  clock: editRequestSelected,
-  target: $changedBid,
-});
+const $changedBid = createStore<BidWithName | null>(null).on(
+  editRequestSelected,
+  (_, clk) => clk,
+);
 
 sample({
   source: $changedBid,

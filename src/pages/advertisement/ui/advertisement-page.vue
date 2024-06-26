@@ -12,6 +12,8 @@
   import { onMounted } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import '../model/advertisement-page-model';
+  import { $requestViewMode } from '@/pages/my-requests';
+  import { cn } from '@/shared/lib';
 
   const route = useRoute();
   const router = useRouter();
@@ -19,8 +21,9 @@
   const searchValue = useUnit($searchTerm);
   const searchOpened = useUnit($showSearch);
 
-  const { data: preSearchData } = useUnit(preSearchQuery);
+  const { data: preSearchData, pending } = useUnit(preSearchQuery);
   const selectedAdvertisement = useUnit($selectedAdvertisementId);
+  const requestViewMode = useUnit($requestViewMode);
 
   onMounted(() => {
     if (selectedAdvertisement.value && !preSearchData.value?.data) {
@@ -56,24 +59,33 @@
 </script>
 
 <template>
-  <div class="w-full">
+  <div class="w-full" v-if="!pending">
     <div
       class="flex items-center justify-between border-b border-r border-[#D0D4DB] p-4 pr-5">
       <h3
-        v-if="route.path === '/advertisements'"
+        v-if="
+          route.path === '/advertisements' || requestViewMode === 'selectBrand'
+        "
         class="text-[18px] font-semibold">
         {{ getAnnouncementText(preSearchData?.data?.length ?? 0) }}
       </h3>
       <h3 v-else class="text-[18px] font-semibold">История поиска</h3>
     </div>
   </div>
-  <ScrollArea class="max-h-[calc(100vh-177px)] w-full">
+  <ScrollArea
+    :class="
+      cn(
+        'h-[calc(100vh-177px)] w-full overflow-auto [&>div>div]:h-full [&>div]:h-full',
+        requestViewMode === 'selectBrand' && 'h-[calc(100vh-60px)]',
+      )
+    ">
     <template
       v-if="
         (route.path === '/advertisements' &&
           route.query.article &&
           route.query.brand) ||
-        searchValue
+        searchValue ||
+        requestViewMode === 'selectBrand'
       ">
       <AdvertisementList
         v-if="preSearchData"

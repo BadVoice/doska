@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { Button } from '@/shared/ui/button';
 
-  import { OfferList } from '@/entities/offer';
+  import { ItemList, OfferList, searchQuery } from '@/entities/offer';
   import type { Item, Offer } from '@/shared/api/generated/Api';
   import { computed, onMounted, ref } from 'vue';
 
@@ -16,11 +16,15 @@
     PaginationPrev,
   } from '@/shared/ui/pagination';
   import { ScrollArea } from '@/shared/ui/scroll-area';
-  import { offerAddButtonClicked } from '@/widgets/offers';
+  import { Offers, offerAddButtonClicked } from '@/widgets/offers';
   import { useUnit } from 'effector-vue/composition';
   import { Plus } from 'lucide-vue-next';
 
   defineProps<{ class: string }>();
+
+  const currentPage = defineModel<number>('currentPage', {
+    required: true,
+  });
 
   const isMobile = ref(false);
 
@@ -45,9 +49,15 @@
     }
   }
 
-  const emit = defineEmits(['offerClicked', 'open-filter', 'closeOffers']);
+  const emit = defineEmits([
+    'offerClicked',
+    'open-filter',
+    'closeOffers',
+    'page-selected',
+  ]);
 
-  const { data, pending } = useUnit(offersQuery);
+  const { data } = useUnit(searchQuery);
+  const { data: offers } = useUnit(offersQuery);
 
   const handleItemClick = (item: Item) => {
     if (!item) {
@@ -69,8 +79,10 @@
     window.addEventListener('resize', checkIsMobile);
   });
 
-  const itemsCount = computed(() => data.value?.data?.length);
-  const currentPage = ref(1);
+  const itemsCount = computed(
+    () =>
+      (data.value?.data?.items_count ?? 0) + (offers?.value?.data?.length ?? 0),
+  );
   const PAGE_LIMIT = 30;
 </script>
 
@@ -117,12 +129,10 @@
       v-if="data?.data"
       class="flex max-h-[calc(100vh-72px)] flex-col gap-y-4 px-4 max-sm:max-h-[calc(100vh-201px)]">
       <OfferList
-        :offers-items="
-          data?.data.slice(
-            (currentPage - 1) * PAGE_LIMIT,
-            PAGE_LIMIT * currentPage,
-          ) as Offer[]
-        "
+        :offers-items="offers?.data as Offer[]"
+        @offer-clicked="handleItemClick" />
+      <ItemList
+        :offers-items="data?.data.items as any"
         @offer-clicked="handleItemClick" />
       <div class="mx-auto flex w-fit bg-[#F9FAFB] py-2">
         <Pagination
@@ -131,7 +141,7 @@
           v-slot="{ page }"
           :sibling-count="1"
           :show-edges="!isMobile"
-          @update:page="(value) => (currentPage = value)"
+          @update:page="(value) => $emit('page-selected', value)"
           v-model:page="currentPage"
           class="mx-auto gap-1 sm:-translate-x-1 sm:gap-2">
           <PaginationList v-slot="{ items }" class="flex items-center gap-1">
@@ -157,7 +167,7 @@
         </Pagination>
       </div>
     </ScrollArea>
-    <div v-if="data?.data?.length === 0">
+    <div v-if="itemsCount === 0">
       <div
         class="mx-auto flex flex-col items-center justify-center gap-y-6 p-4">
         <img
