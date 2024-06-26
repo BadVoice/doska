@@ -142,6 +142,7 @@
     });
     isProductCardOpen.value = true;
     isFilterCardOpen.value = false;
+    offerItem.value = undefined;
     productItem.value = item;
   }
 
@@ -155,6 +156,7 @@
     });
     isProductCardOpen.value = true;
     isFilterCardOpen.value = false;
+    productItem.value = undefined;
     offerItem.value = item;
   }
 
@@ -162,6 +164,8 @@
 
   function handleCloseProductCard() {
     isProductCardOpen.value = false;
+    offerItem.value = undefined;
+    productItem.value = undefined;
   }
 
   function handleNavigate(

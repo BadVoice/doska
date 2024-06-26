@@ -1,6 +1,9 @@
-import { $selectedRequestId } from '@/entities/advertisement';
+import {
+  $selectedRequestId,
+  $selectedAdvertisementId,
+  $selectedAdvertisement,
+} from '@/entities/advertisement';
 import { $selectedCompany } from '@/entities/company';
-import { $selectedAdvertisementId } from '@/entities/advertisement';
 import { createMutation, keepFresh } from '@farfetched/core';
 import {
   combine,
@@ -10,7 +13,7 @@ import {
   sample,
   type EventCallable,
 } from 'effector';
-import { not, spread } from 'patronum';
+import { not, reset, spread } from 'patronum';
 
 import { $api } from '@/shared/api/api';
 
@@ -124,6 +127,15 @@ sample({
       bid: parseInt(id ?? '1'),
     }) as const,
   target: offersQuery.start,
+});
+
+reset({
+  clock: searchVisibilityChanged,
+  target: [
+    $selectedRequestId,
+    $selectedAdvertisementId,
+    $selectedAdvertisement,
+  ],
 });
 
 sample({

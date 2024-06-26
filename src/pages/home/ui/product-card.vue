@@ -12,11 +12,13 @@
   import { X } from 'lucide-vue-next';
   import { ref } from 'vue';
   import { itemBuyed } from '../model/home-model';
+  import { $selectedRequestId } from '@/entities/advertisement';
 
   const api = ref<CarouselApi>();
   const totalCount = ref(0);
   const current = ref(0);
-  const handleOfferBuyed = useUnit(itemBuyed);
+  const buyOffer = useUnit(itemBuyed);
+  const selectedRequestId = useUnit($selectedRequestId);
 
   defineProps<{
     productItem: Item;
@@ -43,6 +45,11 @@
       current.value = api.selectedScrollSnap() + 1;
     });
   });
+
+  function handleOfferBuyed(item: Item) {
+    emits('close-product-card');
+    buyOffer(item);
+  }
 </script>
 
 <template>
@@ -137,7 +144,9 @@
       </div>
     </div>
 
-    <div class="inset-x-0 bottom-0 border-t border-[#CCD0D9] bg-[#F9FAFB] p-4">
+    <div
+      v-if="selectedRequestId"
+      class="inset-x-0 bottom-0 border-t border-[#CCD0D9] bg-[#F9FAFB] p-4">
       <Button
         @click="handleOfferBuyed(productItem)"
         class="w-full text-[17px] font-semibold"

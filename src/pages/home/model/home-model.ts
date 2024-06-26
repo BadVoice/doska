@@ -1,4 +1,7 @@
-import { $selectedAdvertisementId } from '@/entities/advertisement/model/advertisement-model';
+import {
+  $selectedAdvertisementId,
+  $selectedRequestId,
+} from '@/entities/advertisement/';
 import { $selectedCompany } from '@/entities/company';
 import { $searchQS } from '@/pages/my-requests';
 import { $api } from '@/shared/api';
@@ -6,6 +9,7 @@ import type { Item, Offer, Order } from '@/shared/api/generated/Api';
 import { toast } from '@/shared/ui/toast';
 import { createMutation } from '@farfetched/core';
 import { createEffect, createEvent, sample } from 'effector';
+import { debug } from 'patronum';
 
 export const itemBuyed = createEvent<Item>();
 export const offerBuyed = createEvent<Offer>();
@@ -19,16 +23,15 @@ const createOrder = createMutation({
 });
 
 sample({
-  source: { $selectedAdvertisementId, $selectedCompany, $searchQS },
+  source: { $selectedRequestId, $selectedCompany, $searchQS },
   clock: itemBuyed,
   fn: (src, clk) =>
     Object.assign(
       {
         name: src?.$searchQS?.search,
-        brand: src?.$searchQS?.brand,
         amount: parseInt(clk.quantity?.value ?? '0'),
         price: parseInt(clk.price?.value ?? '0'),
-        bid: parseInt(src.$selectedAdvertisementId ?? '0'),
+        bid: src.$selectedRequestId ?? 1,
       },
       src.$selectedCompany?.id && { company: src.$selectedCompany.id },
     ) as Offer,

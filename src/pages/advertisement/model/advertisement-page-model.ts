@@ -4,7 +4,7 @@ import {
   advertisementClicked,
 } from '@/entities/advertisement';
 import { offersQuery, searchQuery } from '@/entities/offer';
-import { $requestViewMode } from '@/pages/my-requests';
+import { $requestViewMode, $searchQS } from '@/pages/my-requests';
 import { createOfferMutation } from '@/widgets/offers';
 import { sample } from 'effector';
 import { debug, spread } from 'patronum';
@@ -18,10 +18,15 @@ sample({
         brand: clk.brand ?? '',
       },
       $requestViewMode: 'search',
+      $searchQS: {
+        search: clk.article ?? '',
+        brand: clk.brand ?? '',
+      },
     }) as const,
   target: spread({
     mutation: searchQuery.start,
     $requestViewMode,
+    $searchQS,
   }),
 });
 

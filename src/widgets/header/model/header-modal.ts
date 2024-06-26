@@ -1,7 +1,11 @@
+import {
+  $selectedAdvertisementId,
+  $selectedRequestId,
+} from '@/entities/advertisement';
 import { preSearchQuery } from '@/entities/offer';
 import { createEvent, createStore, sample } from 'effector';
 import { persist } from 'effector-storage/query';
-import { debounce } from 'patronum';
+import { debounce, reset } from 'patronum';
 
 export const searchTermInputed = createEvent<string>();
 export const sortTypeSelected = createEvent<number>();
