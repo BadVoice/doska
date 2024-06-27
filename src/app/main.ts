@@ -1,4 +1,3 @@
-import { attachLogger } from 'effector-logger';
 import NProgress from 'nprogress';
 import { createApp } from 'vue';
 import VueTheMask from 'vue-the-mask';
@@ -18,13 +17,6 @@ app.use(router);
 app.use(VueVirtualScroller);
 
 attachReduxDevTools();
-
-const unlogger = attachLogger();
-unlogger();
-
-if (import.meta.env.PROD) {
-  unlogger();
-}
 
 // @ts-expect-error seems like bug in VueTheMask types
 app.use(VueTheMask);

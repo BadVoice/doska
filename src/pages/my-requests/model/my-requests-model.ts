@@ -2,6 +2,7 @@ import {
   $selectedAdvertisement,
   $selectedAdvertisementId,
   $selectedRequestId,
+  preSearchUnmounted,
 } from '@/entities/advertisement';
 import { $selectedCompany } from '@/entities/company';
 import { createMutation, keepFresh } from '@farfetched/core';
@@ -84,6 +85,11 @@ export const $requestViewMode = createStore<TSelectScreenMode | null>(
   createBidVisibilityChanged,
   searchVisibilityChanged,
 );
+
+sample({
+  clock: [requestClicked, preSearchUnmounted],
+  target: preSearchQuery.reset,
+});
 
 export const $searchQS = createStore<{ search: string; brand: string } | null>(
   null,

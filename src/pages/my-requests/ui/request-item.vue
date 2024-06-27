@@ -6,7 +6,6 @@
   import { useUnit } from 'effector-vue/composition';
   import { PopoverClose } from 'radix-vue';
   import { ref } from 'vue';
-  import { historyClicked } from '../model/history-model';
   import {
     archiveRequestClicked,
     deleteRequestClicked,
@@ -30,7 +29,6 @@
   const handleEditRequest = useUnit(editRequestSelected);
   const handleArchiveRequest = useUnit(archiveRequestClicked);
   const handleCompleteRequest = useUnit(requestCompleted);
-  const handleHistory = useUnit(historyClicked);
   const handlePublicationClicked = useUnit(publicationClicked);
 
   const selectedRequest = useUnit($selectedAdvertisementId);
@@ -93,13 +91,7 @@
                 class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
                 <p class="w-full text-[14px] font-semibold">Исполнить</p>
               </Button>
-              <Button
-                v-if="item.status === 2"
-                @click="handleHistory(item)"
-                variant="ghost"
-                class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
-                <p class="w-full text-[14px] font-semibold">История заявки</p>
-              </Button>
+
               <Button
                 variant="ghost"
                 @click="handleClickOnChange(item)"

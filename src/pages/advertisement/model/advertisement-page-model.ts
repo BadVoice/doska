@@ -5,9 +5,8 @@ import {
 } from '@/entities/advertisement';
 import { offersQuery, searchQuery } from '@/entities/offer';
 import { $requestViewMode, $searchQS } from '@/pages/my-requests';
-import { createOfferMutation } from '@/widgets/offers';
 import { sample } from 'effector';
-import { debug, spread } from 'patronum';
+import { spread } from 'patronum';
 
 sample({
   clock: advertisementClicked,

@@ -1,14 +1,16 @@
-import { createEvent, createStore, sample } from 'effector';
 import type { PreSearchResponse } from '@/shared/api/generated/Api';
-import { persist } from 'effector-storage/query';
-import { reset, spread } from 'patronum';
 import { searchVisibilityChanged } from '@/widgets/header';
+import { createEvent, createStore, sample } from 'effector';
+import { persist } from 'effector-storage/query';
+import { reset } from 'patronum';
 
 type TAdvertisement = Omit<PreSearchResponse, 'part_name'>;
 
 export const advertisementClicked = createEvent<
   TAdvertisement & { selectBrand: boolean }
 >();
+
+export const preSearchUnmounted = createEvent();
 
 export const $selectedAdvertisement = createStore<TAdvertisement | null>(null);
 export const $selectedRequestId = createStore<number | null>(null);

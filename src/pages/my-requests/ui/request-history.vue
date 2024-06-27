@@ -1,10 +1,8 @@
 <script lang="ts" setup>
   import { requestViewModeChanged } from '@/pages/my-requests/model/my-requests-model';
-  import { Button } from '@/shared/ui';
   import { ScrollArea } from '@/shared/ui/scroll-area';
   import { offerAddButtonClicked } from '@/widgets/offers';
   import { useUnit } from 'effector-vue/composition';
-  import { Plus, SlidersHorizontal } from 'lucide-vue-next';
   import { historyQuery } from '../model/history-model';
 
   const changeViewMode = useUnit(requestViewModeChanged);
@@ -22,13 +20,7 @@
           src="../ui/assets/backIcon.svg "
           alt="Back"
           @click="changeViewMode(null)" />
-        <p class="text-[17px] font-semibold">История заявки</p>
-      </div>
-      <div class="flex items-center gap-x-2">
-        <SlidersHorizontal color="#0017FC" class="h-5 w-5 cursor-pointer" />
-        <Button variant="ghost" @click="handleAddManuallyClick()" size="icon">
-          <Plus color="#0017FC" />
-        </Button>
+        <p class="text-[17px] font-semibold">История</p>
       </div>
     </div>
     <ScrollArea class="h-[calc(100vh-41px)] px-4">

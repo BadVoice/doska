@@ -196,6 +196,8 @@
     isSidebarOpen.value = false;
   }
 
+  $visibleOffersPage.updates.watch(() => changeRequestViewMode(null));
+
   function handleCloseOffers() {
     changeRequestViewMode(null);
   }
