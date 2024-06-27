@@ -18,7 +18,7 @@ export interface FormValues {
   destination?: number;
 }
 
-const createOfferMutation = createMutation({
+export const createAdMutation = createMutation({
   handler: (data: Ad) => $api.ads.createAd(data),
 });
 
@@ -30,7 +30,7 @@ const createBidMutation = createMutation({
       amount: data.amount,
       status: 0,
       destinations: [data.destination],
-      company: data.company
+      company: data.company,
     }),
 });
 
@@ -71,13 +71,18 @@ sample({
   clock: formSubmitted,
   source: { $advertisementType, $selectedCompany },
   filter: (src) => src.$advertisementType === 'buy',
-  fn: (src, clk) => ({
-    name: clk.name,
-    article: clk.article,
-    amount: parseInt(clk?.count ?? '1'),
-    destination: clk.destination!,
-    company: src.$selectedCompany?.id,
-  }),
+  fn: (src, clk) =>
+    Object.assign(
+      {
+        name: clk.name,
+        article: clk.article,
+        amount: parseInt(clk?.count ?? '1'),
+        destination: clk.destination!,
+      },
+      {
+        company: src.$selectedCompany?.id,
+      },
+    ),
   target: [createBidMutation.start, formClosed],
 });
 
@@ -85,21 +90,23 @@ sample({
   clock: formSubmitted,
   source: { $advertisementType, $selectedCompany },
   filter: (src) => src.$advertisementType === 'sell',
-  fn: (src, clk) => ({
-    name: clk.name,
-    amount: parseInt(clk?.count ?? '1'),
-    price: clk.price!,
-    delivery_time: clk.available,
-    destination: clk.destination!,
-    company: src.$selectedCompany?.id,
-  }),
-  target: [createOfferMutation.start, formClosed],
+  fn: (src, clk) =>
+    Object.assign(
+      {
+        name: clk.name,
+        amount: parseInt(clk?.count ?? '1'),
+        price: clk.price!,
+        delivery_time: clk.available,
+        destination: clk.destination!,
+      },
+      src.$selectedCompany && {
+        company: src.$selectedCompany?.id,
+      },
+    ),
+  target: [createAdMutation.start, formClosed],
 });
 
 keepFresh(myRequestsQuery, {
-  triggers: [
-    createOfferMutation.finished.success,
-    createBidMutation.finished.success,
-  ],
+  triggers: [createBidMutation.finished.success],
   automatically: true,
 });

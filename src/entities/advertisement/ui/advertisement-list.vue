@@ -4,9 +4,11 @@
   import { cn } from '@/shared/lib';
   import { ScrollArea } from '@/shared/ui/scroll-area';
   import { useUnit } from 'effector-vue/composition';
+  import { onUnmounted } from 'vue';
   import {
     $selectedAdvertisementId,
     advertisementClicked,
+    preSearchUnmounted,
   } from '../model/advertisement-model';
 
   defineProps<{
@@ -16,6 +18,9 @@
   const handleSelected = useUnit(advertisementClicked);
   const selectedItem = useUnit($selectedAdvertisementId);
   const requestViewMode = useUnit($requestViewMode);
+  const handleUnmounted = useUnit(preSearchUnmounted);
+
+  onUnmounted(handleUnmounted);
 
   const handleCardClick = (item: PreSearchResponse) => {
     if (!item) return;

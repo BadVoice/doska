@@ -80,8 +80,10 @@
   <template v-else>
     <div class="w-full">
       <div
-        class="flex items-center justify-between border-b border-r border-[#D0D4DB] p-2 pr-5">
-        <h3 class="text-[18px] font-semibold">Мои заявки</h3>
+        class="flex h-14 items-center justify-between border-b border-r border-[#D0D4DB] p-2 pr-5">
+        <h3 class="text-[18px] font-semibold">
+          {{ selectedSortType === -3 ? 'Мои заказы' : 'Мои заявки' }}
+        </h3>
         <Button
           v-if="selectedSortType !== -3"
           @click="changeFilterVisibility()"

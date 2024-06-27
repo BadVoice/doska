@@ -3,10 +3,6 @@
   import { Button } from '@/shared/ui/button';
   import { ScrollArea } from '@/shared/ui/scroll-area';
   import { useOfferForm } from '@/widgets/offers/lib/add-offer-schema';
-  import {
-    formSubmitted,
-    offerAddButtonClicked,
-  } from '@/widgets/offers/model/offers-model';
   import FormInput from '@/widgets/offers/ui/form-input.vue';
   import {
     Listbox,
@@ -16,7 +12,11 @@
   } from '@headlessui/vue';
   import { useUnit } from 'effector-vue/composition';
   import { ChevronDown, X } from 'lucide-vue-next';
-  import { getDestinations } from '../model/offers-model';
+  import {
+    formSubmitted,
+    getDestinations,
+    offerAddButtonClicked,
+  } from '../model/offers-model';
 
   const { form, destination } = useOfferForm();
 

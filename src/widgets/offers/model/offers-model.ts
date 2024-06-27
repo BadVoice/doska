@@ -24,7 +24,6 @@ export const createOfferMutation = createMutation({
 export const getDestinations = createQuery({
   handler: () => $api.destinations.getDestinations(),
 });
-
 export const offerAddButtonClicked = createEvent();
 export const formSubmitted = createEvent<FormValues>();
 
