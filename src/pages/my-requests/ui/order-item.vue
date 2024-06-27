@@ -1,0 +1,61 @@
+<script lang="ts" setup>
+  import { type Order } from '@/shared/api/generated/Api';
+  import { cn } from '@/shared/lib';
+  import { Button, Popover, PopoverContent, PopoverTrigger } from '@/shared/ui';
+  import { useUnit } from 'effector-vue/composition';
+  import { PopoverClose } from 'radix-vue';
+  import { ref } from 'vue';
+  import { requestClicked } from '../model/my-requests-model';
+
+  defineProps<{
+    item: Order;
+  }>();
+
+  const handleRequestClicked = useUnit(requestClicked);
+
+  const popoverOpened = ref(false);
+</script>
+
+<template>
+  <div
+    class="flex flex-col items-start justify-between gap-y-1 rounded-lg border-2 bg-white p-4 pr-5 duration-200 hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10">
+    <div class="flex w-full flex-col gap-y-1">
+      <div class="flex w-full justify-between">
+        <p class="text-sm font-normal text-[#101828]">Заказ: {{ item.name }}</p>
+        <Popover @update:open="(value) => (popoverOpened = value)">
+          <PopoverTrigger @click.stop>
+            <span
+              :class="
+                cn(
+                  'cursor-pointer select-none text-3xl leading-[0px] text-[#858FA3] transition-all duration-75 hover:text-[#0017FC]',
+                  popoverOpened && 'text-[#0017FC]',
+                )
+              "
+              >...</span
+            >
+          </PopoverTrigger>
+          <PopoverContent
+            class="flex h-fit w-[150px] flex-col justify-center overflow-hidden rounded-[10px] p-0">
+            <PopoverClose class="flex flex-col gap-y-0">
+              <Button
+                variant="ghost"
+                class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
+                <p class="w-full text-[14px] font-semibold">Удалить</p>
+              </Button>
+            </PopoverClose>
+          </PopoverContent>
+        </Popover>
+      </div>
+      <div class="flex w-full flex-col items-start justify-between gap-y-1">
+        <div class="flex w-full flex-row justify-between">
+          <div class="flex w-full justify-between gap-x-2 pr-4">
+            <p class="text-xs font-normal text-[#858FA3]">
+              {{ item.amount }} шт
+            </p>
+            <p class="text-xs font-normal text-[#858FA3]">{{ item.price }} ₽</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

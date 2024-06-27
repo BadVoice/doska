@@ -1,8 +1,9 @@
-import { createRouter, createWebHistory } from 'vue-router';
 import { AdvertisementPage } from '@/pages/advertisement';
 import { MyRequestsPage } from '@/pages/my-requests';
+import { OffersPage } from '@/pages/offers';
 import { SearchHistory } from '@/widgets/search-history';
 import NProgress from 'nprogress';
+import { createRouter, createWebHistory } from 'vue-router';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,6 +15,10 @@ const router = createRouter({
     {
       path: '/',
       component: MyRequestsPage,
+    },
+    {
+      path: '/offers',
+      component: OffersPage,
     },
     {
       path: '/search-history',

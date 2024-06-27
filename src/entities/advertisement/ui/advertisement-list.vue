@@ -1,13 +1,13 @@
 <script setup lang="ts">
+  import { $requestViewMode } from '@/pages/my-requests';
   import type { PreSearchResponse } from '@/shared/api/generated/Api';
   import { cn } from '@/shared/lib';
+  import { ScrollArea } from '@/shared/ui/scroll-area';
   import { useUnit } from 'effector-vue/composition';
   import {
     $selectedAdvertisementId,
     advertisementClicked,
   } from '../model/advertisement-model';
-  import { $requestViewMode } from '@/pages/my-requests';
-  import { ScrollArea } from '@/shared/ui/scroll-area';
 
   defineProps<{
     searchResult: Readonly<PreSearchResponse[]>;
@@ -31,7 +31,15 @@
 
 <template>
   <div v-if="searchResult" class="broder-r w-full border">
-    <ScrollArea class="h-[calc(100vh-190px)]">
+    <ScrollArea
+      :class="
+        cn(
+          'overflow-auto',
+          requestViewMode === 'selectBrand'
+            ? 'h-[calc(100vh-41px]'
+            : 'h-[calc(100vh-190px)',
+        )
+      ">
       <div
         class="mx-auto flex w-full flex-col items-center justify-center gap-y-6 p-4">
         <DynamicScroller

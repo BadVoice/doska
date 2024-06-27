@@ -11,7 +11,7 @@ import { not } from 'patronum';
 
 export const offerListVisibilityChanged = createEvent();
 export const deleteOfferClicked = createEvent<number>();
-export const offerClicked =createEvent<Offer>()
+export const offerClicked = createEvent<Offer>();
 
 export const deleteOfferMutation = createMutation({
   handler: (id: number) => $api.offers.deleteOffer(id),
@@ -29,7 +29,7 @@ export const searchQuery = createQuery({
 });
 
 export const offersQuery = createQuery({
-  handler: (data: { bid: number }) => $api.offers.getOffers(data),
+  handler: (data?: { bid: number }) => $api.offers.getOffers(data),
 });
 
 export const preSearchQuery = createQuery({

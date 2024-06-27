@@ -13,16 +13,22 @@
 
   import { $selectedAdvertisement } from '@/entities/advertisement';
   import { searchQuery } from '@/entities/offer';
+  import type { BidWithName } from '@/entities/requests';
   import { $showCreateAdvertisement } from '@/features/create-advertisement';
+  import { AdvertisementPage } from '@/pages/advertisement';
+  import { OffersPage } from '@/pages/offers';
+
   import {
     $currentPage,
     $filteredRequests,
     $requestViewMode,
-    $searchQS,
     RequestHistory,
     requestViewModeChanged,
-    SelectBrand,
   } from '@/pages/my-requests';
+  import {
+    $visibleOffersPage,
+    offersPageVisibilityChanged,
+  } from '@/pages/offers';
   import { Toaster } from '@/shared/ui/toast';
   import {
     $showAuth,
@@ -37,8 +43,6 @@
   import { useUnit } from 'effector-vue/composition';
   import { offerClicked } from '../entities/offer/model/offers-model';
   import { type Offer } from '../shared/api/generated/Api';
-  import type { BidWithName } from '@/entities/requests';
-  import { AdvertisementPage } from '@/pages/advertisement';
 
   const route = useRoute();
   const router = useRouter();
@@ -96,6 +100,8 @@
   const isProductCardOpen = ref(false);
   const isFilterCardOpen = ref(false);
   const isSidebarOpen = ref(false);
+  const offersPageVisible = useUnit($visibleOffersPage);
+  const changeOffersPageVisible = useUnit(offersPageVisibilityChanged);
   const handleAddCompany = useUnit(addCompanyClicked);
   const isCreateAdvertisementOpen = useUnit($showCreateAdvertisement);
 
@@ -171,14 +177,21 @@
   function handleNavigate(
     destination: 'my-requests' | 'my-offers' | 'change-company' | 'add-company',
   ) {
-    if (destination === 'add-company') {
-      handleAddCompany();
-    } else if (destination === 'my-requests') {
-      router.push('/');
-    } else if (destination === 'change-company') {
-      changeSwitchCompanyVisible(true);
-    } else {
-      router.push('/');
+    switch (destination) {
+      case 'add-company':
+        handleAddCompany();
+        break;
+      case 'my-requests':
+        router.push('/');
+        changeOffersPageVisible(false);
+        break;
+      case 'change-company':
+        changeSwitchCompanyVisible(true);
+        break;
+      case 'my-offers':
+        router.push('/offers');
+        changeOffersPageVisible(true);
+        break;
     }
     isSidebarOpen.value = false;
   }
@@ -191,7 +204,8 @@
 <template>
   <Toaster />
   <div class="flex flex-row bg-white">
-    <div class="flex h-[100vh] w-full flex-col items-center sm:max-w-[356px]">
+    <div
+      class="flex max-h-[100vh] w-full flex-col items-center overflow-hidden sm:max-w-[356px]">
       <Header
         v-if="
           (isMobile &&
@@ -250,6 +264,7 @@
             !isCreateAdvertisementOpen) ||
           (!isAuthOpen && !isMobile && !isSidebarOpen)
         " />
+      <OffersPage v-if="!isSidebarOpen && offersPageVisible" />
       <AdvertisementPage
         v-if="
           isMobile && !isSidebarOpen && requestViewMode === 'selectBrand'

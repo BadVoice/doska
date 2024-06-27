@@ -11,7 +11,9 @@ export const historyClicked = createEvent<BidWithName>();
 
 export const historyQuery = createQuery({
   handler: async (item: BidWithName) =>
-    (await $api.bids.getBid(item?.id ?? 0)).data.history as unknown as {orders: Orders},
+    (await $api.bids.getBid(item?.id ?? 0)).data.history as unknown as {
+      orders: Orders;
+    },
 });
 
 sample({

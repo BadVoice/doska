@@ -1,8 +1,6 @@
-import { deleteOfferMutation } from '@/entities/offer';
 import { $api } from '@/shared/api';
 import type { Bid } from '@/shared/api/generated/Api';
 import { createMutation, createQuery } from '@farfetched/core';
-import { sample } from 'effector';
 
 export interface IRequestsQueryParams {
   search?: string;
@@ -15,10 +13,18 @@ export interface IRequestsQueryParams {
 export const myRequestsQuery = createQuery({
   handler: async (params?: IRequestsQueryParams) => {
     const bids = (
-      await $api.bids.getBids(undefined, {
-        // @ts-ignore
-        page: params?.page ?? 1,
-      })
+      await $api.bids.getBids(
+        {
+          search: params?.search,
+          amount: params?.amount,
+          article: params?.article,
+          destinations: params?.destinations,
+        },
+        {
+          // @ts-ignore
+          page: params?.page ?? 1,
+        },
+      )
     ).data;
     const brands = (await $api.brands.getBrands()).data;
     const categories = (await $api.categories.getCategories()).data;

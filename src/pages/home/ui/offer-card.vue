@@ -70,11 +70,16 @@
       </div>
     </div>
 
-    <div class="inset-x-0 bottom-0 border-t border-[#CCD0D9] bg-[#F9FAFB] p-4">
+    <div
+      class="inset-x-0 bottom-0 flex flex-col gap-y-3 border-t border-[#CCD0D9] bg-[#F9FAFB] p-4">
+      <Button class="w-full text-[17px] font-semibold"
+        >Показать номер телефона</Button
+      >
       <Button
+        variant="outline"
         @click="handleBuy(productItem)"
-        class="w-full text-[17px] font-semibold"
-        >Купить</Button
+        class="w-full border-2 border-[#0015FA] text-[17px] font-semibold text-[#0015FA] hover:text-[#0015FA]"
+        >Сделать запись о покупке</Button
       >
     </div>
   </div>

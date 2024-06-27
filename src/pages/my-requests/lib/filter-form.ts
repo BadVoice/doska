@@ -1,9 +1,11 @@
 import { toTypedSchema } from '@vee-validate/zod';
+import { useForm, type FormContext } from 'vee-validate';
+import type { Ref } from 'vue';
 import * as z from 'zod';
-import { type FormContext, useForm } from 'vee-validate';
 
 export function useFilterRequestsForm(): {
   form: FormContext<any, {}>;
+  destination: Ref<number[] | undefined>;
 } {
   const formSchema = toTypedSchema(
     z.object({
@@ -14,7 +16,7 @@ export function useFilterRequestsForm(): {
           invalid_type_error: 'Введите количество',
         })
         .optional(),
-      assigment: z.string().optional(),
+      destinations: z.number().array().optional().default([]),
     }),
   );
 
@@ -22,7 +24,10 @@ export function useFilterRequestsForm(): {
     validationSchema: formSchema,
   });
 
+  const [destination] = form.defineField('destinations');
+
   return {
     form,
+    destination,
   };
 }

@@ -11,7 +11,7 @@ export const advertisementClicked = createEvent<
 >();
 
 export const $selectedAdvertisement = createStore<TAdvertisement | null>(null);
-export const $selectedRequestId = createStore<number | null>(null)
+export const $selectedRequestId = createStore<number | null>(null);
 
 export const $selectedAdvertisementId = createStore<string | null>(null).on(
   $selectedAdvertisement,

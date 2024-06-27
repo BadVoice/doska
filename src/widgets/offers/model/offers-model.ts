@@ -40,15 +40,19 @@ sample({
   source: $selectedRequestId,
   clock: formSubmitted,
   fn: (src, clk) =>
-    ({
-      bid: src ?? 1,
-      name: clk.name,
-      article: clk.article,
-      price: clk.price,
-      amount: clk.amount,
-      category: clk.purpose,
-      delivery_time: clk.deliveryTo,
-    }) as Offer,
+    Object.assign(
+      {
+        bid: src ?? 1,
+        name: clk.name,
+        article: clk.article,
+        price: clk.price,
+        amount: clk.amount,
+        category: clk.purpose,
+      },
+      clk.deliveryTo && {
+        delivery_time: clk.deliveryTo,
+      },
+    ) as Offer,
   target: createOfferMutation.start,
 });
 

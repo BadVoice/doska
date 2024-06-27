@@ -1,11 +1,7 @@
-import {
-  $selectedAdvertisementId,
-  $selectedRequestId,
-} from '@/entities/advertisement';
-import { preSearchQuery } from '@/entities/offer';
+import { offersQuery, preSearchQuery, searchQuery } from '@/entities/offer';
 import { createEvent, createStore, sample } from 'effector';
 import { persist } from 'effector-storage/query';
-import { debounce, reset } from 'patronum';
+import { debounce } from 'patronum';
 
 export const searchTermInputed = createEvent<string>();
 export const sortTypeSelected = createEvent<number>();
@@ -15,6 +11,11 @@ export const $showSearch = createStore(false).on(
   searchVisibilityChanged,
   (src, clk) => clk ?? !src,
 );
+
+sample({
+  clock: searchVisibilityChanged,
+  target: [preSearchQuery.reset, searchQuery.reset, offersQuery.reset],
+});
 
 export const $searchTerm = createStore<string | null>(null)
   .reset(searchVisibilityChanged)

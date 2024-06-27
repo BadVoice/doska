@@ -1,9 +1,9 @@
 <script setup lang="ts">
-  import companyIcon from '@/widgets/sidebar/assets/companyIcon.vue';
-  import myRequestsIcon from '@/widgets/sidebar/assets/myRequstsIcon.vue';
-  import myOffersIcon from '@/widgets/sidebar/assets/myOffersIcon.vue';
-  import logoutIcon from '@/widgets/sidebar/assets/logoutIcon.vue';
   import { Button } from '@/shared/ui';
+  import companyIcon from '@/widgets/sidebar/assets/companyIcon.vue';
+  import logoutIcon from '@/widgets/sidebar/assets/logoutIcon.vue';
+  import myOffersIcon from '@/widgets/sidebar/assets/myOffersIcon.vue';
+  import myRequestsIcon from '@/widgets/sidebar/assets/myRequstsIcon.vue';
   import { type DefineComponent } from 'vue';
 
   export interface IButtonMobile {
@@ -27,7 +27,7 @@
       action: () => emit('navigate', 'my-requests'),
     },
     {
-      label: 'Мои продажи',
+      label: 'Мои Продажи',
       icon: myOffersIcon,
       action: () => emit('navigate', 'my-offers'),
     },

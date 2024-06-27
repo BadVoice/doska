@@ -1,5 +1,7 @@
 <script setup lang="ts">
-  import { myRequestsQuery, type BidWithName } from '@/entities/requests';
+  import { $selectedCompany } from '@/entities/company';
+  import { getOrders } from '@/entities/order';
+  import { type BidWithName } from '@/entities/requests';
   import { $isAuthorized } from '@/entities/session';
   import { createBidVisibilityChanged } from '@/features/create-advertisement';
   import { Button } from '@/shared/ui/button';
@@ -42,6 +44,9 @@
   const formFocused = ref(false);
   const scrollableContainer = ref();
   const scrolledButtonIndex = ref(0);
+
+  const selectedCompany = useUnit($selectedCompany);
+  const { data: orders } = useUnit(getOrders);
 
   const handleSortTypeSelected = useUnit(sortTypeSelected);
   const selectedSortType = useUnit($selectedSortType);
@@ -213,7 +218,13 @@
                     ? requests.filter(
                         (request) => request.status === button.status,
                       ).length
-                    : requests.length
+                    : button.status === -1
+                      ? requests.length
+                      : button.status === -3 && selectedCompany?.id
+                        ? orders?.data?.filter(
+                            (o) => o.company === (selectedCompany?.id ?? 1),
+                          )?.length
+                        : orders?.data?.length
                 }})
               </template>
             </Button>

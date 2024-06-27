@@ -1,7 +1,7 @@
 import {
-  $selectedRequestId,
-  $selectedAdvertisementId,
   $selectedAdvertisement,
+  $selectedAdvertisementId,
+  $selectedRequestId,
 } from '@/entities/advertisement';
 import { $selectedCompany } from '@/entities/company';
 import { createMutation, keepFresh } from '@farfetched/core';
@@ -46,7 +46,7 @@ export interface FormValues {
   requestType: string;
   article: string;
   count: string;
-  assigment: string;
+  destinations: number[];
 }
 
 export interface BidWithName extends Bid {
@@ -105,7 +105,7 @@ export const $filteredRequests = combine(
     )
       ?.filter((request) =>
         shape.$selectedCompany
-          ? request.company === shape.$selectedCompany
+          ? request.company === shape.$selectedCompany.id
           : true,
       )
       ?.filter((request) => request.name.includes(shape.$searchTerm ?? '')) ??
@@ -176,15 +176,6 @@ sample({
   target: myRequestsQuery.start,
 });
 
-keepFresh(myRequestsQuery, {
-  automatically: true,
-  triggers: [
-    deleteRequestMutation.finished.success,
-    editRequestMutation.finished.success,
-    $isAuthorized.updates,
-  ],
-});
-
 sample({
   clock: pageSelected,
   fn: (clk) =>
@@ -211,6 +202,7 @@ sample({
         amount: parseInt(clk.count ?? '1'),
         article: clk.article,
         page: src,
+        destinations: clk.destinations,
       },
       $filterOpened: false,
     }) as const,
@@ -325,5 +317,9 @@ sample({
 
 keepFresh(myRequestsQuery, {
   automatically: true,
-  triggers: [bidMutation.finished.success],
+  triggers: [
+    bidMutation.finished.success,
+    deleteRequestMutation.finished.success,
+    editRequestMutation.finished.success,
+  ],
 });

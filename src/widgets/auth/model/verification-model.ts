@@ -1,4 +1,4 @@
-import { $isAuthorized } from '@/entities/session';
+import { myRequestsQuery } from '@/entities/requests';
 import { $api } from '@/shared/api';
 import type { VerifyUser } from '@/shared/api/generated/Api';
 import { toast } from '@/shared/ui/toast';
@@ -36,8 +36,8 @@ const notifyWrongCodeFx = createEffect(() => {
 sample({
   clock: verifyUserMutation.finished.success,
   filter: (clk) => [200].includes(clk.result.status),
-  fn: () => true,
-  target: $isAuthorized,
+  fn: () => undefined,
+  target: myRequestsQuery.start,
 });
 
 sample({

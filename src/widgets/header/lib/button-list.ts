@@ -26,6 +26,12 @@ export function getButtonList(visibleSearch: Ref<boolean>) {
           status: -1,
         },
         {
+          label: 'Мои заказы',
+          link: '/',
+          active: false,
+          status: -3,
+        },
+        {
           label: 'Созданные',
           link: '/',
           active: false,

@@ -25,9 +25,7 @@
   "paths": {
     "/token/refresh": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "метод обновления токена",
         "requestBody": {
           "content": {
@@ -65,9 +63,7 @@
     },
     "/token/verify": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "метод проверки токена",
         "requestBody": {
           "content": {
@@ -98,9 +94,7 @@
     },
     "/site_info": {
       "get": {
-        "tags": [
-          "SiteInfo"
-        ],
+        "tags": ["SiteInfo"],
         "summary": "метод получения информации о сайте",
         "operationId": "getSiteInfo",
         "responses": {
@@ -129,9 +123,7 @@
     },
     "/user": {
       "get": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "метод получения информации о пользователе",
         "operationId": "getUser",
         "responses": {
@@ -163,9 +155,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "метод изменения пользователя",
         "operationId": "updateUser",
         "requestBody": {
@@ -207,9 +197,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "метод создания или аутентификации пользователя",
         "operationId": "createAuthUser",
         "requestBody": {
@@ -258,9 +246,7 @@
     },
     "/user_verify": {
       "post": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "метод верификации пользователя",
         "description": "токен опционально",
         "operationId": "verifyUser",
@@ -305,9 +291,7 @@
     },
     "/profiles/": {
       "get": {
-        "tags": [
-          "Profiles"
-        ],
+        "tags": ["Profiles"],
         "summary": "метод получения списка профилей",
         "operationId": "getProfiles",
         "responses": {
@@ -339,9 +323,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Profiles"
-        ],
+        "tags": ["Profiles"],
         "summary": "метод создания профиля",
         "operationId": "createProfile",
         "requestBody": {
@@ -385,9 +367,7 @@
     },
     "/profiles/{profile_id}": {
       "get": {
-        "tags": [
-          "Profiles"
-        ],
+        "tags": ["Profiles"],
         "summary": "метод получения профиля",
         "operationId": "getProfile",
         "parameters": [
@@ -432,9 +412,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "Profiles"
-        ],
+        "tags": ["Profiles"],
         "summary": "метод изменения профиля",
         "operationId": "updateProfile",
         "parameters": [
@@ -489,9 +467,7 @@
         ]
       },
       "delete": {
-        "tags": [
-          "Profiles"
-        ],
+        "tags": ["Profiles"],
         "summary": "метод удаления профиля",
         "operationId": "deleteProfile",
         "parameters": [
@@ -538,9 +514,7 @@
     },
     "/companies/": {
       "get": {
-        "tags": [
-          "Companies"
-        ],
+        "tags": ["Companies"],
         "summary": "метод получения списка организаций пользователя",
         "operationId": "getUserCompanies",
         "responses": {
@@ -572,9 +546,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Companies"
-        ],
+        "tags": ["Companies"],
         "summary": "метод создания организации пользователя",
         "operationId": "createUserCompany",
         "requestBody": {
@@ -618,9 +590,7 @@
     },
     "/companies/{company_id}": {
       "get": {
-        "tags": [
-          "Companies"
-        ],
+        "tags": ["Companies"],
         "summary": "метод получения организации пользователя",
         "operationId": "getUserCompany",
         "parameters": [
@@ -665,9 +635,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "Companies"
-        ],
+        "tags": ["Companies"],
         "summary": "метод изменения организации пользователя",
         "operationId": "updateUserCompany",
         "parameters": [
@@ -722,9 +690,7 @@
         ]
       },
       "delete": {
-        "tags": [
-          "Companies"
-        ],
+        "tags": ["Companies"],
         "summary": "метод удаления организации пользователя",
         "operationId": "deleteUserCompany",
         "parameters": [
@@ -771,9 +737,7 @@
     },
     "/categories/": {
       "get": {
-        "tags": [
-          "Categories"
-        ],
+        "tags": ["Categories"],
         "summary": "метод получения списка категорий",
         "operationId": "getCategories",
         "responses": {
@@ -805,9 +769,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Categories"
-        ],
+        "tags": ["Categories"],
         "summary": "метод создания категории",
         "operationId": "createCategory",
         "requestBody": {
@@ -851,9 +813,7 @@
     },
     "/categories/{category_id}": {
       "get": {
-        "tags": [
-          "Categories"
-        ],
+        "tags": ["Categories"],
         "summary": "метод получения категории",
         "operationId": "getCategory",
         "parameters": [
@@ -898,9 +858,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "Categories"
-        ],
+        "tags": ["Categories"],
         "summary": "метод изменения категории",
         "operationId": "updateCategory",
         "parameters": [
@@ -955,9 +913,7 @@
         ]
       },
       "delete": {
-        "tags": [
-          "Categories"
-        ],
+        "tags": ["Categories"],
         "summary": "метод удаления категории",
         "operationId": "deleteCategory",
         "parameters": [
@@ -1004,9 +960,7 @@
     },
     "/brands/": {
       "get": {
-        "tags": [
-          "Brands"
-        ],
+        "tags": ["Brands"],
         "summary": "метод получения списка брендов",
         "operationId": "getBrands",
         "parameters": [
@@ -1051,9 +1005,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Brands"
-        ],
+        "tags": ["Brands"],
         "summary": "метод создания бренда",
         "operationId": "createBrand",
         "requestBody": {
@@ -1097,9 +1049,7 @@
     },
     "/brands/{brand_id}": {
       "get": {
-        "tags": [
-          "Brands"
-        ],
+        "tags": ["Brands"],
         "summary": "метод получения бренда",
         "operationId": "getBrand",
         "parameters": [
@@ -1144,9 +1094,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "Brands"
-        ],
+        "tags": ["Brands"],
         "summary": "метод изменения бренда",
         "operationId": "updateBrand",
         "parameters": [
@@ -1201,9 +1149,7 @@
         ]
       },
       "delete": {
-        "tags": [
-          "Brands"
-        ],
+        "tags": ["Brands"],
         "summary": "метод удаления бренда",
         "operationId": "deleteBrand",
         "parameters": [
@@ -1250,9 +1196,7 @@
     },
     "/destinations/": {
       "get": {
-        "tags": [
-          "Destinations"
-        ],
+        "tags": ["Destinations"],
         "summary": "метод получения списка назначений",
         "operationId": "getDestinations",
         "responses": {
@@ -1284,9 +1228,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Destinations"
-        ],
+        "tags": ["Destinations"],
         "summary": "метод создания назначения",
         "operationId": "createDestination",
         "requestBody": {
@@ -1330,9 +1272,7 @@
     },
     "/destinations/{destination_id}": {
       "get": {
-        "tags": [
-          "Destinations"
-        ],
+        "tags": ["Destinations"],
         "summary": "метод получения назначения",
         "operationId": "getDestination",
         "parameters": [
@@ -1377,9 +1317,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "Destinations"
-        ],
+        "tags": ["Destinations"],
         "summary": "метод изменения назначения",
         "operationId": "updateDestination",
         "parameters": [
@@ -1434,9 +1372,7 @@
         ]
       },
       "delete": {
-        "tags": [
-          "Destinations"
-        ],
+        "tags": ["Destinations"],
         "summary": "метод удаления назначения",
         "operationId": "deleteDestination",
         "parameters": [
@@ -1483,9 +1419,7 @@
     },
     "/nomenclatures/": {
       "get": {
-        "tags": [
-          "Nomenclatures"
-        ],
+        "tags": ["Nomenclatures"],
         "summary": "метод получения списка номенклатур",
         "operationId": "getNomenclatures",
         "parameters": [
@@ -1540,9 +1474,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Nomenclatures"
-        ],
+        "tags": ["Nomenclatures"],
         "summary": "метод создания номенклатуры",
         "operationId": "createNomenclature",
         "requestBody": {
@@ -1586,9 +1518,7 @@
     },
     "/nomenclatures/{nomenclature_id}": {
       "get": {
-        "tags": [
-          "Nomenclatures"
-        ],
+        "tags": ["Nomenclatures"],
         "summary": "метод получения номенклатуры",
         "operationId": "getNomenclature",
         "parameters": [
@@ -1633,9 +1563,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "Nomenclatures"
-        ],
+        "tags": ["Nomenclatures"],
         "summary": "метод изменения номенклатуры",
         "operationId": "updateNomenclature",
         "parameters": [
@@ -1690,9 +1618,7 @@
         ]
       },
       "delete": {
-        "tags": [
-          "Nomenclatures"
-        ],
+        "tags": ["Nomenclatures"],
         "summary": "метод удаления номенклатуры",
         "operationId": "deleteNomenclature",
         "parameters": [
@@ -1739,9 +1665,7 @@
     },
     "/bids/": {
       "get": {
-        "tags": [
-          "Bids"
-        ],
+        "tags": ["Bids"],
         "summary": "метод получения списка заявок",
         "operationId": "getBids",
         "parameters": [
@@ -1834,9 +1758,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Bids"
-        ],
+        "tags": ["Bids"],
         "summary": "метод создания заявки",
         "operationId": "createBid",
         "requestBody": {
@@ -1880,9 +1802,7 @@
     },
     "/bids/{bid_id}": {
       "get": {
-        "tags": [
-          "Bids"
-        ],
+        "tags": ["Bids"],
         "summary": "метод получения заявки",
         "operationId": "getBid",
         "parameters": [
@@ -1927,9 +1847,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "Bids"
-        ],
+        "tags": ["Bids"],
         "summary": "метод изменения заявки",
         "operationId": "updateBid",
         "parameters": [
@@ -1984,9 +1902,7 @@
         ]
       },
       "delete": {
-        "tags": [
-          "Bids"
-        ],
+        "tags": ["Bids"],
         "summary": "метод удаления заявки",
         "operationId": "deleteBid",
         "parameters": [
@@ -2033,9 +1949,7 @@
     },
     "/ads/": {
       "get": {
-        "tags": [
-          "Ads"
-        ],
+        "tags": ["Ads"],
         "summary": "метод получения списка объявлений",
         "operationId": "getAds",
         "parameters": [
@@ -2117,9 +2031,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Ads"
-        ],
+        "tags": ["Ads"],
         "summary": "метод создания объявления",
         "operationId": "createAd",
         "requestBody": {
@@ -2163,9 +2075,7 @@
     },
     "/ads/{ad_id}": {
       "get": {
-        "tags": [
-          "Ads"
-        ],
+        "tags": ["Ads"],
         "summary": "метод получения объявления",
         "operationId": "getAd",
         "parameters": [
@@ -2210,9 +2120,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "Ads"
-        ],
+        "tags": ["Ads"],
         "summary": "метод изменения объявления",
         "operationId": "updateAd",
         "parameters": [
@@ -2267,9 +2175,7 @@
         ]
       },
       "delete": {
-        "tags": [
-          "Ads"
-        ],
+        "tags": ["Ads"],
         "summary": "метод удаления объявления",
         "operationId": "deleteAd",
         "parameters": [
@@ -2316,9 +2222,7 @@
     },
     "/offers/": {
       "get": {
-        "tags": [
-          "Offers"
-        ],
+        "tags": ["Offers"],
         "summary": "метод получения списка предложений",
         "operationId": "getOffers",
         "parameters": [
@@ -2363,9 +2267,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Offers"
-        ],
+        "tags": ["Offers"],
         "summary": "метод создания предложения",
         "operationId": "createOffer",
         "requestBody": {
@@ -2409,9 +2311,7 @@
     },
     "/offers/{offer_id}": {
       "get": {
-        "tags": [
-          "Offers"
-        ],
+        "tags": ["Offers"],
         "summary": "метод получения предложения",
         "operationId": "getOffer",
         "parameters": [
@@ -2456,9 +2356,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "Offers"
-        ],
+        "tags": ["Offers"],
         "summary": "метод изменения предложения",
         "operationId": "updateOffer",
         "parameters": [
@@ -2513,9 +2411,7 @@
         ]
       },
       "delete": {
-        "tags": [
-          "Offers"
-        ],
+        "tags": ["Offers"],
         "summary": "метод удаления предложения",
         "operationId": "deleteOffer",
         "parameters": [
@@ -2562,9 +2458,7 @@
     },
     "/orders/": {
       "get": {
-        "tags": [
-          "Orders"
-        ],
+        "tags": ["Orders"],
         "summary": "метод получения списка заказов",
         "operationId": "getOrders",
         "responses": {
@@ -2596,9 +2490,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Orders"
-        ],
+        "tags": ["Orders"],
         "summary": "метод создания заказа",
         "operationId": "createOrder",
         "requestBody": {
@@ -2642,9 +2534,7 @@
     },
     "/orders/{order_id}": {
       "get": {
-        "tags": [
-          "Orders"
-        ],
+        "tags": ["Orders"],
         "summary": "метод получения заказа",
         "operationId": "getOrder",
         "parameters": [
@@ -2689,9 +2579,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "Orders"
-        ],
+        "tags": ["Orders"],
         "summary": "метод изменения заказа",
         "operationId": "updateOrder",
         "parameters": [
@@ -2746,9 +2634,7 @@
         ]
       },
       "delete": {
-        "tags": [
-          "Orders"
-        ],
+        "tags": ["Orders"],
         "summary": "метод удаления заказа",
         "operationId": "deleteOrder",
         "parameters": [
@@ -2795,9 +2681,7 @@
     },
     "/order_returns/": {
       "get": {
-        "tags": [
-          "OrderReturns"
-        ],
+        "tags": ["OrderReturns"],
         "summary": "метод получения списка возвратов",
         "operationId": "getOrderReturns",
         "responses": {
@@ -2829,9 +2713,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "OrderReturns"
-        ],
+        "tags": ["OrderReturns"],
         "summary": "метод создания возврата",
         "operationId": "createOrderReturn",
         "requestBody": {
@@ -2875,9 +2757,7 @@
     },
     "/order_returns/{order_return_id}": {
       "get": {
-        "tags": [
-          "OrderReturns"
-        ],
+        "tags": ["OrderReturns"],
         "summary": "метод получения возврата",
         "operationId": "getOrderReturn",
         "parameters": [
@@ -2922,9 +2802,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "OrderReturns"
-        ],
+        "tags": ["OrderReturns"],
         "summary": "метод изменения возврата",
         "operationId": "updateOrderReturn",
         "parameters": [
@@ -2979,9 +2857,7 @@
         ]
       },
       "delete": {
-        "tags": [
-          "OrderReturns"
-        ],
+        "tags": ["OrderReturns"],
         "summary": "метод удаления возврата",
         "operationId": "deleteOrderReturn",
         "parameters": [
@@ -3028,9 +2904,7 @@
     },
     "/interests/": {
       "get": {
-        "tags": [
-          "Interests"
-        ],
+        "tags": ["Interests"],
         "summary": "метод получения списка интересов",
         "operationId": "getInterests",
         "responses": {
@@ -3062,9 +2936,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Interests"
-        ],
+        "tags": ["Interests"],
         "summary": "метод создания интереса",
         "operationId": "createInterest",
         "requestBody": {
@@ -3108,9 +2980,7 @@
     },
     "/interests/{interest_id}": {
       "get": {
-        "tags": [
-          "Interests"
-        ],
+        "tags": ["Interests"],
         "summary": "метод получения интереса",
         "operationId": "getInterest",
         "parameters": [
@@ -3155,9 +3025,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "Interests"
-        ],
+        "tags": ["Interests"],
         "summary": "метод изменения интереса",
         "operationId": "updateInterest",
         "parameters": [
@@ -3212,9 +3080,7 @@
         ]
       },
       "delete": {
-        "tags": [
-          "Interests"
-        ],
+        "tags": ["Interests"],
         "summary": "метод удаления интереса",
         "operationId": "deleteInterest",
         "parameters": [
@@ -3261,9 +3127,7 @@
     },
     "/pre_search": {
       "post": {
-        "tags": [
-          "QWEP"
-        ],
+        "tags": ["QWEP"],
         "summary": "предварительный поиск",
         "operationId": "getPreSearch",
         "requestBody": {
@@ -3313,9 +3177,7 @@
     },
     "/search": {
       "post": {
-        "tags": [
-          "QWEP"
-        ],
+        "tags": ["QWEP"],
         "summary": "поиск",
         "operationId": "getSearch",
         "requestBody": {
@@ -3365,9 +3227,7 @@
     },
     "/vendors": {
       "post": {
-        "tags": [
-          "QWEP"
-        ],
+        "tags": ["QWEP"],
         "summary": "метод получения списка поставщиков",
         "operationId": "getVendors",
         "parameters": [
@@ -3420,9 +3280,7 @@
     },
     "/cart": {
       "get": {
-        "tags": [
-          "QWEP"
-        ],
+        "tags": ["QWEP"],
         "summary": "метод получения корзины",
         "operationId": "getCart",
         "responses": {
@@ -3460,9 +3318,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "QWEP"
-        ],
+        "tags": ["QWEP"],
         "summary": "метод изменения позиции корзины",
         "operationId": "updateCartItem",
         "requestBody": {
@@ -3510,9 +3366,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "QWEP"
-        ],
+        "tags": ["QWEP"],
         "summary": "метод создания позиции корзины",
         "operationId": "createCartItem",
         "requestBody": {
@@ -3560,9 +3414,7 @@
         ]
       },
       "delete": {
-        "tags": [
-          "QWEP"
-        ],
+        "tags": ["QWEP"],
         "summary": "метод удаления позиции корзины",
         "operationId": "deleteCartItem",
         "responses": {
@@ -3602,9 +3454,7 @@
     },
     "/qwep_interests/": {
       "get": {
-        "tags": [
-          "QWEP"
-        ],
+        "tags": ["QWEP"],
         "summary": "метод получения списка интересов",
         "operationId": "getQwepInterests",
         "responses": {
@@ -3642,9 +3492,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "QWEP"
-        ],
+        "tags": ["QWEP"],
         "summary": "метод создания интереса",
         "operationId": "createQwepInterest",
         "requestBody": {
@@ -3694,9 +3542,7 @@
     },
     "/qwep_interests/{interest_id}": {
       "get": {
-        "tags": [
-          "QWEP"
-        ],
+        "tags": ["QWEP"],
         "summary": "метод получения интереса",
         "operationId": "getQwepInterest",
         "parameters": [
@@ -3747,9 +3593,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "QWEP"
-        ],
+        "tags": ["QWEP"],
         "summary": "метод изменения интереса",
         "operationId": "updateQwepInterest",
         "parameters": [
@@ -3810,9 +3654,7 @@
         ]
       },
       "delete": {
-        "tags": [
-          "QWEP"
-        ],
+        "tags": ["QWEP"],
         "summary": "метод удаления интереса",
         "operationId": "deleteQwepInterest",
         "parameters": [
@@ -3865,9 +3707,7 @@
     },
     "/accounts/": {
       "get": {
-        "tags": [
-          "QWEP"
-        ],
+        "tags": ["QWEP"],
         "summary": "метод получения списка аккаунтов",
         "operationId": "getAccounts",
         "responses": {
@@ -3905,9 +3745,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "QWEP"
-        ],
+        "tags": ["QWEP"],
         "summary": "метод создания аккаунта",
         "operationId": "createAccount",
         "requestBody": {
@@ -3957,9 +3795,7 @@
     },
     "/accounts/{account_id}": {
       "get": {
-        "tags": [
-          "QWEP"
-        ],
+        "tags": ["QWEP"],
         "summary": "метод получения интереса",
         "operationId": "getAccount",
         "parameters": [
@@ -4010,9 +3846,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "QWEP"
-        ],
+        "tags": ["QWEP"],
         "summary": "метод изменения аккаунта",
         "operationId": "updateAccount",
         "parameters": [
@@ -4073,9 +3907,7 @@
         ]
       },
       "delete": {
-        "tags": [
-          "QWEP"
-        ],
+        "tags": ["QWEP"],
         "summary": "метод удаления аккаунта",
         "operationId": "deleteAccount",
         "parameters": [
@@ -4139,9 +3971,7 @@
         }
       },
       "PostUser": {
-        "required": [
-          "username"
-        ],
+        "required": ["username"],
         "type": "object",
         "properties": {
           "username": {
@@ -4154,10 +3984,7 @@
         }
       },
       "VerifyUser": {
-        "required": [
-          "code",
-          "username"
-        ],
+        "required": ["code", "username"],
         "type": "object",
         "properties": {
           "username": {
@@ -4226,9 +4053,7 @@
         }
       },
       "Profile": {
-        "required": [
-          "username"
-        ],
+        "required": ["username"],
         "type": "object",
         "properties": {
           "username": {
@@ -4256,9 +4081,7 @@
         }
       },
       "UserAuthRefresh": {
-        "required": [
-          "refresh"
-        ],
+        "required": ["refresh"],
         "type": "object",
         "properties": {
           "refresh": {
@@ -4267,9 +4090,7 @@
         }
       },
       "UserAuthVerify": {
-        "required": [
-          "token"
-        ],
+        "required": ["token"],
         "type": "object",
         "properties": {
           "token": {
@@ -4308,22 +4129,13 @@
             "type": "integer",
             "description": "dictionary:\n  * 0 Не определено\n  * 1 ООО\n  * 2 ИП\n  * 3 ПАО\n  * 4 АО\n",
             "default": 0,
-            "enum": [
-              0,
-              1,
-              2,
-              3,
-              4
-            ]
+            "enum": [0, 1, 2, 3, 4]
           },
           "tax_system": {
             "type": "integer",
             "description": "dictionary:\n  * 0 НДС\n  * 1 Без НДС\n",
             "default": 0,
-            "enum": [
-              0,
-              1
-            ]
+            "enum": [0, 1]
           }
         }
       },
@@ -4413,10 +4225,7 @@
         }
       },
       "Bid": {
-        "required": [
-          "amount",
-          "name"
-        ],
+        "required": ["amount", "name"],
         "type": "object",
         "properties": {
           "id": {
@@ -4438,12 +4247,7 @@
             "type": "integer",
             "description": "dictionary:\n  * 0 Создана\n  * 1 Опубликована\n  * 2 Исполнена\n  * 3 Архивирована\n",
             "default": 0,
-            "enum": [
-              0,
-              1,
-              2,
-              3
-            ]
+            "enum": [0, 1, 2, 3]
           },
           "name": {
             "type": "string"
@@ -4503,12 +4307,7 @@
             "type": "integer",
             "description": "dictionary:\n  * 0 Создана\n  * 1 Опубликована\n  * 2 Исполнена\n  * 3 Архивирована\n",
             "default": 0,
-            "enum": [
-              0,
-              1,
-              2,
-              3
-            ]
+            "enum": [0, 1, 2, 3]
           },
           "name": {
             "type": "string"
@@ -4573,11 +4372,7 @@
         }
       },
       "Ad": {
-        "required": [
-          "amount",
-          "name",
-          "price"
-        ],
+        "required": ["amount", "name", "price"],
         "type": "object",
         "properties": {
           "id": {
@@ -4599,12 +4394,7 @@
             "type": "integer",
             "description": "dictionary:\n  * 0 Создано\n  * 1 Опубликовано\n  * 2 Исполнено\n  * 3 Архивировано\n",
             "default": 0,
-            "enum": [
-              0,
-              1,
-              2,
-              3
-            ]
+            "enum": [0, 1, 2, 3]
           },
           "name": {
             "type": "string"
@@ -4656,9 +4446,7 @@
         }
       },
       "Offer": {
-        "required": [
-          "name"
-        ],
+        "required": ["name"],
         "type": "object",
         "properties": {
           "id": {
@@ -4712,12 +4500,7 @@
         }
       },
       "Order": {
-        "required": [
-          "amount",
-          "name",
-          "offer",
-          "price"
-        ],
+        "required": ["amount", "name", "offer", "price"],
         "type": "object",
         "properties": {
           "id": {
@@ -4734,10 +4517,7 @@
             "type": "integer",
             "description": "dictionary:\n  * 0 Заказан\n  * 1 Исполнен\n",
             "default": 0,
-            "enum": [
-              0,
-              1
-            ]
+            "enum": [0, 1]
           },
           "name": {
             "type": "string"
@@ -4789,10 +4569,7 @@
             "type": "integer",
             "description": "dictionary:\n  * 0 Заказан\n  * 1 Исполнен\n",
             "default": 0,
-            "enum": [
-              0,
-              1
-            ]
+            "enum": [0, 1]
           },
           "name": {
             "type": "string"
@@ -4831,10 +4608,7 @@
         }
       },
       "OrderReturn": {
-        "required": [
-          "amount",
-          "order"
-        ],
+        "required": ["amount", "order"],
         "type": "object",
         "properties": {
           "id": {
@@ -4851,10 +4625,7 @@
             "type": "integer",
             "description": "dictionary:\n  * 0 Возврат\n  * 1 Возвращен\n",
             "default": 0,
-            "enum": [
-              0,
-              1
-            ]
+            "enum": [0, 1]
           },
           "amount": {
             "type": "integer"
@@ -5044,9 +4815,7 @@
         }
       },
       "PreSearchRequest": {
-        "required": [
-          "search"
-        ],
+        "required": ["search"],
         "type": "object",
         "properties": {
           "search": {
@@ -5157,10 +4926,7 @@
         }
       },
       "SearchRequest": {
-        "required": [
-          "brand",
-          "search"
-        ],
+        "required": ["brand", "search"],
         "type": "object",
         "properties": {
           "search": {
@@ -5343,9 +5109,7 @@
         }
       },
       "Error": {
-        "required": [
-          "detail"
-        ],
+        "required": ["detail"],
         "type": "object",
         "properties": {
           "detail": {
@@ -5370,12 +5134,7 @@
         }
       },
       "cart_body": {
-        "required": [
-          "account_id",
-          "cart_id",
-          "cart_item_id",
-          "quantity"
-        ],
+        "required": ["account_id", "cart_id", "cart_item_id", "quantity"],
         "type": "object",
         "properties": {
           "account_id": {
@@ -5393,11 +5152,7 @@
         }
       },
       "cart_body_1": {
-        "required": [
-          "item_id",
-          "quantity",
-          "search_id"
-        ],
+        "required": ["item_id", "quantity", "search_id"],
         "type": "object",
         "properties": {
           "search_id": {
