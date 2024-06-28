@@ -16,7 +16,7 @@
     PaginationPrev,
   } from '@/shared/ui/pagination';
   import { ScrollArea } from '@/shared/ui/scroll-area';
-  import { Offers, offerAddButtonClicked } from '@/widgets/offers';
+  import { offerAddButtonClicked } from '@/widgets/offers';
   import { useUnit } from 'effector-vue/composition';
   import { Plus } from 'lucide-vue-next';
 
@@ -132,7 +132,7 @@
         :offers-items="offers?.data as Offer[]"
         @offer-clicked="handleItemClick" />
       <ItemList
-        :offers-items="data?.data.items as any"
+        :offers-items="(data?.data.items ?? []) as any"
         @offer-clicked="handleItemClick" />
       <div class="mx-auto flex w-fit bg-[#F9FAFB] py-2">
         <Pagination

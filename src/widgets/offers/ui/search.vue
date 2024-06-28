@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { Button } from '@/shared/ui/button';
 
-  import { searchQuery, ItemList } from '@/entities/offer';
+  import { ItemList, searchQuery } from '@/entities/offer';
   import type { Item } from '@/shared/api/generated/Api';
   import { onMounted, ref } from 'vue';
 
@@ -115,7 +115,7 @@
       v-if="data?.data?.items"
       class="flex max-h-[calc(100vh-72px)] flex-col gap-y-4 px-4 max-sm:max-h-[calc(100vh-201px)]">
       <ItemList
-        :offers-items="data?.data.items as any"
+        :offers-items="(data?.data.items ?? []) as any"
         @offer-clicked="handleItemClick" />
       <div class="mx-auto flex w-fit bg-[#F9FAFB] py-2">
         <Pagination

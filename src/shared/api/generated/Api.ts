@@ -253,6 +253,7 @@ export interface Offer {
    */
   created_at?: string;
   name: string;
+  vendor?: string;
   price?: number;
   amount?: number;
   delivery_time?: number;

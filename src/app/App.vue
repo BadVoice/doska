@@ -23,6 +23,7 @@
     $filteredRequests,
     $requestViewMode,
     RequestHistory,
+    requestClicked,
     requestViewModeChanged,
   } from '@/pages/my-requests';
   import {
@@ -201,6 +202,13 @@
   function handleCloseOffers() {
     changeRequestViewMode(null);
   }
+
+  requestClicked.watch(() => {
+    isProductCardOpen.value = false;
+    isFilterCardOpen.value = false;
+    productItem.value = undefined;
+    offerItem.value = undefined;
+  });
 </script>
 
 <template>

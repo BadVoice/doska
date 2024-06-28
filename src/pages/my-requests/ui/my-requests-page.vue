@@ -13,7 +13,7 @@
     PaginationPrev,
   } from '@/shared/ui/pagination';
   import { ScrollArea } from '@/shared/ui/scroll-area';
-  import { $searchTerm, $selectedSortType } from '@/widgets/header';
+  import { $selectedSortType } from '@/widgets/header';
   import { useUnit } from 'effector-vue/composition';
   import { onBeforeUnmount } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
@@ -38,10 +38,9 @@
     filterVisibilityChanged: changeFilterVisibility,
   } = useUnit({ $filterOpened, filterVisibilityChanged });
 
-  const { data: requests, pending } = useUnit(myRequestsQuery);
+  const { pending } = useUnit(myRequestsQuery);
   const selectedSortType = useUnit($selectedSortType);
   const selectedCompany = useUnit($selectedCompany);
-  const searchValue = useUnit($searchTerm);
   const { data: orders, pending: pendingOrders } = useUnit(getOrders);
 
   const status = [
@@ -111,7 +110,7 @@
         </div>
       </div>
       <ScrollArea
-        v-else-if="selectedSortType >= -1"
+        v-else-if="selectedSortType >= -2 && !pending"
         class="h-[calc(100vh-186px)]"
         v-if="filteredList">
         <DynamicScroller
@@ -132,11 +131,7 @@
         <Pagination
           v-if="!pending && filteredList.length > 150"
           v-slot="{ page }"
-          :total="
-            searchValue === '' || !searchValue || searchValue === null
-              ? requests?.count
-              : filteredList?.length
-          "
+          :total="filteredList?.length"
           :sibling-count="0"
           show-edges
           :items-per-page="150"
@@ -191,11 +186,7 @@
         <Pagination
           v-if="!pendingOrders && (orders?.data?.length ?? 0) > 150"
           v-slot="{ page }"
-          :total="
-            searchValue === '' || !searchValue || searchValue === null
-              ? requests?.count
-              : filteredList?.length
-          "
+          :total="filteredList?.length"
           :sibling-count="0"
           show-edges
           :items-per-page="150"

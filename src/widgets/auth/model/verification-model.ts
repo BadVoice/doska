@@ -1,3 +1,4 @@
+import { getOrders } from '@/entities/order';
 import { myRequestsQuery } from '@/entities/requests';
 import { $api } from '@/shared/api';
 import type { VerifyUser } from '@/shared/api/generated/Api';
@@ -37,7 +38,7 @@ sample({
   clock: verifyUserMutation.finished.success,
   filter: (clk) => [200].includes(clk.result.status),
   fn: () => undefined,
-  target: myRequestsQuery.start,
+  target: [myRequestsQuery.start, getOrders.start],
 });
 
 sample({

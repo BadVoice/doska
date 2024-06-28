@@ -53,6 +53,7 @@
     </div>
     <div class="flex w-full flex-row justify-between">
       <p class="text-[15px] font-semibold text-black">{{ item.amount }} шт.</p>
+      <p class="text-[15px] font-normal text-black">{{ item.vendor }}</p>
       <p class="text-[14px] font-normal text-[#667085]">
         Время доставки:
         {{ item.delivery_time ? item.delivery_time + ' дн.' : 'Не указано' }}

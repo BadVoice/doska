@@ -47,6 +47,7 @@ sample({
         price: clk.price,
         amount: clk.amount,
         category: clk.purpose,
+        vendor: clk.supplier
       },
       clk.deliveryTo && {
         delivery_time: clk.deliveryTo,

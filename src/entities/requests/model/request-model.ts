@@ -1,6 +1,6 @@
 import { $api } from '@/shared/api';
 import type { Bid } from '@/shared/api/generated/Api';
-import { createMutation, createQuery } from '@farfetched/core';
+import { cache, createMutation, createQuery } from '@farfetched/core';
 
 export interface IRequestsQueryParams {
   search?: string;
@@ -8,18 +8,24 @@ export interface IRequestsQueryParams {
   amount?: number;
   destinations?: number[];
   page: number;
+  status?: number;
 }
 
 export const myRequestsQuery = createQuery({
   handler: async (params?: IRequestsQueryParams) => {
     const bids = (
       await $api.bids.getBids(
-        {
-          search: params?.search,
-          amount: params?.amount,
-          article: params?.article,
-          destinations: params?.destinations,
-        },
+        Object.assign(
+          {
+            search: params?.search,
+            amount: params?.amount,
+            article: params?.article,
+            destinations: params?.destinations,
+          },
+          (params?.status || params?.status === 0) && {
+            status: params?.status,
+          },
+        ),
         {
           // @ts-ignore
           page: params?.page ?? 1,
@@ -47,6 +53,8 @@ export const myRequestsQuery = createQuery({
     };
   },
 });
+
+cache(myRequestsQuery);
 
 export const deleteRequestMutation = createMutation({
   handler: (id: string) => $api.bids.deleteBid(parseInt(id)),

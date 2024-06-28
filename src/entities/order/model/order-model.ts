@@ -1,3 +1,4 @@
+import { $isAuthorized } from '@/entities/session';
 import { $api } from '@/shared/api';
 import { appMounted } from '@/shared/model';
 import { createQuery } from '@farfetched/core';
@@ -9,5 +10,6 @@ export const getOrders = createQuery({
 
 sample({
   clock: appMounted,
+  filter: $isAuthorized,
   target: getOrders.start,
 });

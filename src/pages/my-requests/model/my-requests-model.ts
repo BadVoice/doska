@@ -14,7 +14,7 @@ import {
   sample,
   type EventCallable,
 } from 'effector';
-import { not, reset, spread } from 'patronum';
+import { debounce, debug, not, reset, spread } from 'patronum';
 
 import { $api } from '@/shared/api/api';
 
@@ -37,6 +37,7 @@ import { handleShowAuthChanged } from '@/widgets/auth';
 import {
   $searchTerm,
   $selectedSortType,
+  searchTermInputed,
   searchVisibilityChanged,
 } from '@/widgets/header';
 
@@ -97,25 +98,16 @@ export const $searchQS = createStore<{ search: string; brand: string } | null>(
 
 export const $filteredRequests = combine(
   {
-    $selectedSortType,
     $selectedCompany,
     requests: myRequestsQuery.$data,
     $searchTerm,
   },
   (shape) =>
-    (shape.$selectedSortType >= 0
-      ? shape.requests?.results?.filter(
-          (request) => request.status === shape.$selectedSortType,
-        )
-      : shape.requests?.results
-    )
-      ?.filter((request) =>
-        shape.$selectedCompany
-          ? request.company === shape.$selectedCompany.id
-          : true,
-      )
-      ?.filter((request) => request.name.includes(shape.$searchTerm ?? '')) ??
-    [],
+    shape.requests?.results?.filter((request) =>
+      shape.$selectedCompany
+        ? request.company === shape.$selectedCompany.id
+        : true,
+    ) ?? [],
 );
 
 sample({
@@ -182,6 +174,31 @@ sample({
   target: myRequestsQuery.start,
 });
 
+debug($selectedSortType);
+debug(myRequestsQuery.start);
+
+sample({
+  source: { $selectedSortType, $currentPage, $searchTerm },
+  clock: [$selectedSortType, $currentPage, debounce($searchTerm, 500)],
+  filter: (src) => src.$selectedSortType >= -2,
+  fn: (src) =>
+    src.$selectedSortType === -1
+      ? undefined
+      : src.$selectedSortType === -2
+        ? { search: src.$searchTerm ?? '', page: src.$currentPage }
+        : ({
+            search: src.$searchTerm ?? '',
+            status: src.$selectedSortType,
+            page: src.$currentPage,
+          } as const),
+  target: myRequestsQuery.start,
+});
+
+reset({
+  clock: searchTermInputed,
+  target: $currentPage,
+});
+
 sample({
   clock: pageSelected,
   fn: (clk) =>
@@ -199,7 +216,7 @@ sample({
 });
 
 sample({
-  source: $currentPage,
+  source: { $currentPage, $selectedSortType },
   clock: filterSubmitted,
   fn: (src, clk: FormValues) =>
     ({
@@ -207,8 +224,9 @@ sample({
         search: clk.name,
         amount: parseInt(clk.count ?? '1'),
         article: clk.article,
-        page: src,
+        page: src.$currentPage,
         destinations: clk.destinations,
+        status: src.$selectedSortType,
       },
       $filterOpened: false,
     }) as const,
@@ -219,17 +237,15 @@ sample({
   clock: requestClicked,
   fn: (clk) =>
     ({
-      preSearch: {
+      search: {
         search: clk.article ?? '',
       },
       $requestViewMode: 'selectBrand',
-      editRequestSelected: clk,
       id: clk.id?.toString(),
     }) as const,
   target: spread({
-    preSearch: preSearchQuery.start,
+    search: preSearchQuery.start,
     $requestViewMode,
-    editRequestSelected,
     id: $selectedAdvertisementId,
   }),
 });
