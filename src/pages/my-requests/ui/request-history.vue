@@ -1,12 +1,10 @@
 <script lang="ts" setup>
-  import { requestViewModeChanged } from '@/pages/my-requests/model/my-requests-model';
   import { ScrollArea } from '@/shared/ui/scroll-area';
-  import { offerAddButtonClicked } from '@/widgets/offers';
   import { useUnit } from 'effector-vue/composition';
   import { historyQuery } from '../model/history-model';
+  import { requestViewModeChanged } from '../model/view-mode';
 
   const changeViewMode = useUnit(requestViewModeChanged);
-  const handleAddManuallyClick = useUnit(offerAddButtonClicked);
   const { data: history, pending } = useUnit(historyQuery);
 </script>
 
@@ -36,13 +34,6 @@
                   {{ item.name }}
                 </h3>
               </div>
-
-              <!--<Button size="icon" variant="ghost" class="h-[24px] w-[24px]">
-                <span
-                  class="-mt-4 cursor-pointer select-none text-3xl leading-[0px] text-[#858FA3] transition-all duration-75 hover:text-[#0017FC]"
-                  >...</span
-                >
-              </Button>-->
             </div>
             <h3 class="text-[16px] font-bold text-[#101828]">
               {{ item.price }} ₽
@@ -59,14 +50,6 @@
               {{ item.delivery_time }}
             </p>
           </div>
-
-          <!--        <div v-if="item?.photo" class="flex flex-row gap-x-2">-->
-          <!--          <img :src="item?.photo" alt="Photo" class="h-[48px] w-[48px]" />-->
-          <!--        </div>-->
-          <!--<div class="flex items-center gap-x-1">
-            <span class="mt-0.5 h-2 w-[9px] rounded-full bg-green-500" />
-            <p class="text-[15px] text-green-500">{{ item. }}</p>
-          </div>-->
         </div>
       </div>
     </ScrollArea>

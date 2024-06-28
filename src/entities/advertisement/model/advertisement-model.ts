@@ -1,8 +1,6 @@
 import type { PreSearchResponse } from '@/shared/api/generated/Api';
-import { searchVisibilityChanged } from '@/widgets/header';
 import { createEvent, createStore, sample } from 'effector';
 import { persist } from 'effector-storage/query';
-import { reset } from 'patronum';
 
 type TAdvertisement = Omit<PreSearchResponse, 'part_name'>;
 
@@ -23,11 +21,6 @@ export const $brandSelected = createStore(false).on(
   advertisementClicked,
   (_, clk) => clk.selectBrand,
 );
-
-reset({
-  clock: searchVisibilityChanged,
-  target: $selectedAdvertisementId,
-});
 
 persist({
   store: $selectedAdvertisementId,

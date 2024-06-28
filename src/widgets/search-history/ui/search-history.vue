@@ -1,5 +1,3 @@
-<script setup lang="ts"></script>
-
 <template>
   <div
     class="flex h-[100vh] w-full flex-col items-center justify-start border-r border-[#D0D4DB] bg-[#F9FAFB] p-4 py-8">
@@ -15,5 +13,3 @@
     </div>
   </div>
 </template>
-
-<style scoped lang="postcss"></style>

@@ -1,20 +1,21 @@
 <script lang="ts" setup>
   import { $selectedAdvertisementId } from '@/entities/advertisement';
-  import type { BidWithName } from '@/entities/requests';
-  import { cn } from '@/shared/lib';
-  import { Button, Popover, PopoverContent, PopoverTrigger } from '@/shared/ui';
-  import { useUnit } from 'effector-vue/composition';
-  import { PopoverClose } from 'radix-vue';
-  import { ref } from 'vue';
-  import {
-    archiveRequestClicked,
-    deleteRequestClicked,
-    editRequestSelected,
-    publicationClicked,
-    requestClicked,
-    requestCompleted,
-    requestViewModeChanged,
-  } from '../model/my-requests-model';
+import type { BidWithName } from '@/entities/requests';
+import { cn } from '@/shared/lib';
+import { Button, Popover, PopoverContent, PopoverTrigger } from '@/shared/ui';
+import { useUnit } from 'effector-vue/composition';
+import { PopoverClose } from 'radix-vue';
+import { ref } from 'vue';
+import {
+  archiveRequestClicked,
+  cancelStatusClicked,
+  deleteRequestClicked,
+  editRequestSelected,
+  publicationClicked,
+  requestClicked,
+  requestCompleted,
+} from '../model/my-requests-model';
+import { requestViewModeChanged } from '../model/view-mode';
 
   defineProps<{
     status: { color: string; text: string }[];
@@ -30,6 +31,7 @@
   const handleArchiveRequest = useUnit(archiveRequestClicked);
   const handleCompleteRequest = useUnit(requestCompleted);
   const handlePublicationClicked = useUnit(publicationClicked);
+  const cancelStatus = useUnit(cancelStatusClicked);
 
   const selectedRequest = useUnit($selectedAdvertisementId);
 
@@ -93,23 +95,32 @@
               </Button>
 
               <Button
+                v-if="item.status !== 2"
                 variant="ghost"
                 @click="handleClickOnChange(item)"
                 class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
                 <p class="w-full text-[14px] font-semibold">Редактировать</p>
               </Button>
               <Button
+                v-if="item.status !== 2"
                 variant="ghost"
                 @click="deleteRequestClicked(item.id ?? 0)"
                 class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
                 <p class="w-full text-[14px] font-semibold">Удалить заявку</p>
               </Button>
               <Button
-                v-if="item.status !== 3"
+                v-if="item.status !== 3 && item.status !== 2"
                 variant="ghost"
                 @click="handleArchiveRequest(item)"
                 class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
                 <p class="w-full text-[14px] font-semibold">Архивировать</p>
+              </Button>
+              <Button
+                v-if="item.status !== 0"
+                variant="ghost"
+                @click="cancelStatusClicked(item)"
+                class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
+                <p class="w-full text-[14px] font-semibold">Отменить</p>
               </Button>
             </PopoverClose>
           </PopoverContent>

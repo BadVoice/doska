@@ -1,8 +1,4 @@
 <script setup lang="ts">
-  import {
-    brandSelected,
-    requestViewModeChanged,
-  } from '@/pages/my-requests/model/my-requests-model';
   import { Button } from '@/shared/ui/button';
   import { Input } from '@/shared/ui/input';
   import {
@@ -18,6 +14,8 @@
   import { useUnit } from 'effector-vue/composition';
   import { computed, onMounted, ref } from 'vue';
   import { getBrands, mounted } from '../model/brand-model';
+  import { brandSelected } from '../model/my-requests-model';
+  import { requestViewModeChanged } from '../model/view-mode';
 
   const handleMount = useUnit(mounted);
   const { data: allBrands } = useUnit(getBrands);

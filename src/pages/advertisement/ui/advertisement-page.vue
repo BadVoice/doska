@@ -6,14 +6,14 @@
     AdvertisementList,
   } from '@/entities/advertisement';
   import { preSearchQuery } from '@/entities/offer';
+  import { $requestViewMode } from '@/pages/my-requests';
+  import { cn } from '@/shared/lib';
   import { ScrollArea } from '@/shared/ui/scroll-area';
   import { $searchTerm, $showSearch } from '@/widgets/header';
   import { useUnit } from 'effector-vue/composition';
   import { onMounted } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import '../model/advertisement-page-model';
-  import { $requestViewMode } from '@/pages/my-requests';
-  import { cn } from '@/shared/lib';
 
   const route = useRoute();
   const router = useRouter();
@@ -73,9 +73,10 @@
     </div>
   </div>
   <ScrollArea
+    v-if="!pending"
     :class="
       cn(
-        'h-[calc(100vh-177px)] w-full overflow-auto [&>div>div]:h-full [&>div]:h-full',
+        'h-[calc(100vh-177px)] w-full overflow-auto ',
         requestViewMode === 'selectBrand' && 'h-[calc(100vh-60px)]',
       )
     ">
@@ -89,13 +90,10 @@
       ">
       <AdvertisementList
         v-if="preSearchData"
-        :search-result="preSearchData?.data"
-        class="custom-scrollbar h-full w-full overflow-auto bg-[#F9FAFB]" />
+        :search-result="preSearchData?.data" />
     </template>
 
-    <SearchHistory
-      class="custom-scrollbar h-full overflow-auto"
-      v-if="route.path === '/search-history'" />
+    <SearchHistory v-if="route.path === '/search-history'" />
   </ScrollArea>
   <div
     v-if="!preSearchData"

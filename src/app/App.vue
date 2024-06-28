@@ -213,7 +213,7 @@
 
 <template>
   <Toaster />
-  <div class="flex flex-row bg-white">
+  <div class="flex max-h-[100vh] flex-row overflow-hidden bg-white">
     <div
       class="flex max-h-[100vh] w-full flex-col items-center overflow-hidden sm:max-w-[356px]">
       <Header

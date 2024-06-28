@@ -1,20 +1,21 @@
 <script lang="ts" setup>
-  import { type Order } from '@/shared/api/generated/Api';
+  import { type Order, type OrderReturn } from '@/shared/api/generated/Api';
   import { cn } from '@/shared/lib';
   import { Button, Popover, PopoverContent, PopoverTrigger } from '@/shared/ui';
   import { useUnit } from 'effector-vue/composition';
   import { PopoverClose } from 'radix-vue';
   import { ref } from 'vue';
-  import { historyClicked } from '../model/history-model';
-  import { deleteOrderClicked, returnOrderClicked } from '../model/order-model';
+  import {
+    cancelReturnClicked,
+    confirmReturnClicked,
+  } from '../model/order-model';
 
   defineProps<{
-    item: Order;
+    item: OrderReturn & Order;
   }>();
 
-  const showHistory = useUnit(historyClicked);
-  const deleteOrder = useUnit(deleteOrderClicked);
-  const returnOrder = useUnit(returnOrderClicked);
+  const cancelReturn = useUnit(cancelReturnClicked);
+  const confirmReturn = useUnit(confirmReturnClicked);
 
   const popoverOpened = ref(false);
 </script>
@@ -24,7 +25,9 @@
     class="flex flex-col items-start justify-between gap-y-1 rounded-lg border-2 bg-white p-4 pr-5 duration-200 hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10">
     <div class="flex w-full flex-col gap-y-1">
       <div class="flex w-full justify-between">
-        <p class="text-sm font-normal text-[#101828]">Заказ: {{ item.name }}</p>
+        <p class="text-sm font-normal text-[#101828]">
+          Возврат: {{ item.name }}
+        </p>
         <Popover @update:open="(value) => (popoverOpened = value)">
           <PopoverTrigger @click.stop>
             <span
@@ -41,24 +44,16 @@
             class="flex h-fit w-[150px] flex-col justify-center overflow-hidden rounded-[10px] p-0">
             <PopoverClose class="flex flex-col gap-y-0">
               <Button
-                @click="deleteOrder(item)"
+                @click="cancelReturn(item)"
                 variant="ghost"
                 class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
-                <p class="w-full text-[14px] font-semibold">Удалить</p>
-              </Button>
-            </PopoverClose>
-            <PopoverClose class="flex flex-col gap-y-0">
-              <Button
-                @click="showHistory(item)"
-                variant="ghost"
-                class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
-                <p class="w-full text-[14px] font-semibold">История</p>
+                <p class="w-full text-[14px] font-semibold">Отменить</p>
               </Button>
               <Button
                 variant="ghost"
-                @click="returnOrder(item)"
+                @click="confirmReturn(item)"
                 class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
-                <p class="w-full text-[14px] font-semibold">Вернуть</p>
+                <p class="w-full text-[14px] font-semibold">Возвращено</p>
               </Button>
             </PopoverClose>
           </PopoverContent>

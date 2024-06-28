@@ -2,7 +2,6 @@ import {
   $selectedAdvertisement,
   $selectedAdvertisementId,
   $selectedRequestId,
-  preSearchUnmounted,
 } from '@/entities/advertisement';
 import { $selectedCompany } from '@/entities/company';
 import { createMutation, keepFresh } from '@farfetched/core';
@@ -14,7 +13,7 @@ import {
   sample,
   type EventCallable,
 } from 'effector';
-import { debounce, debug, not, reset, spread } from 'patronum';
+import { debounce, not, reset, spread } from 'patronum';
 
 import { $api } from '@/shared/api/api';
 
@@ -30,18 +29,15 @@ import {
   preSearchQuery,
 } from '@/entities/offer';
 import { $isAuthorized } from '@/entities/session';
-import { createBidVisibilityChanged } from '@/features/create-advertisement';
 import type { Bid, Brand } from '@/shared/api/generated/Api';
 import { appMounted } from '@/shared/model';
-import { handleShowAuthChanged } from '@/widgets/auth';
 import {
   $searchTerm,
   $selectedSortType,
   searchTermInputed,
   searchVisibilityChanged,
 } from '@/widgets/header';
-
-type TSelectScreenMode = 'offers' | 'selectBrand' | 'history' | 'search' | null;
+import { $requestViewMode } from './view-mode';
 
 export interface FormValues {
   name: string;
@@ -65,32 +61,17 @@ export const editRequestSelected = createEvent<BidWithName>();
 
 export const deleteRequestClicked = createEvent<number>();
 export const archiveRequestClicked = createEvent<Bid>();
+export const cancelStatusClicked = createEvent<Bid>();
 export const requestCompleted = createEvent<Bid>();
 export const filterVisibilityChanged = createEvent<boolean | void>();
 export const filterSubmitted = createEvent<FormValues>();
 export const requestClicked = createEvent<BidWithName>();
-export const requestViewModeChanged = createEvent<TSelectScreenMode>();
 export const pageSelected = createEvent<number>();
 export const publicationClicked = createEvent<BidWithName>();
 
 export const $filterOpened = createStore(false);
 
 export const $currentPage = createStore(1).on(pageSelected, (_, clk) => clk);
-export const resetRequestViewMode = createEvent();
-
-export const $requestViewMode = createStore<TSelectScreenMode | null>(
-  null,
-).reset(
-  resetRequestViewMode,
-  handleShowAuthChanged,
-  createBidVisibilityChanged,
-  searchVisibilityChanged,
-);
-
-sample({
-  clock: [requestClicked, preSearchUnmounted],
-  target: preSearchQuery.reset,
-});
 
 export const $searchQS = createStore<{ search: string; brand: string } | null>(
   null,
@@ -148,7 +129,10 @@ sample({
   }),
 });
 
-function changeRequestStatus(event: EventCallable<Bid>, status: number) {
+export function changeRequestStatus(
+  event: EventCallable<Bid>,
+  status?: number,
+) {
   sample({
     clock: event,
     fn: (clk) =>
@@ -156,7 +140,7 @@ function changeRequestStatus(event: EventCallable<Bid>, status: number) {
         name: clk.name,
         amount: clk.amount,
         id: clk.id,
-        status: status,
+        status: status ?? (clk?.status as number) - 1,
       }) as Bid,
     target: editRequestMutation.start,
   });
@@ -165,6 +149,7 @@ function changeRequestStatus(event: EventCallable<Bid>, status: number) {
 changeRequestStatus(publicationClicked, 1);
 changeRequestStatus(requestCompleted, 2);
 changeRequestStatus(archiveRequestClicked, 3);
+changeRequestStatus(cancelStatusClicked, 0);
 
 sample({
   source: { $isAuthorized, $currentPage },
@@ -173,9 +158,6 @@ sample({
   fn: (src) => ({ page: src.$currentPage }) as const,
   target: myRequestsQuery.start,
 });
-
-debug($selectedSortType);
-debug(myRequestsQuery.start);
 
 sample({
   source: { $selectedSortType, $currentPage, $searchTerm },
@@ -254,11 +236,6 @@ sample({
   clock: offersQuery.finished.success,
   filter: (clk) => [200].includes(clk.result.status),
   fn: () => 'offers' as const,
-  target: $requestViewMode,
-});
-
-sample({
-  clock: requestViewModeChanged,
   target: $requestViewMode,
 });
 

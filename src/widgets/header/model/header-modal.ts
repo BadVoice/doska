@@ -1,6 +1,7 @@
+import { $selectedAdvertisementId } from '@/entities/advertisement';
 import { offersQuery, preSearchQuery, searchQuery } from '@/entities/offer';
 import { createEvent, createStore, sample } from 'effector';
-import { persist } from 'effector-storage/query';
+import { reset } from 'patronum';
 
 export const searchTermInputed = createEvent<string>();
 export const sortTypeSelected = createEvent<number>();
@@ -27,4 +28,7 @@ sample({
   target: $selectedSortType,
 });
 
-persist({ store: $selectedSortType, key: 'selectedStatus' });
+reset({
+  clock: searchVisibilityChanged,
+  target: $selectedAdvertisementId,
+});

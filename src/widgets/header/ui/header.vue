@@ -4,6 +4,8 @@
   import { type BidWithName } from '@/entities/requests';
   import { $isAuthorized } from '@/entities/session';
   import { createBidVisibilityChanged } from '@/features/create-advertisement';
+  import { createReturnMutation, getReturns } from '@/pages/my-requests';
+  import { cn } from '@/shared/lib';
   import { Button } from '@/shared/ui/button';
   import { Input } from '@/shared/ui/input';
   import { useUnit } from 'effector-vue/composition';
@@ -48,6 +50,8 @@
   const selectedCompany = useUnit($selectedCompany);
   const { data: orders } = useUnit(getOrders);
 
+  const { data: returns } = useUnit(getReturns);
+
   const handleSortTypeSelected = useUnit(sortTypeSelected);
   const selectedSortType = useUnit($selectedSortType);
 
@@ -79,7 +83,12 @@
     }
   });
 
-  const scrollToButton = (index: number) => {
+  createReturnMutation.finished.success.watch(() => {
+    scrollToButton(5);
+    handleSortTypeSelected(-5);
+  });
+
+  function scrollToButton(index: number) {
     if (!scrollableContainer.value) {
       console.error('scrollableContainer is null!');
       return;
@@ -110,7 +119,7 @@
         behavior: 'smooth',
       });
     }
-  };
+  }
 </script>
 
 <template>
@@ -205,27 +214,72 @@
                   emit('buttonClicked', index);
                 }
               "
-              :class="{
-                'border-[#0017FC] bg-[#1778EA] bg-opacity-10 text-[#0017FC] hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10 hover:text-[#0017FC]':
-                  selectedSortType === button.status,
-              }"
-              class="max-h-[28px] rounded-lg"
+              :class="
+                cn(
+                  'max-h-[28px] rounded-lg',
+                  selectedSortType === button.status &&
+                    'border-[#0017FC] bg-[#1778EA] bg-opacity-10 text-[#0017FC] hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10 hover:text-[#0017FC]',
+                )
+              "
               size="sm">
               {{ button.label }}
               <template v-if="button.link === '/' && requests?.length">
-                ({{
-                  button.status >= 0
-                    ? requests.filter(
+                <template v-if="button.status >= 0">
+                  {{
+                    requests &&
+                    '(' +
+                      requests.filter(
                         (request) => request.status === button.status,
-                      ).length
-                    : button.status === -1
-                      ? requests.length
-                      : button.status === -3 && selectedCompany?.id
-                        ? orders?.data?.filter(
-                            (o) => o.company === (selectedCompany?.id ?? 1),
-                          )?.length
-                        : orders?.data?.length
-                }})
+                      ).length +
+                      ')'
+                  }}
+                </template>
+                <template v-else-if="button.status === -1">
+                  {{
+                    requests &&
+                    '(' +
+                      requests.filter((r) =>
+                        selectedCompany?.id
+                          ? r.company === selectedCompany?.id
+                          : true,
+                      ).length +
+                      ')'
+                  }}
+                </template>
+                <template v-else-if="button.status === -3">
+                  {{
+                    orders?.data &&
+                    '(' +
+                      orders.data.filter((o) =>
+                        selectedCompany?.id
+                          ? o.company === selectedCompany?.id
+                          : true,
+                      )?.length +
+                      ')'
+                  }}
+                </template>
+                <template
+                  v-else-if="button.status === -5 || button.status === -6">
+                  {{
+                    returns &&
+                    '(' +
+                      returns
+                        .filter((r) =>
+                          button.status === -6
+                            ? r.status === 1
+                            : r.status === 0,
+                        )
+                        .filter((r) =>
+                          selectedCompany?.id
+                            ? r.company === selectedCompany?.id
+                            : true,
+                        ).length +
+                      ')'
+                  }}
+                </template>
+                <template v-else>
+                  {{ orders?.data?.length }}
+                </template>
               </template>
             </Button>
           </RouterLink>

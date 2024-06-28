@@ -1,7 +1,4 @@
-import {
-  $selectedAdvertisementId,
-  $selectedRequestId,
-} from '@/entities/advertisement/';
+import { $selectedRequestId } from '@/entities/advertisement/';
 import { $selectedCompany } from '@/entities/company';
 import { $searchQS } from '@/pages/my-requests';
 import { $api } from '@/shared/api';
@@ -9,7 +6,6 @@ import type { Item, Offer, Order } from '@/shared/api/generated/Api';
 import { toast } from '@/shared/ui/toast';
 import { createMutation } from '@farfetched/core';
 import { createEffect, createEvent, sample } from 'effector';
-import { debug } from 'patronum';
 
 export const itemBuyed = createEvent<Item>();
 export const offerBuyed = createEvent<Offer>();
@@ -28,7 +24,8 @@ sample({
   fn: (src, clk) =>
     Object.assign(
       {
-        name: src?.$searchQS?.search,
+        name: clk.title,
+        delivery_time: clk.parsedDelivery,
         amount: parseInt(clk.quantity?.value ?? '0'),
         price: parseInt(clk.price?.value ?? '0'),
         bid: src.$selectedRequestId ?? 1,
