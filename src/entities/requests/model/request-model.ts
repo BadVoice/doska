@@ -50,6 +50,10 @@ export const myRequestsQuery = createQuery({
     return {
       ...bids,
       results: results,
+      count_created: bids.count_created,
+      count_published: bids.count_published,
+      count_finished: bids.count_finished,
+      count_archived: bids.count_archived,
     };
   },
 });

@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { $selectedCompany } from '@/entities/company';
   import { getOrders } from '@/entities/order';
-  import { type BidWithName } from '@/entities/requests';
+  import { myRequestsQuery, type BidWithName } from '@/entities/requests';
   import { $isAuthorized } from '@/entities/session';
   import { createBidVisibilityChanged } from '@/features/create-advertisement';
   import { createReturnMutation, getReturns } from '@/pages/my-requests';
@@ -51,6 +51,8 @@
   const { data: orders } = useUnit(getOrders);
 
   const { data: returns } = useUnit(getReturns);
+
+  const { data: requestsData } = useUnit(myRequestsQuery);
 
   const handleSortTypeSelected = useUnit(sortTypeSelected);
   const selectedSortType = useUnit($selectedSortType);
@@ -120,6 +122,13 @@
       });
     }
   }
+
+  const CountDictionary = Object.freeze({
+    0: 'count_created',
+    1: 'count_published',
+    2: 'count_finished',
+    3: 'count_archived',
+  });
 </script>
 
 <template>
@@ -225,12 +234,13 @@
               {{ button.label }}
               <template v-if="button.link === '/' && requests?.length">
                 <template v-if="button.status >= 0">
+                  {{ button.status }}
                   {{
-                    requests &&
+                    requestsData &&
                     '(' +
-                      requests.filter(
-                        (request) => request.status === button.status,
-                      ).length +
+                      requestsData?.[
+                        CountDictionary[button.status as 0 | 1 | 2 | 3]
+                      ] +
                       ')'
                   }}
                 </template>

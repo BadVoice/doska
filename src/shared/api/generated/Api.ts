@@ -202,6 +202,10 @@ export interface BidWithHistory {
 
 export interface BidPage {
   count?: number;
+  count_created?: number;
+  count_published?: number;
+  count_finished?: number;
+  count_archived?: number;
   next?: string;
   previous?: string;
   results?: Bid[];

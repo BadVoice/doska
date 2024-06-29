@@ -4357,6 +4357,18 @@
           "count": {
             "type": "integer"
           },
+          "count_created": {
+            "type": "integer"
+          },
+          "count_published": {
+            "type": "integer"
+          },
+          "count_finished": {
+            "type": "integer"
+          },
+          "count_archived": {
+            "type": "integer"
+          },
           "next": {
             "type": "string"
           },
