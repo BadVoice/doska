@@ -234,7 +234,6 @@
               {{ button.label }}
               <template v-if="button.link === '/' && requests?.length">
                 <template v-if="button.status >= 0">
-                  {{ button.status }}
                   {{
                     requestsData &&
                     '(' +
