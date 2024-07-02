@@ -3,7 +3,7 @@ import { handleShowAuthChanged } from '@/widgets/auth';
 import { searchVisibilityChanged } from '@/widgets/header';
 import { createEvent, createStore, sample } from 'effector';
 import { reset } from 'patronum';
-import { historyClicked } from './history-model';
+import { historyClicked, historyClickedBid } from './history-model';
 
 type TSelectScreenMode = 'offers' | 'selectBrand' | 'history' | 'search' | null;
 
@@ -26,7 +26,7 @@ reset({
 });
 
 sample({
-  clock: historyClicked,
+  clock: [historyClicked, historyClickedBid],
   fn: () => 'history' as const,
   target: $requestViewMode,
 });

@@ -6,13 +6,13 @@
   import { useUnit } from 'effector-vue/composition';
   import { PopoverClose } from 'radix-vue';
   import { ref } from 'vue';
+  import { historyClickedBid } from '../model/history-model';
   import {
     archiveRequestClicked,
     cancelStatusClicked,
     editRequestSelected,
     publicationClicked,
     requestClicked,
-    requestCompleted,
   } from '../model/my-requests-model';
   import { requestViewModeChanged } from '../model/view-mode';
 
@@ -28,13 +28,12 @@
   const handleRequestClicked = useUnit(requestClicked);
   const handleEditRequest = useUnit(editRequestSelected);
   const handleArchiveRequest = useUnit(archiveRequestClicked);
-  const handleCompleteRequest = useUnit(requestCompleted);
   const handlePublicationClicked = useUnit(publicationClicked);
-  const cancelStatus = useUnit(cancelStatusClicked);
 
   const selectedRequest = useUnit($selectedAdvertisementId);
 
   const changeViewMode = useUnit(requestViewModeChanged);
+  const showHistory = useUnit(historyClickedBid);
 
   const popoverOpened = ref(false);
 
@@ -107,6 +106,12 @@
                 class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
                 <p class="w-full text-[14px] font-semibold">Удалить заявку</p>
               </Button> -->
+              <Button
+                @click="showHistory(item)"
+                variant="ghost"
+                class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
+                <p class="w-full text-[14px] font-semibold">История</p>
+              </Button>
               <Button
                 v-if="item.status !== 3 && item.status !== 2"
                 variant="ghost"

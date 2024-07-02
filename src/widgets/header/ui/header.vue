@@ -244,16 +244,7 @@
                   }}
                 </template>
                 <template v-else-if="button.status === -1">
-                  {{
-                    requests &&
-                    '(' +
-                      requests.filter((r) =>
-                        selectedCompany?.id
-                          ? r.company === selectedCompany?.id
-                          : true,
-                      ).length +
-                      ')'
-                  }}
+                  {{ requestsData && '(' + requestsData.count + ')' }}
                 </template>
                 <template
                   v-else-if="button.status === -3 || button.status === -4">

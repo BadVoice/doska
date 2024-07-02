@@ -1,35 +1,35 @@
 <script setup lang="ts">
   import { $selectedCompany } from '@/entities/company';
-import { getOrders } from '@/entities/order';
-import { myRequestsQuery } from '@/entities/requests';
-import type { Bid, Order, OrderReturn } from '@/shared/api/generated/Api';
-import { Button } from '@/shared/ui';
-import {
-  Pagination,
-  PaginationEllipsis,
-  PaginationList,
-  PaginationListItem,
-  PaginationNext,
-  PaginationPrev,
-} from '@/shared/ui/pagination';
-import { ScrollArea } from '@/shared/ui/scroll-area';
-import { $selectedSortType } from '@/widgets/header';
-import { useUnit } from 'effector-vue/composition';
-import { onBeforeUnmount } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import {
-  $currentPage,
-  $filterOpened,
-  $filteredRequests,
-  $searchQS,
-  filterVisibilityChanged,
-  pageSelected,
-} from '../model/my-requests-model';
-import { getReturns } from '../model/order-model';
-import FilterForm from './filter-form.vue';
-import OrderItem from './order-item.vue';
-import RequestItem from './request-item.vue';
-import ReturnItem from './return-item.vue';
+  import { getOrders } from '@/entities/order';
+  import { myRequestsQuery } from '@/entities/requests';
+  import type { Bid, Order, OrderReturn } from '@/shared/api/generated/Api';
+  import { Button } from '@/shared/ui';
+  import {
+    Pagination,
+    PaginationEllipsis,
+    PaginationList,
+    PaginationListItem,
+    PaginationNext,
+    PaginationPrev,
+  } from '@/shared/ui/pagination';
+  import { ScrollArea } from '@/shared/ui/scroll-area';
+  import { $selectedSortType } from '@/widgets/header';
+  import { useUnit } from 'effector-vue/composition';
+  import { onBeforeUnmount } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
+  import {
+    $currentPage,
+    $filterOpened,
+    $filteredRequests,
+    $searchQS,
+    filterVisibilityChanged,
+    pageSelected,
+  } from '../model/my-requests-model';
+  import { getReturns } from '../model/order-model';
+  import FilterForm from './filter-form.vue';
+  import OrderItem from './order-item.vue';
+  import RequestItem from './request-item.vue';
+  import ReturnItem from './return-item.vue';
   const emit = defineEmits(['handleData']);
   const router = useRouter();
   const route = useRoute();
@@ -68,6 +68,8 @@ import ReturnItem from './return-item.vue';
 
   const page = useUnit($currentPage);
   const changePage = useUnit(pageSelected);
+
+  type Return = OrderReturn & Order & { brand: string };
 
   const filteredList = useUnit($filteredRequests);
 </script>
@@ -262,7 +264,7 @@ import ReturnItem from './return-item.vue';
               ?.filter((r) =>
                 selectedCompany?.id ? r.company === selectedCompany?.id : true,
               )"
-            :item="item as OrderReturn & Order" />
+            :item="item as Return" />
         </div>
         <Pagination
           v-if="!pendingReturns && (returns?.length ?? 0) > 150"

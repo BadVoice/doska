@@ -144,17 +144,27 @@ export const getReturns = createQuery({
   handler: async () => {
     const orders = await $api.orders.getOrders();
     const returns = await $api.orderReturns.getOrderReturns();
+    const bids = await $api.bids.getBids();
+    const brands = await $api.brands.getBrands();
 
     return returns.data?.map((r) => {
       const order = JSON.parse(
         JSON.stringify(orders.data?.results?.find((o) => o.id === r.order)),
       );
+      const bid = JSON.parse(
+        JSON.stringify(bids.data.results?.find((b) => b.id === order.bid)),
+      );
+
       delete order?.id;
       delete order?.status;
+
+      delete bid?.status;
 
       return {
         ...r,
         ...order,
+        ...bid,
+        brand: brands.data.find((b) => b.id === bid.brand)?.name,
       };
     });
   },

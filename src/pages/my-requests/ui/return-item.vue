@@ -10,8 +10,8 @@
     confirmReturnClicked,
   } from '../model/order-model';
 
-  defineProps<{
-    item: OrderReturn & Order;
+  const props = defineProps<{
+    item: OrderReturn & Order & { brand: string };
   }>();
 
   const cancelReturn = useUnit(cancelReturnClicked);
@@ -74,6 +74,7 @@
             <p class="text-xs font-normal text-[#858FA3]">{{ item.city }}</p>
           </div>
         </div>
+        <p class="text-xs font-normal text-[#858FA3]">{{ item.brand }}</p>
         <div class="flex items-center gap-x-1">
           <span
             class="mt-px h-2.5 w-2.5 rounded-full"
