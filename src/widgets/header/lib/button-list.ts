@@ -48,7 +48,7 @@ export function getButtonList(visibleSearch: Ref<boolean>) {
           label: 'Исполнено',
           link: '/',
           active: false,
-          status: 2,
+          status: -4,
         },
         {
           label: 'Возврат',

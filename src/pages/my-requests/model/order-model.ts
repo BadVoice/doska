@@ -4,7 +4,7 @@ import { $api } from '@/shared/api';
 import type { Bid, Order, OrderReturn } from '@/shared/api/generated/Api';
 import { appMounted } from '@/shared/model';
 import { createMutation, createQuery, keepFresh } from '@farfetched/core';
-import { createEvent, createStore, sample } from 'effector';
+import { createEvent, createStore, sample, type EventCallable } from 'effector';
 import { delay } from 'patronum';
 import { historyQuery } from './history-model';
 import { changeRequestStatus } from './my-requests-model';
@@ -13,6 +13,8 @@ export const deleteOrderClicked = createEvent<Order>();
 export const returnOrderClicked = createEvent<Order>();
 export const confirmReturnClicked = createEvent<OrderReturn & Order>();
 export const cancelReturnClicked = createEvent<OrderReturn & Order>();
+export const confirmOrderClicked = createEvent<Order>();
+export const cancelOrderClicked = createEvent<Order>();
 
 const $editedReturn = createStore<number | null>(null).on(
   cancelReturnClicked,
@@ -26,6 +28,52 @@ const $currentOrder = createStore<Order | null>(null).on(
 
 const deleteOrderMutation = createMutation({
   handler: (data: Order) => $api.orders.deleteOrder(data.id ?? 1),
+});
+
+const editOrderMutation = createQuery({
+  handler: (data: Order) => $api.orders.updateOrder(data.id ?? 1, data),
+});
+
+function changeOrderStatus(event: EventCallable<Order>, status: 0 | 1) {
+  sample({
+    clock: event,
+    fn: (clk) =>
+      Object.assign(
+        {
+          id: clk.id,
+          name: clk.name,
+          amount: clk.amount,
+          price: clk.price,
+          offer: clk.offer,
+          status: status,
+        },
+        clk?.delivery_time && {
+          delivery_time: clk.delivery_time,
+        },
+        clk.description && {
+          description: clk.description,
+        },
+        clk.company && {
+          company: clk.company,
+        },
+        clk.bid && {
+          bid: clk.bid,
+        },
+        clk.ad && {
+          ad: clk.ad,
+        },
+      ) as Order,
+    target: editOrderMutation.start,
+  });
+}
+
+changeOrderStatus(confirmOrderClicked, 1);
+changeOrderStatus(cancelOrderClicked, 0);
+
+sample({
+  clock: editOrderMutation.finished.success,
+  filter: (clk) => [200].includes(clk.result.status),
+  target: getOrders.start,
 });
 
 const deleteReturnMutation = createMutation({
@@ -99,7 +147,7 @@ export const getReturns = createQuery({
 
     return returns.data?.map((r) => {
       const order = JSON.parse(
-        JSON.stringify(orders.data?.find((o) => o.id === r.order)),
+        JSON.stringify(orders.data?.results?.find((o) => o.id === r.order)),
       );
       delete order?.id;
       delete order?.status;

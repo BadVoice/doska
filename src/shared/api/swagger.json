@@ -2467,7 +2467,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Orders"
+                  "$ref": "#/components/schemas/OrderPage"
                 }
               }
             }
@@ -4369,6 +4369,12 @@
           "count_archived": {
             "type": "integer"
           },
+          "count_order_created": {
+            "type": "integer"
+          },
+          "count_order_finished": {
+            "type": "integer"
+          },
           "next": {
             "type": "string"
           },
@@ -4549,6 +4555,10 @@
           "description": {
             "type": "string"
           },
+          "city": {
+            "type": "string",
+            "readOnly": true
+          },
           "company": {
             "type": "integer",
             "description": "company_id"
@@ -4612,6 +4622,32 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/OrderReturn"
+            }
+          }
+        }
+      },
+      "OrderPage": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "count_order_created": {
+            "type": "integer"
+          },
+          "count_order_finished": {
+            "type": "integer"
+          },
+          "next": {
+            "type": "string"
+          },
+          "previous": {
+            "type": "string"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Order"
             }
           }
         }

@@ -255,16 +255,15 @@
                       ')'
                   }}
                 </template>
-                <template v-else-if="button.status === -3">
+                <template
+                  v-else-if="button.status === -3 || button.status === -4">
                   {{
                     orders?.data &&
-                    '(' +
-                      orders.data.filter((o) =>
-                        selectedCompany?.id
-                          ? o.company === selectedCompany?.id
-                          : true,
-                      )?.length +
-                      ')'
+                    `(${
+                      button.status === -3
+                        ? orders.data.count_order_created
+                        : orders?.data.count_order_finished
+                    })`
                   }}
                 </template>
                 <template
@@ -287,7 +286,7 @@
                   }}
                 </template>
                 <template v-else>
-                  {{ orders?.data?.length }}
+                  {{ orders?.data?.results?.length }}
                 </template>
               </template>
             </Button>

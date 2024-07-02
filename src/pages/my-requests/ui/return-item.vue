@@ -18,6 +18,11 @@
   const confirmReturn = useUnit(confirmReturnClicked);
 
   const popoverOpened = ref(false);
+
+  const StatusDictionary = Object.freeze({
+    0: { label: 'Возврат', color: '#FFC50F' },
+    1: { label: 'Возвращено', color: '#FF570F' },
+  });
 </script>
 
 <template>
@@ -26,7 +31,7 @@
     <div class="flex w-full flex-col gap-y-1">
       <div class="flex w-full justify-between">
         <p class="text-sm font-normal text-[#101828]">
-          Возврат: {{ item.name }}
+          {{ item.name }}
         </p>
         <Popover @update:open="(value) => (popoverOpened = value)">
           <PopoverTrigger @click.stop>
@@ -61,12 +66,27 @@
       </div>
       <div class="flex w-full flex-col items-start justify-between gap-y-1">
         <div class="flex w-full flex-row justify-between">
-          <div class="flex w-full justify-between gap-x-2 pr-4">
+          <div class="mt-1 flex w-full justify-between gap-x-2 pr-4">
             <p class="text-xs font-normal text-[#858FA3]">
               {{ item.amount }} шт
             </p>
             <p class="text-xs font-normal text-[#858FA3]">{{ item.price }} ₽</p>
+            <p class="text-xs font-normal text-[#858FA3]">{{ item.city }}</p>
           </div>
+        </div>
+        <div class="flex items-center gap-x-1">
+          <span
+            class="mt-px h-2.5 w-2.5 rounded-full"
+            :style="{
+              backgroundColor: StatusDictionary[item.status as 0 | 1].color,
+            }" />
+          <p
+            class="text-[14px] font-normal"
+            :style="{
+              color: StatusDictionary[item.status as 0 | 1].color,
+            }">
+            {{ StatusDictionary[item.status as 0 | 1].label }}
+          </p>
         </div>
       </div>
     </div>

@@ -1,21 +1,20 @@
 <script lang="ts" setup>
   import { $selectedAdvertisementId } from '@/entities/advertisement';
-import type { BidWithName } from '@/entities/requests';
-import { cn } from '@/shared/lib';
-import { Button, Popover, PopoverContent, PopoverTrigger } from '@/shared/ui';
-import { useUnit } from 'effector-vue/composition';
-import { PopoverClose } from 'radix-vue';
-import { ref } from 'vue';
-import {
-  archiveRequestClicked,
-  cancelStatusClicked,
-  deleteRequestClicked,
-  editRequestSelected,
-  publicationClicked,
-  requestClicked,
-  requestCompleted,
-} from '../model/my-requests-model';
-import { requestViewModeChanged } from '../model/view-mode';
+  import type { BidWithName } from '@/entities/requests';
+  import { cn } from '@/shared/lib';
+  import { Button, Popover, PopoverContent, PopoverTrigger } from '@/shared/ui';
+  import { useUnit } from 'effector-vue/composition';
+  import { PopoverClose } from 'radix-vue';
+  import { ref } from 'vue';
+  import {
+    archiveRequestClicked,
+    cancelStatusClicked,
+    editRequestSelected,
+    publicationClicked,
+    requestClicked,
+    requestCompleted,
+  } from '../model/my-requests-model';
+  import { requestViewModeChanged } from '../model/view-mode';
 
   defineProps<{
     status: { color: string; text: string }[];
@@ -86,13 +85,13 @@ import { requestViewModeChanged } from '../model/view-mode';
                 class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
                 <p class="w-full text-[14px] font-semibold">Опубликовать</p>
               </Button>
-              <Button
+              <!--<Button
                 v-if="item.status === 1"
                 variant="ghost"
                 @click="handleCompleteRequest(item)"
                 class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
                 <p class="w-full text-[14px] font-semibold">Исполнить</p>
-              </Button>
+              </Button> -->
 
               <Button
                 v-if="item.status !== 2"
@@ -101,13 +100,13 @@ import { requestViewModeChanged } from '../model/view-mode';
                 class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
                 <p class="w-full text-[14px] font-semibold">Редактировать</p>
               </Button>
-              <Button
+              <!--<Button
                 v-if="item.status !== 2"
                 variant="ghost"
                 @click="deleteRequestClicked(item.id ?? 0)"
                 class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
                 <p class="w-full text-[14px] font-semibold">Удалить заявку</p>
-              </Button>
+              </Button> -->
               <Button
                 v-if="item.status !== 3 && item.status !== 2"
                 variant="ghost"
@@ -116,11 +115,18 @@ import { requestViewModeChanged } from '../model/view-mode';
                 <p class="w-full text-[14px] font-semibold">Архивировать</p>
               </Button>
               <Button
-                v-if="item.status !== 0"
+                v-if="item.status !== 0 && item.status !== 1"
                 variant="ghost"
                 @click="cancelStatusClicked(item)"
                 class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
                 <p class="w-full text-[14px] font-semibold">Отменить</p>
+              </Button>
+              <Button
+                v-if="item.status === 1"
+                variant="ghost"
+                @click="cancelStatusClicked(item)"
+                class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
+                <p class="w-full text-[14px] font-semibold">Не опубликовано</p>
               </Button>
             </PopoverClose>
           </PopoverContent>

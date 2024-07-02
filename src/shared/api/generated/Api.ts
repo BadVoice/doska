@@ -206,6 +206,8 @@ export interface BidPage {
   count_published?: number;
   count_finished?: number;
   count_archived?: number;
+  count_order_created?: number;
+  count_order_finished?: number;
   next?: string;
   previous?: string;
   results?: Bid[];
@@ -294,6 +296,7 @@ export interface Order {
   price: number;
   delivery_time?: number;
   description?: string;
+  city?: string;
   /** company_id */
   company?: number;
   /** bid_id */
@@ -327,6 +330,15 @@ export interface OrderWithHistory {
   company?: number;
   offer?: Offer;
   order_returns?: OrderReturn[];
+}
+
+export interface OrderPage {
+  count?: number;
+  count_order_created?: number;
+  count_order_finished?: number;
+  next?: string;
+  previous?: string;
+  results?: Order[];
 }
 
 export type Orders = Order[];
@@ -717,6 +729,9 @@ export class HttpClient<SecurityDataType = unknown> {
   }
 
   protected createFormData(input: Record<string, unknown>): FormData {
+    if (input instanceof FormData) {
+      return input;
+    }
     return Object.keys(input || {}).reduce((formData, key) => {
       const property = input[key];
       const propertyContent: any[] =
@@ -1865,7 +1880,7 @@ export class Api<
      * @secure
      */
     getOrders: (params: RequestParams = {}) =>
-      this.request<Orders, Error>({
+      this.request<OrderPage, Error>({
         path: `/orders/`,
         method: 'GET',
         secure: true,
