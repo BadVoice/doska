@@ -13,7 +13,7 @@ import {
   sample,
   type EventCallable,
 } from 'effector';
-import { debounce, not, reset, spread } from 'patronum';
+import { not, reset, spread } from 'patronum';
 
 import { $api } from '@/shared/api/api';
 
@@ -161,7 +161,7 @@ sample({
 
 sample({
   source: { $selectedSortType, $currentPage, $searchTerm },
-  clock: [$selectedSortType, $currentPage, debounce($searchTerm, 500)],
+  clock: [$selectedSortType, $currentPage],
   filter: (src) => src.$selectedSortType >= -2,
   fn: (src) =>
     src.$selectedSortType === -1

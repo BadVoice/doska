@@ -27,7 +27,7 @@
     <div class="flex h-screen flex-col gap-y-6">
       <div>
         <div
-          class="group flex cursor-pointer items-center gap-x-2 border-b border-[#D0D4DB] px-2 py-4"
+          class="group mb-4 flex cursor-pointer items-center gap-x-2 border-b border-[#D0D4DB] px-2 py-4"
           @click="$emit('close-product-card', false)">
           <Button variant="ghost" size="icon">
             <X class="h-7 w-7 text-primary group-hover:text-primary/70" />
@@ -37,7 +37,6 @@
             Закрыть
           </p>
         </div>
-
         <div v-if="productItem" class="px-4">
           <p class="text-[21px] font-semibold">
             {{ productItem.price ? productItem.price + '₽' : 'Не указано' }}

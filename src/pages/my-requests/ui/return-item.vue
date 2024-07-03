@@ -5,17 +5,19 @@
   import { useUnit } from 'effector-vue/composition';
   import { PopoverClose } from 'radix-vue';
   import { ref } from 'vue';
+  import { historyClickedReturn } from '../model/history-model';
   import {
     cancelReturnClicked,
     confirmReturnClicked,
   } from '../model/order-model';
 
-  const props = defineProps<{
+  defineProps<{
     item: OrderReturn & Order & { brand: string };
   }>();
 
   const cancelReturn = useUnit(cancelReturnClicked);
   const confirmReturn = useUnit(confirmReturnClicked);
+  const showHistory = useUnit(historyClickedReturn);
 
   const popoverOpened = ref(false);
 
@@ -55,10 +57,17 @@
                 <p class="w-full text-[14px] font-semibold">Отменить</p>
               </Button>
               <Button
+                v-if="item.status === 0"
                 variant="ghost"
                 @click="confirmReturn(item)"
                 class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
                 <p class="w-full text-[14px] font-semibold">Возвращено</p>
+              </Button>
+              <Button
+                variant="ghost"
+                @click="showHistory(item)"
+                class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
+                <p class="w-full text-[14px] font-semibold">История</p>
               </Button>
             </PopoverClose>
           </PopoverContent>

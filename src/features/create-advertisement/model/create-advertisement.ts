@@ -24,14 +24,20 @@ export const createAdMutation = createMutation({
 
 const createBidMutation = createMutation({
   handler: (data: Bid & { destination: number }) =>
-    $api.bids.createBid({
-      name: data.name,
-      article: data.article || 'Не указано',
-      amount: data.amount,
-      status: 0,
-      destinations: [data.destination],
-      company: data.company,
-    }),
+    $api.bids.createBid(
+      Object.assign(
+        {
+          name: data.name,
+          article: data.article || 'Не указано',
+          amount: data.amount,
+          status: 0 as 0,
+          destinations: [data.destination],
+        },
+        data.company && {
+          company: data.company,
+        },
+      ),
+    ),
 });
 
 export const getDestinations = createQuery({
@@ -79,7 +85,7 @@ sample({
         amount: parseInt(clk?.count ?? '1'),
         destination: clk.destination!,
       },
-      {
+      src.$selectedCompany && {
         company: src.$selectedCompany?.id,
       },
     ),

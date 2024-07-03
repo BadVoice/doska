@@ -3,10 +3,11 @@ import {
   $selectedRequestId,
   advertisementClicked,
 } from '@/entities/advertisement';
-import { offersQuery, searchQuery } from '@/entities/offer';
+import { offersQuery, preSearchQuery, searchQuery } from '@/entities/offer';
 import { $requestViewMode, $searchQS } from '@/pages/my-requests';
+import { $searchTerm } from '@/widgets/header';
 import { sample } from 'effector';
-import { spread } from 'patronum';
+import { debounce, spread } from 'patronum';
 
 sample({
   clock: advertisementClicked,
@@ -27,6 +28,15 @@ sample({
     $requestViewMode,
     $searchQS,
   }),
+});
+
+sample({
+  clock: debounce($searchTerm, 500),
+  fn: (clk) =>
+    ({
+      search: clk ?? '',
+    }) as const,
+  target: preSearchQuery.start,
 });
 
 sample({

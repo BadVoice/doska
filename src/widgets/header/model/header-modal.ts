@@ -4,6 +4,7 @@ import { createEvent, createStore, sample } from 'effector';
 import { reset } from 'patronum';
 
 export const searchTermInputed = createEvent<string>();
+
 export const sortTypeSelected = createEvent<number>();
 export const searchVisibilityChanged = createEvent<boolean | void>();
 

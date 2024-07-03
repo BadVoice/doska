@@ -4,7 +4,13 @@ import { $api } from '@/shared/api';
 import type { Bid, Order, OrderReturn } from '@/shared/api/generated/Api';
 import { appMounted } from '@/shared/model';
 import { createMutation, createQuery, keepFresh } from '@farfetched/core';
-import { createEvent, createStore, sample, type EventCallable } from 'effector';
+import {
+  createEffect,
+  createEvent,
+  createStore,
+  sample,
+  type EventCallable,
+} from 'effector';
 import { delay } from 'patronum';
 import { historyQuery } from './history-model';
 import { changeRequestStatus } from './my-requests-model';
@@ -69,6 +75,14 @@ function changeOrderStatus(event: EventCallable<Order>, status: 0 | 1) {
 
 changeOrderStatus(confirmOrderClicked, 1);
 changeOrderStatus(cancelOrderClicked, 0);
+
+const deleteOrderFx = createEffect((data: Order) => deleteOrderClicked(data));
+
+sample({
+  clock: cancelOrderClicked,
+  filter: (clk) => clk.status === 0,
+  target: deleteOrderFx,
+});
 
 sample({
   clock: editOrderMutation.finished.success,
@@ -159,6 +173,7 @@ export const getReturns = createQuery({
       delete order?.status;
 
       delete bid?.status;
+      delete bid?.id;
 
       return {
         ...r,
@@ -195,7 +210,7 @@ sample({
   source: $currentOrder,
   clock: createReturnMutation.finished.success,
   filter: (_, clk) => [201].includes(clk.result.status),
-  fn: (src) => src as Order,
+  fn: (src) => src?.bid ?? 1,
   target: historyQuery.start,
 });
 

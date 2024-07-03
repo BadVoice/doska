@@ -7,7 +7,7 @@ import type {
 } from '@/shared/api/generated/Api';
 import { createMutation, createQuery } from '@farfetched/core';
 import { createEvent, createStore, sample } from 'effector';
-import { not } from 'patronum';
+import { debug, not } from 'patronum';
 
 export const offerListVisibilityChanged = createEvent();
 export const deleteOfferClicked = createEvent<number>();
@@ -35,6 +35,8 @@ export const offersQuery = createQuery({
 export const preSearchQuery = createQuery({
   handler: (data: PreSearchRequest) => $qwepApi.preSearch.getPreSearch(data),
 });
+
+debug(preSearchQuery.start);
 
 sample({
   source: not($offersVisible),

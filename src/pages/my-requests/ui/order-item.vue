@@ -71,7 +71,6 @@
                 <p class="w-full text-[14px] font-semibold">Исполнить</p>
               </Button>
               <Button
-                v-if="item.status === 1"
                 variant="ghost"
                 @click="cancelOrder(item)"
                 class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
