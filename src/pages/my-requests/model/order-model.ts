@@ -76,12 +76,29 @@ function changeOrderStatus(event: EventCallable<Order>, status: 0 | 1) {
 changeOrderStatus(confirmOrderClicked, 1);
 changeOrderStatus(cancelOrderClicked, 0);
 
-const deleteOrderFx = createEffect((data: Order) => deleteOrderClicked(data));
+const archiveBidFx = createEffect((data: Bid) =>
+  $api.bids.updateBid(data.id ?? 1, {
+    ...data,
+    status: 3,
+  }),
+);
+
+const getBidCancel = createQuery({
+  handler: (data: number) => $api.bids.getBid(data),
+});
 
 sample({
   clock: cancelOrderClicked,
   filter: (clk) => clk.status === 0,
-  target: deleteOrderFx,
+  fn: (clk) => clk.bid ?? 1,
+  target: getBidCancel.start,
+});
+
+sample({
+  clock: getBidCancel.finished.success,
+  filter: (clk) => [200].includes(clk.result.status),
+  fn: (clk) => clk.result.data as Bid,
+  target: archiveBidFx,
 });
 
 sample({
@@ -213,7 +230,6 @@ sample({
   fn: (src) => src?.bid ?? 1,
   target: historyQuery.start,
 });
-
 sample({
   clock: deleteOrderClicked,
   target: deleteOrderMutation.start,

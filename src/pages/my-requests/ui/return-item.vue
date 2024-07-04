@@ -11,7 +11,7 @@
     confirmReturnClicked,
   } from '../model/order-model';
 
-  defineProps<{
+  const props = defineProps<{
     item: OrderReturn & Order & { brand: string };
   }>();
 
@@ -25,6 +25,8 @@
     0: { label: 'Возврат', color: '#FFC50F' },
     1: { label: 'Возвращено', color: '#FF570F' },
   });
+
+  console.log(props.item);
 </script>
 
 <template>

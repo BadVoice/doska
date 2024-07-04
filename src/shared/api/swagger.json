@@ -3452,259 +3452,6 @@
         ]
       }
     },
-    "/qwep_interests/": {
-      "get": {
-        "tags": ["QWEP"],
-        "summary": "метод получения списка интересов",
-        "operationId": "getQwepInterests",
-        "responses": {
-          "200": {
-            "description": "успешный ответ со списком интересов",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/QwepInterests"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "ошибка",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "servers": [
-          {
-            "url": "https://test.qrq.ru/qwep/api/v1/",
-            "description": "test qwep server"
-          }
-        ]
-      },
-      "post": {
-        "tags": ["QWEP"],
-        "summary": "метод создания интереса",
-        "operationId": "createQwepInterest",
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "$ref": "#/components/schemas/QwepInterest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "description": "успешный ответ с созданным интересом",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/QwepInterest"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "ошибка",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "servers": [
-          {
-            "url": "https://test.qrq.ru/qwep/api/v1/",
-            "description": "test qwep server"
-          }
-        ]
-      }
-    },
-    "/qwep_interests/{interest_id}": {
-      "get": {
-        "tags": ["QWEP"],
-        "summary": "метод получения интереса",
-        "operationId": "getQwepInterest",
-        "parameters": [
-          {
-            "name": "interest_id",
-            "in": "path",
-            "description": "идентификатор интереса",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "успешный ответ с интересом",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/QwepInterest"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "ошибка",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "servers": [
-          {
-            "url": "https://test.qrq.ru/qwep/api/v1/",
-            "description": "test qwep server"
-          }
-        ]
-      },
-      "put": {
-        "tags": ["QWEP"],
-        "summary": "метод изменения интереса",
-        "operationId": "updateQwepInterest",
-        "parameters": [
-          {
-            "name": "interest_id",
-            "in": "path",
-            "description": "идентификатор интереса",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/QwepInterest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "успешный ответ с измененным интересом",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/QwepInterest"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "ошибка",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "servers": [
-          {
-            "url": "https://test.qrq.ru/qwep/api/v1/",
-            "description": "test qwep server"
-          }
-        ]
-      },
-      "delete": {
-        "tags": ["QWEP"],
-        "summary": "метод удаления интереса",
-        "operationId": "deleteQwepInterest",
-        "parameters": [
-          {
-            "name": "interest_id",
-            "in": "path",
-            "description": "идентификатор интереса",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "успешный ответ",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/inline_response_204"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "ошибка",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "servers": [
-          {
-            "url": "https://test.qrq.ru/qwep/api/v1/",
-            "description": "test qwep server"
-          }
-        ]
-      }
-    },
     "/accounts/": {
       "get": {
         "tags": ["QWEP"],
@@ -4481,7 +4228,8 @@
             "type": "string"
           },
           "vendor": {
-            "type": "string"
+            "type": "integer",
+            "description": "vendor_id"
           },
           "price": {
             "type": "number"
@@ -4709,6 +4457,10 @@
             "readOnly": true,
             "example": "2024-04-14T08:12:44.533679Z"
           },
+          "company": {
+            "type": "integer",
+            "description": "company_id"
+          },
           "related_user": {
             "type": "integer",
             "description": "user_id"
@@ -4733,6 +4485,12 @@
               "type": "integer"
             }
           },
+          "destinations": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
           "article": {
             "type": "string"
           },
@@ -4748,62 +4506,6 @@
         "type": "array",
         "items": {
           "$ref": "#/components/schemas/Interest"
-        }
-      },
-      "QwepInterest": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "readOnly": true
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "readOnly": true,
-            "example": "2024-04-14T08:12:44.533679Z"
-          },
-          "related_user": {
-            "type": "integer",
-            "description": "user_id"
-          },
-          "vendor": {
-            "type": "string"
-          },
-          "brand": {
-            "type": "string"
-          },
-          "city": {
-            "type": "integer",
-            "description": "city_id"
-          },
-          "amount": {
-            "type": "array",
-            "items": {
-              "type": "integer"
-            }
-          },
-          "delivery_time": {
-            "type": "array",
-            "items": {
-              "type": "integer"
-            }
-          },
-          "article": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          }
-        }
-      },
-      "QwepInterests": {
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/QwepInterest"
         }
       },
       "PutAccount": {

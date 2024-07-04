@@ -259,7 +259,8 @@ export interface Offer {
    */
   created_at?: string;
   name: string;
-  vendor?: string;
+  /** vendor_id */
+  vendor?: number;
   price?: number;
   amount?: number;
   delivery_time?: number;
@@ -372,6 +373,8 @@ export interface Interest {
    * @example "2024-04-14T08:12:44.533679Z"
    */
   created_at?: string;
+  /** company_id */
+  company?: number;
   /** user_id */
   related_user?: number;
   /** brand_id */
@@ -380,34 +383,13 @@ export interface Interest {
   city?: number;
   amount?: number[];
   delivery_time?: number[];
+  destinations?: number[];
   article?: string;
   name?: string;
   description?: string;
 }
 
 export type Interests = Interest[];
-
-export interface QwepInterest {
-  id?: number;
-  /**
-   * @format date-time
-   * @example "2024-04-14T08:12:44.533679Z"
-   */
-  created_at?: string;
-  /** user_id */
-  related_user?: number;
-  vendor?: string;
-  brand?: string;
-  /** city_id */
-  city?: number;
-  amount?: number[];
-  delivery_time?: number[];
-  article?: string;
-  name?: string;
-  description?: string;
-}
-
-export type QwepInterests = QwepInterest[];
 
 export interface PutAccount {
   id?: number;
@@ -2223,7 +2205,7 @@ export class Api<
     ) =>
       this.request<Vendors, Error>({
         path: `/vendors`,
-        method: 'POST',
+        method: 'GET',
         query: query,
         secure: true,
         format: 'json',
@@ -2301,105 +2283,6 @@ export class Api<
     deleteCartItem: (params: RequestParams = {}) =>
       this.request<Response, Error>({
         path: `/cart`,
-        method: 'DELETE',
-        secure: true,
-        format: 'json',
-        ...params,
-      }),
-  };
-  qwepInterests = {
-    /**
-     * No description
-     *
-     * @tags QWEP
-     * @name GetQwepInterests
-     * @summary метод получения списка интересов
-     * @request GET:/qwep_interests/
-     * @secure
-     */
-    getQwepInterests: (params: RequestParams = {}) =>
-      this.request<QwepInterests, Error>({
-        path: `/qwep_interests/`,
-        method: 'GET',
-        secure: true,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags QWEP
-     * @name CreateQwepInterest
-     * @summary метод создания интереса
-     * @request POST:/qwep_interests/
-     * @secure
-     */
-    createQwepInterest: (data: QwepInterest, params: RequestParams = {}) =>
-      this.request<QwepInterest, Error>({
-        path: `/qwep_interests/`,
-        method: 'POST',
-        body: data,
-        secure: true,
-        type: ContentType.FormData,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags QWEP
-     * @name GetQwepInterest
-     * @summary метод получения интереса
-     * @request GET:/qwep_interests/{interest_id}
-     * @secure
-     */
-    getQwepInterest: (interestId: number, params: RequestParams = {}) =>
-      this.request<QwepInterest, Error>({
-        path: `/qwep_interests/${interestId}`,
-        method: 'GET',
-        secure: true,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags QWEP
-     * @name UpdateQwepInterest
-     * @summary метод изменения интереса
-     * @request PUT:/qwep_interests/{interest_id}
-     * @secure
-     */
-    updateQwepInterest: (
-      interestId: number,
-      data: QwepInterest,
-      params: RequestParams = {},
-    ) =>
-      this.request<QwepInterest, Error>({
-        path: `/qwep_interests/${interestId}`,
-        method: 'PUT',
-        body: data,
-        secure: true,
-        type: ContentType.Json,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags QWEP
-     * @name DeleteQwepInterest
-     * @summary метод удаления интереса
-     * @request DELETE:/qwep_interests/{interest_id}
-     * @secure
-     */
-    deleteQwepInterest: (interestId: number, params: RequestParams = {}) =>
-      this.request<InlineResponse204, Error>({
-        path: `/qwep_interests/${interestId}`,
         method: 'DELETE',
         secure: true,
         format: 'json',
