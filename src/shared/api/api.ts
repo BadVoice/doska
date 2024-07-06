@@ -17,12 +17,12 @@ const endProgressFx = createEffect(() => {
 });
 
 sample({
-  clock: debounce(requestSended, 300),
+  clock: debounce(requestSended, 350),
   target: startProgressFx,
 });
 
 sample({
-  clock: debounce(responseReceived, 300),
+  clock: debounce(responseReceived, 350),
   target: endProgressFx,
 });
 

@@ -27,7 +27,7 @@ const createOffer = createMutation({
   handler: (data: Offer) => $api.offers.createOffer(data),
 });
 
-const createOrder = createMutation({
+export const createOrder = createMutation({
   handler: (data: Order) => $api.orders.createOrder(data),
 });
 
@@ -60,7 +60,7 @@ sample({
 });
 
 sample({
-  clock: [createOffer.finished.success],
+  clock: createOffer.finished.success,
   filter: (clk) => [201].includes(clk.result.status),
   fn: (clk) =>
     ({
@@ -68,7 +68,9 @@ sample({
       offer: clk.result.data.id,
       amount: clk.result.data.amount,
       bid: clk.result.data.bid,
+      vendor: clk.result.data.vendor,
       price: clk.result.data.price,
+      delivery_time: clk.result.data.delivery_time,
     }) as Order,
   target: createOrder.start,
 });

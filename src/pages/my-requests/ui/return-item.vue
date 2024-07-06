@@ -25,8 +25,6 @@
     0: { label: 'Возврат', color: '#FFC50F' },
     1: { label: 'Возвращено', color: '#FF570F' },
   });
-
-  console.log(props.item);
 </script>
 
 <template>

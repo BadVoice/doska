@@ -1,5 +1,6 @@
 import { getOrders } from '@/entities/order';
 import { $isAuthorized } from '@/entities/session';
+import { createOrder } from '@/pages/home/model/home-model';
 import { $api } from '@/shared/api';
 import type { Bid, Order, OrderReturn } from '@/shared/api/generated/Api';
 import { appMounted } from '@/shared/model';
@@ -11,7 +12,7 @@ import {
   sample,
   type EventCallable,
 } from 'effector';
-import { delay } from 'patronum';
+import { delay, spread } from 'patronum';
 import { historyQuery } from './history-model';
 import { changeRequestStatus } from './my-requests-model';
 
@@ -74,24 +75,34 @@ function changeOrderStatus(event: EventCallable<Order>, status: 0 | 1) {
 }
 
 changeOrderStatus(confirmOrderClicked, 1);
-changeOrderStatus(cancelOrderClicked, 0);
 
-const archiveBidFx = createEffect((data: Bid) =>
-  $api.bids.updateBid(data.id ?? 1, {
-    ...data,
+const archiveBidFx = createEffect((data: Bid) => {
+  return $api.bids.updateBid(data.id ?? 1, {
+    name: data.name,
+    amount: data.amount,
     status: 3,
-  }),
-);
+  });
+});
 
 const getBidCancel = createQuery({
   handler: (data: number) => $api.bids.getBid(data),
 });
 
+const deleteOrder = createMutation({
+  handler: (data: number) => $api.orders.deleteOrder(data),
+});
+
 sample({
   clock: cancelOrderClicked,
   filter: (clk) => clk.status === 0,
-  fn: (clk) => clk.bid ?? 1,
-  target: getBidCancel.start,
+  fn: (clk) => ({
+    bidId: clk.bid ?? 1,
+    order: clk.id ?? 1,
+  }),
+  target: spread({
+    bidId: getBidCancel.start,
+    order: deleteOrder.start,
+  }),
 });
 
 sample({
@@ -186,6 +197,8 @@ export const getReturns = createQuery({
         JSON.stringify(bids.data.results?.find((b) => b.id === order.bid)),
       );
 
+      console.log(bid);
+
       delete order?.id;
       delete order?.status;
 
@@ -237,7 +250,10 @@ sample({
 
 keepFresh(getOrders, {
   automatically: true,
-  triggers: [deleteOrderMutation.finished.success],
+  triggers: [
+    deleteOrderMutation.finished.success,
+    createOrder.finished.success,
+  ],
 });
 
 keepFresh(getReturns, {
