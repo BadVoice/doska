@@ -14,6 +14,7 @@
 
   defineProps<{
     item: Order;
+    hideHistory?: boolean;
   }>();
 
   const showHistory = useUnit(historyClicked);
@@ -51,6 +52,7 @@
             class="flex h-fit w-[150px] flex-col justify-center overflow-hidden rounded-[10px] p-0">
             <PopoverClose class="flex flex-col gap-y-0">
               <Button
+                v-if="!hideHistory"
                 @click="showHistory(item)"
                 variant="ghost"
                 class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">

@@ -4,7 +4,7 @@ import { $isAuthorized } from '@/entities/session';
 import { $searchQS, requestClicked } from '@/pages/my-requests';
 import { $api } from '@/shared/api';
 import { $qwepApi } from '@/shared/api/api';
-import type { Item, Offer, Order } from '@/shared/api/generated/Api';
+import type { Bid, Item, Offer, Order } from '@/shared/api/generated/Api';
 import { appMounted } from '@/shared/model';
 import { toast } from '@/shared/ui/toast';
 import { createMutation, createQuery } from '@farfetched/core';
@@ -29,6 +29,10 @@ const createOffer = createMutation({
 
 export const createOrder = createMutation({
   handler: (data: Order) => $api.orders.createOrder(data),
+});
+
+const editBidMutation = createMutation({
+  handler: (data: Bid) => $api.bids.updateBid(data?.id ?? 1, data),
 });
 
 sample({
