@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { type Order } from '@/shared/api/generated/Api';
+  import { type Offer, type Order } from '@/shared/api/generated/Api';
   import { cn } from '@/shared/lib';
   import { Button, Popover, PopoverContent, PopoverTrigger } from '@/shared/ui';
   import { useUnit } from 'effector-vue/composition';
@@ -12,8 +12,8 @@
     returnOrderClicked,
   } from '../model/order-model';
 
-  defineProps<{
-    item: Order;
+  const props = defineProps<{
+    item: Order & Offer;
     hideHistory?: boolean;
   }>();
 

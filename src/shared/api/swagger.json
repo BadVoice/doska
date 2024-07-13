@@ -3226,7 +3226,7 @@
       }
     },
     "/vendors": {
-      "post": {
+      "get": {
         "tags": ["QWEP"],
         "summary": "метод получения списка поставщиков",
         "operationId": "getVendors",
@@ -3417,6 +3417,104 @@
         "tags": ["QWEP"],
         "summary": "метод удаления позиции корзины",
         "operationId": "deleteCartItem",
+        "responses": {
+          "200": {
+            "description": "успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://test.qrq.ru/qwep/api/v1/",
+            "description": "test qwep server"
+          }
+        ]
+      }
+    },
+    "/order": {
+      "get": {
+        "tags": ["QWEP"],
+        "summary": "метод создания QWEP заказа",
+        "operationId": "getQwepOrder",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/order_body"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "успешный ответ с формой",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Vendors"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "ошибка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://test.qrq.ru/qwep/api/v1/",
+            "description": "test qwep server"
+          }
+        ]
+      },
+      "post": {
+        "tags": ["QWEP"],
+        "summary": "метод создания QWEP заказа",
+        "operationId": "createQwepOrder",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/order_body_1"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "успешный ответ",
@@ -4231,6 +4329,24 @@
             "type": "integer",
             "description": "vendor_id"
           },
+          "brand": {
+            "type": "integer",
+            "description": "brand_id"
+          },
+          "raw_brand": {
+            "type": "string"
+          },
+          "qwep_vendor_id": {
+            "type": "string",
+            "description": "UUID"
+          },
+          "qwep_branch_id": {
+            "type": "string",
+            "description": "UUID"
+          },
+          "article": {
+            "type": "string"
+          },
           "price": {
             "type": "number"
           },
@@ -4782,6 +4898,15 @@
           },
           "parsedDelivery": {
             "type": "string"
+          },
+          "vendor_id": {
+            "type": "integer"
+          },
+          "qwep_vendor_id": {
+            "type": "string"
+          },
+          "qwep_branch_id": {
+            "type": "string"
           }
         }
       },
@@ -4916,6 +5041,44 @@
           },
           "quantity": {
             "type": "integer"
+          }
+        }
+      },
+      "order_body": {
+        "required": ["account_id"],
+        "type": "object",
+        "properties": {
+          "account_id": {
+            "type": "integer"
+          }
+        }
+      },
+      "order_field_values": {
+        "type": "object",
+        "properties": {
+          "field_name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "order_body_1": {
+        "required": ["account_id", "field_values", "form_id"],
+        "type": "object",
+        "properties": {
+          "account_id": {
+            "type": "integer"
+          },
+          "form_id": {
+            "type": "string"
+          },
+          "field_values": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/order_field_values"
+            }
           }
         }
       },

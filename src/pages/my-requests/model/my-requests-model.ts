@@ -152,9 +152,9 @@ changeRequestStatus(archiveRequestClicked, 3);
 changeRequestStatus(cancelStatusClicked, 0);
 
 sample({
-  source: { $isAuthorized, $currentPage },
+  source: { $currentPage },
   clock: appMounted,
-  filter: (src) => src.$isAuthorized,
+  filter: $isAuthorized,
   fn: (src) => ({ page: src.$currentPage }) as const,
   target: myRequestsQuery.start,
 });

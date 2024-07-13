@@ -4,7 +4,7 @@ import { $isAuthorized } from '@/entities/session';
 import { $searchQS, requestClicked } from '@/pages/my-requests';
 import { $api } from '@/shared/api';
 import { $qwepApi } from '@/shared/api/api';
-import type { Bid, Item, Offer, Order } from '@/shared/api/generated/Api';
+import type { Item, Offer, Order } from '@/shared/api/generated/Api';
 import { appMounted } from '@/shared/model';
 import { toast } from '@/shared/ui/toast';
 import { createMutation, createQuery } from '@farfetched/core';
@@ -14,7 +14,7 @@ export const itemBuyed = createEvent<Item>();
 export const offerBuyed = createEvent<Offer>();
 
 const getVendors = createQuery({
-  handler: () => $qwepApi.vendors.getVendors(),
+  handler: () => $qwepApi.vendors.getVendors(undefined),
 });
 
 sample({
@@ -29,10 +29,6 @@ const createOffer = createMutation({
 
 export const createOrder = createMutation({
   handler: (data: Order) => $api.orders.createOrder(data),
-});
-
-const editBidMutation = createMutation({
-  handler: (data: Bid) => $api.bids.updateBid(data?.id ?? 1, data),
 });
 
 sample({
@@ -54,6 +50,7 @@ sample({
           src.vendors?.data.find((v) =>
             v.qwep_vendors?.find((qv) => qv.title === clk.vendorTitle),
           )?.id ?? 1,
+        article: clk.article,
       },
       src.$selectedCompany?.id && { company: src.$selectedCompany.id },
       clk.parsedDelivery && {

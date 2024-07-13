@@ -261,6 +261,14 @@ export interface Offer {
   name: string;
   /** vendor_id */
   vendor?: number;
+  /** brand_id */
+  brand?: number;
+  raw_brand?: string;
+  /** UUID */
+  qwep_vendor_id?: string;
+  /** UUID */
+  qwep_branch_id?: string;
+  article?: string;
   price?: number;
   amount?: number;
   delivery_time?: number;
@@ -494,6 +502,9 @@ export interface Item {
   info?: ItemInfo;
   vendorTitle?: string;
   parsedDelivery?: string;
+  vendor_id?: number;
+  qwep_vendor_id?: string;
+  qwep_branch_id?: string;
 }
 
 export interface SearchResponse {
@@ -548,6 +559,21 @@ export interface CartBody1 {
   search_id: string;
   item_id: string;
   quantity: number;
+}
+
+export interface OrderBody {
+  account_id: number;
+}
+
+export interface OrderFieldValues {
+  field_name?: string;
+  value?: string;
+}
+
+export interface OrderBody1 {
+  account_id: number;
+  form_id: string;
+  field_values: OrderFieldValues[];
 }
 
 export interface ItemPrice {
@@ -2193,7 +2219,7 @@ export class Api<
      * @tags QWEP
      * @name GetVendors
      * @summary метод получения списка поставщиков
-     * @request POST:/vendors
+     * @request GET:/vendors
      * @secure
      */
     getVendors: (
@@ -2285,6 +2311,47 @@ export class Api<
         path: `/cart`,
         method: 'DELETE',
         secure: true,
+        format: 'json',
+        ...params,
+      }),
+  };
+  order = {
+    /**
+     * No description
+     *
+     * @tags QWEP
+     * @name GetQwepOrder
+     * @summary метод создания QWEP заказа
+     * @request GET:/order
+     * @secure
+     */
+    getQwepOrder: (data: OrderBody, params: RequestParams = {}) =>
+      this.request<Vendors, Error>({
+        path: `/order`,
+        method: 'GET',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags QWEP
+     * @name CreateQwepOrder
+     * @summary метод создания QWEP заказа
+     * @request POST:/order
+     * @secure
+     */
+    createQwepOrder: (data: OrderBody1, params: RequestParams = {}) =>
+      this.request<Response, Error>({
+        path: `/order`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
         format: 'json',
         ...params,
       }),

@@ -1,5 +1,5 @@
 import { $api } from '@/shared/api';
-import type { Order, OrderReturn, Orders } from '@/shared/api/generated/Api';
+import type { Order, OrderReturn } from '@/shared/api/generated/Api';
 import { createQuery } from '@farfetched/core';
 import { createEvent, sample } from 'effector';
 import type { BidWithName } from './my-requests-model';
@@ -11,10 +11,19 @@ export const historyClickedReturn = createEvent<
 >();
 
 export const historyQuery = createQuery({
-  handler: async (id: number) =>
-    (await $api.bids.getBid(id)).data.history as unknown as {
-      orders: Orders;
-    },
+  handler: async (id: number) => {
+    const bid = await $api.bids.getBid(id);
+    const brands = await $api.brands.getBrands();
+    const categories = await $api.categories.getCategories();
+
+    return {
+      ...bid.data,
+      brandName: brands.data.find((brand) => brand.id === bid.data.brand),
+      categoryName: categories.data.find(
+        (category) => category.id === bid.data.category,
+      ),
+    };
+  },
 });
 
 sample({

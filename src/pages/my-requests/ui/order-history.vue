@@ -1,31 +1,35 @@
 <script lang="ts" setup>
-  import { type Order, type OrderReturn } from '@/shared/api/generated/Api';
+  import {
+    type Order,
+    type OrderReturn,
+    type OrderWithHistory,
+  } from '@/shared/api/generated/Api';
   import { cn } from '@/shared/lib';
   import { Button, Popover, PopoverContent, PopoverTrigger } from '@/shared/ui';
   import { useUnit } from 'effector-vue/composition';
   import { PopoverClose } from 'radix-vue';
   import { ref } from 'vue';
-  import { historyClickedReturn } from '../model/history-model';
   import {
-    cancelReturnClicked,
-    confirmReturnClicked,
+    confirmOrderClicked,
+    returnOrderClicked,
   } from '../model/order-model';
+  import ReturnItem from './return-item.vue';
 
-  defineProps<{
-    item: OrderReturn & Order & { brand: string };
-    hideHistory?: boolean;
+  const props = defineProps<{
+    item: OrderWithHistory;
   }>();
 
-  const cancelReturn = useUnit(cancelReturnClicked);
-  const confirmReturn = useUnit(confirmReturnClicked);
-  const showHistory = useUnit(historyClickedReturn);
+  const confirmOrder = useUnit(confirmOrderClicked);
+  const returnOrder = useUnit(returnOrderClicked);
 
   const popoverOpened = ref(false);
 
   const StatusDictionary = Object.freeze({
-    0: { label: 'Возврат', color: '#FFC50F' },
-    1: { label: 'Возвращено', color: '#FF570F' },
+    0: { label: 'Заказано', color: '#40CCBA' },
+    1: { label: 'Исполнено', color: '#0017FC' },
   });
+
+  type ReturnItem = OrderReturn & Order & { brand: string };
 </script>
 
 <template>
@@ -33,9 +37,7 @@
     class="flex flex-col items-start justify-between gap-y-1 rounded-lg border-2 bg-white p-4 pr-5 duration-200 hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10">
     <div class="flex w-full flex-col gap-y-1">
       <div class="flex w-full justify-between">
-        <p class="text-sm font-normal text-[#101828]">
-          {{ item.name }}
-        </p>
+        <p class="text-sm font-normal text-[#101828]">{{ item.name }}</p>
         <Popover @update:open="(value) => (popoverOpened = value)">
           <PopoverTrigger @click.stop>
             <span
@@ -52,24 +54,18 @@
             class="flex h-fit w-[150px] flex-col justify-center overflow-hidden rounded-[10px] p-0">
             <PopoverClose class="flex flex-col gap-y-0">
               <Button
-                @click="cancelReturn(item)"
+                v-if="item.status === 1"
                 variant="ghost"
+                @click="returnOrder(item)"
                 class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
-                <p class="w-full text-[14px] font-semibold">Отменить</p>
+                <p class="w-full text-[14px] font-semibold">Вернуть</p>
               </Button>
               <Button
                 v-if="item.status === 0"
                 variant="ghost"
-                @click="confirmReturn(item)"
+                @click="confirmOrder(item)"
                 class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
-                <p class="w-full text-[14px] font-semibold">Возвращено</p>
-              </Button>
-              <Button
-                v-if="!hideHistory"
-                variant="ghost"
-                @click="showHistory(item)"
-                class="flex h-full w-full px-4 py-2 text-start hover:bg-[#F9FAFB]">
-                <p class="w-full text-[14px] font-semibold">История</p>
+                <p class="w-full text-[14px] font-semibold">Исполнить</p>
               </Button>
             </PopoverClose>
           </PopoverContent>
@@ -77,15 +73,14 @@
       </div>
       <div class="flex w-full flex-col items-start justify-between gap-y-1">
         <div class="flex w-full flex-row justify-between">
-          <div class="mt-1 flex w-full justify-between gap-x-2 pr-4">
+          <div class="flex w-full justify-between gap-x-2 pr-4">
             <p class="text-xs font-normal text-[#858FA3]">
               {{ item.amount }} шт
             </p>
+
             <p class="text-xs font-normal text-[#858FA3]">{{ item.price }} ₽</p>
-            <p class="text-xs font-normal text-[#858FA3]">{{ item.city }}</p>
           </div>
         </div>
-        <p class="text-xs font-normal text-[#858FA3]">{{ item.brand }}</p>
         <div class="flex items-center gap-x-1">
           <span
             class="mt-px h-2.5 w-2.5 rounded-full"
@@ -103,4 +98,9 @@
       </div>
     </div>
   </div>
+
+  <ReturnItem
+    hide-history
+    :item="{ ...returnEl, ...item } as unknown as ReturnItem"
+    v-for="returnEl of item.order_returns" />
 </template>

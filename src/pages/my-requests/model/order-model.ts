@@ -2,7 +2,12 @@ import { getOrders } from '@/entities/order';
 import { $isAuthorized } from '@/entities/session';
 import { createOrder } from '@/pages/home/model/home-model';
 import { $api } from '@/shared/api';
-import type { Bid, Order, OrderReturn } from '@/shared/api/generated/Api';
+import type {
+  Bid,
+  Order,
+  OrderReturn,
+  OrderWithHistory,
+} from '@/shared/api/generated/Api';
 import { appMounted } from '@/shared/model';
 import { createMutation, createQuery, keepFresh } from '@farfetched/core';
 import {
@@ -17,10 +22,10 @@ import { historyQuery } from './history-model';
 import { changeRequestStatus } from './my-requests-model';
 
 export const deleteOrderClicked = createEvent<Order>();
-export const returnOrderClicked = createEvent<Order>();
+export const returnOrderClicked = createEvent<Order | OrderWithHistory>();
 export const confirmReturnClicked = createEvent<OrderReturn & Order>();
 export const cancelReturnClicked = createEvent<OrderReturn & Order>();
-export const confirmOrderClicked = createEvent<Order>();
+export const confirmOrderClicked = createEvent<Order | OrderWithHistory>();
 export const cancelOrderClicked = createEvent<Order>();
 
 const $editedReturn = createStore<number | null>(null).on(
@@ -30,7 +35,7 @@ const $editedReturn = createStore<number | null>(null).on(
 
 const $currentOrder = createStore<Order | null>(null).on(
   [returnOrderClicked],
-  (_, clk) => clk,
+  (_, clk) => clk as Order,
 );
 
 const deleteOrderMutation = createMutation({
@@ -74,7 +79,7 @@ function changeOrderStatus(event: EventCallable<Order>, status: 0 | 1) {
   });
 }
 
-changeOrderStatus(confirmOrderClicked, 1);
+changeOrderStatus(confirmOrderClicked as EventCallable<Order>, 1);
 
 const archiveBidFx = createEffect((data: Bid) => {
   return $api.bids.updateBid(data.id ?? 1, {
@@ -196,8 +201,6 @@ export const getReturns = createQuery({
       const bid = JSON.parse(
         JSON.stringify(bids.data.results?.find((b) => b.id === order.bid)),
       );
-
-      console.log(bid);
 
       delete order?.id;
       delete order?.status;
