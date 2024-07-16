@@ -6,9 +6,10 @@ import { createEvent, createStore, sample } from 'effector';
 export const userAuthorized = createEvent();
 
 function parseJwt(token: string) {
-  var base64Url = token.split('.')[1];
-  var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  var jsonPayload = decodeURIComponent(
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+
+  const jsonPayload = decodeURIComponent(
     window
       .atob(base64)
       .split('')
@@ -21,8 +22,7 @@ function parseJwt(token: string) {
   return JSON.parse(jsonPayload);
 }
 export const $isAuthorized = createStore(
-  parseJwt(localStorage.getItem('token') ?? '').exp * 1000 >=
-    new Date().getTime(),
+  localStorage.getItem('token') ? parseJwt(localStorage.getItem('token')!) : false,
 );
 
 export const getSelf = createQuery({
