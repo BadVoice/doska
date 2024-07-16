@@ -28,6 +28,7 @@ import {
   offersQuery,
   preSearchQuery,
 } from '@/entities/offer';
+import { getVendors } from '@/entities/offer/model/offers-model';
 import { $isAuthorized } from '@/entities/session';
 import type { Bid, Brand } from '@/shared/api/generated/Api';
 import { appMounted } from '@/shared/model';
@@ -76,6 +77,12 @@ export const $currentPage = createStore(1).on(pageSelected, (_, clk) => clk);
 export const $searchQS = createStore<{ search: string; brand: string } | null>(
   null,
 );
+
+sample({
+  clock: requestClicked,
+  filter: $isAuthorized,
+  target: getVendors.start,
+});
 
 export const $filteredRequests = combine(
   {

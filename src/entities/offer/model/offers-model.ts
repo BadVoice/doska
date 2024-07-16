@@ -1,3 +1,4 @@
+import { $isAuthorized } from '@/entities/session';
 import { $api } from '@/shared/api';
 import { $qwepApi } from '@/shared/api/api';
 import type {
@@ -5,6 +6,7 @@ import type {
   PreSearchRequest,
   SearchRequest,
 } from '@/shared/api/generated/Api';
+import { appMounted } from '@/shared/model';
 import { createMutation, createQuery } from '@farfetched/core';
 import { createEvent, createStore, sample } from 'effector';
 import { debug, not } from 'patronum';
@@ -15,6 +17,16 @@ export const offerClicked = createEvent<Offer>();
 
 export const deleteOfferMutation = createMutation({
   handler: (id: number) => $api.offers.deleteOffer(id),
+});
+
+export const getVendors = createQuery({
+  handler: () => $qwepApi.vendors.getVendors(undefined),
+});
+
+sample({
+  clock: [appMounted, $isAuthorized],
+  filter: $isAuthorized,
+  target: getVendors.start,
 });
 
 sample({

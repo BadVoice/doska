@@ -84,13 +84,16 @@
       </div>
       <div class="flex w-full flex-col items-start justify-between gap-y-1">
         <div class="flex w-full flex-row justify-between">
-          <div class="flex w-full justify-between gap-x-2 pr-4">
+          <div class="jsustify-between flex w-full gap-x-2 pr-4">
             <p class="text-xs font-normal text-[#858FA3]">
               {{ item.amount }} шт
             </p>
 
             <p class="text-xs font-normal text-[#858FA3]">{{ item.price }} ₽</p>
             <p class="text-xs font-normal text-[#858FA3]">{{ item.city }}</p>
+            <p class="text-xs font-normal text-[#858FA3]">
+              {{ item.raw_brand }}
+            </p>
           </div>
         </div>
         <div class="flex items-center gap-x-1">

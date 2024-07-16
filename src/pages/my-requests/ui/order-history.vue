@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+  import { OfferItem } from '@/entities/offer';
   import {
     type Order,
     type OrderReturn,
@@ -15,7 +16,7 @@
   } from '../model/order-model';
   import ReturnItem from './return-item.vue';
 
-  const props = defineProps<{
+  defineProps<{
     item: OrderWithHistory;
   }>();
 
@@ -33,6 +34,10 @@
 </script>
 
 <template>
+  <div
+    class="flex w-full cursor-default flex-col items-start justify-between rounded-lg border border-[#D0D4DB] bg-white p-4 duration-200 hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10">
+    <OfferItem v-if="item?.offer" :item="item.offer" />
+  </div>
   <div
     class="flex flex-col items-start justify-between gap-y-1 rounded-lg border-2 bg-white p-4 pr-5 duration-200 hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10">
     <div class="flex w-full flex-col gap-y-1">
@@ -79,6 +84,11 @@
             </p>
 
             <p class="text-xs font-normal text-[#858FA3]">{{ item.price }} ₽</p>
+            <p
+              v-if="item.offer?.raw_brand"
+              class="text-xs font-normal text-[#858FA3]">
+              {{ item.offer?.raw_brand }}
+            </p>
           </div>
         </div>
         <div class="flex items-center gap-x-1">

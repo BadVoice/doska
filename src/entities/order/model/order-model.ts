@@ -16,6 +16,7 @@ export const getOrders = createQuery({
         return {
           ...order,
           ...offers.data.find((offer) => order.offer === offer.id),
+          raw_brand: offers.data.find((offer) => order.offer === offer.id)?.raw_brand
         };
       }),
     };

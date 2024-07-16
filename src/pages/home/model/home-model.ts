@@ -1,27 +1,15 @@
 import { $selectedRequestId } from '@/entities/advertisement/';
 import { $selectedCompany } from '@/entities/company';
-import { $isAuthorized } from '@/entities/session';
-import { $searchQS, requestClicked } from '@/pages/my-requests';
+import { getVendors } from '@/entities/offer/model/offers-model';
+import { $searchQS } from '@/pages/my-requests';
 import { $api } from '@/shared/api';
-import { $qwepApi } from '@/shared/api/api';
 import type { Item, Offer, Order } from '@/shared/api/generated/Api';
-import { appMounted } from '@/shared/model';
 import { toast } from '@/shared/ui/toast';
-import { createMutation, createQuery } from '@farfetched/core';
+import { createMutation } from '@farfetched/core';
 import { createEffect, createEvent, sample } from 'effector';
 
 export const itemBuyed = createEvent<Item>();
 export const offerBuyed = createEvent<Offer>();
-
-const getVendors = createQuery({
-  handler: () => $qwepApi.vendors.getVendors(undefined),
-});
-
-sample({
-  clock: [appMounted, $isAuthorized, requestClicked],
-  filter: $isAuthorized,
-  target: getVendors.start,
-});
 
 const createOffer = createMutation({
   handler: (data: Offer) => $api.offers.createOffer(data),
@@ -51,6 +39,7 @@ sample({
             v.qwep_vendors?.find((qv) => qv.title === clk.vendorTitle),
           )?.id ?? 1,
         article: clk.article,
+        raw_brand: clk.brand,
       },
       src.$selectedCompany?.id && { company: src.$selectedCompany.id },
       clk.parsedDelivery && {
