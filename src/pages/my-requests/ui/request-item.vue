@@ -175,12 +175,6 @@
               {{ item.categoryName }}
             </p>
           </div>
-          <div>
-            <p class="text-xs font-normal text-[#858FA3]" v-if="item.company">
-              {{ item.company }}
-            </p>
-            <p class="text-xs font-normal text-[#858FA3]" v-else>Не указано</p>
-          </div>
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
   import { OfferItem } from '@/entities/offer';
+  import { getVendors } from '@/entities/offer/model/offers-model';
   import {
     type Order,
     type OrderReturn,
@@ -30,19 +31,22 @@
     1: { label: 'Исполнено', color: '#0017FC' },
   });
 
+  const { data: vendors } = useUnit(getVendors);
+
   type ReturnItem = OrderReturn & Order & { brand: string };
 </script>
 
 <template>
-  <div
-    class="flex w-full cursor-default flex-col items-start justify-between rounded-lg border border-[#D0D4DB] bg-white p-4 duration-200 hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10">
-    <OfferItem v-if="item?.offer" :item="item.offer" />
-  </div>
+  <ReturnItem
+    hide-history
+    :item="{ ...returnEl, ...item } as unknown as ReturnItem"
+    v-for="returnEl of item.order_returns" />
+
   <div
     class="flex flex-col items-start justify-between gap-y-1 rounded-lg border-2 bg-white p-4 pr-5 duration-200 hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10">
     <div class="flex w-full flex-col gap-y-1">
       <div class="flex w-full justify-between">
-        <p class="text-sm font-normal text-[#101828]">{{ item.name }}</p>
+        <p class="text-[14px] font-semibold text-black">{{ item.name }}</p>
         <Popover @update:open="(value) => (popoverOpened = value)">
           <PopoverTrigger @click.stop>
             <span
@@ -77,17 +81,32 @@
         </Popover>
       </div>
       <div class="flex w-full flex-col items-start justify-between gap-y-1">
-        <div class="flex w-full flex-row justify-between">
-          <div class="flex w-full justify-between gap-x-2 pr-4">
-            <p class="text-xs font-normal text-[#858FA3]">
-              {{ item.amount }} шт
-            </p>
+        <div class="flex w-full flex-col justify-between">
+          <p class="-mt-1.5 font-bold text-black">{{ item.price }} ₽</p>
 
-            <p class="text-xs font-normal text-[#858FA3]">{{ item.price }} ₽</p>
+          <div class="flex w-full justify-between gap-x-2">
+            <p class="text-[14px] font-normal text-[#858FA3]">
+              {{
+                item.offer?.article && item.offer?.raw_brand
+                  ? `${item.offer?.article}, ${item.offer?.raw_brand}`
+                  : item.offer?.article
+                    ? item.offer?.article
+                    : 'Не указано'
+              }}
+            </p>
             <p
               v-if="item.offer?.raw_brand"
-              class="text-xs font-normal text-[#858FA3]">
-              {{ item.offer?.raw_brand }}
+              class="text-[14px] font-normal text-[#858FA3]">
+              {{ item.offer?.delivery_time }} дн.
+            </p>
+            <p class="text-[14px] font-normal text-[#667085]">
+              {{
+                vendors?.data.find((v) => v.id === item.offer?.vendor)?.title ??
+                'Не указано'
+              }}
+            </p>
+            <p class="text-[14px] font-normal text-black">
+              {{ item.amount }} шт
             </p>
           </div>
         </div>
@@ -108,9 +127,12 @@
       </div>
     </div>
   </div>
-
-  <ReturnItem
-    hide-history
-    :item="{ ...returnEl, ...item } as unknown as ReturnItem"
-    v-for="returnEl of item.order_returns" />
+  <div
+    class="flex w-full cursor-default flex-col items-start justify-between rounded-lg border border-[#D0D4DB] bg-white p-4 duration-200 hover:border-[#0017FC] hover:bg-[#1778EA] hover:bg-opacity-10">
+    <OfferItem
+      :amount="item.amount"
+      v-if="item?.offer"
+      :item="item.offer"
+      showStatusMark />
+  </div>
 </template>

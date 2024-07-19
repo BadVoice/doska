@@ -22,7 +22,9 @@ function parseJwt(token: string) {
   return JSON.parse(jsonPayload);
 }
 export const $isAuthorized = createStore(
-  localStorage.getItem('token') ? parseJwt(localStorage.getItem('token')!) : false,
+  localStorage.getItem('token')
+    ? parseJwt(localStorage.getItem('token')!).exp * 1000 >= Date.now()
+    : false,
 );
 
 export const getSelf = createQuery({
