@@ -1,9 +1,9 @@
 <script setup lang="ts">
   import { type Offer } from '@/shared/api/generated/Api';
-  import { Button } from '@/shared/ui/button';
-  import { useUnit } from 'effector-vue/composition';
-  import { Trash } from 'lucide-vue-next';
-  import { deleteOfferClicked, getVendors } from '../model/offers-model';
+import { Button } from '@/shared/ui/button';
+import { useUnit } from 'effector-vue/composition';
+import { Trash } from 'lucide-vue-next';
+import { deleteOfferClicked, getVendors } from '../model/offers-model';
 
   defineProps<{
     item: Offer;
@@ -60,8 +60,23 @@
       {{ item + 'дн.' }}
     </p>-->
   </div>
-  <div v-if="showStatusMark" class="flex items-center gap-x-1">
+  <div  v-if="showStatusMark" class="flex w-full justify-between">
+    <div class="flex items-center gap-x-1">
     <span class="mt-px h-2.5 w-2.5 rounded-full bg-[#4760F6]" />
     <p class="text-[14px] font-normal text-[#4760F6]">Предложение</p>
   </div>
+    <p class="text-[14px] font-normal text-[#667085]">
+            {{
+              new Date(Date.parse(item.created_at!))
+                .toLocaleString('ru-RU', {
+                  timeStyle: 'short',
+                  dateStyle: 'short',
+                })
+                .split(', ')
+                .reverse()
+                .join(' ')
+            }}
+          </p>
+  </div>
+ 
 </template>

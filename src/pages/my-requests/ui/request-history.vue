@@ -39,7 +39,10 @@
           hideHistory
           :item="item as OrderWithHistory"
           v-for="item in (history?.history as unknown as IHistory)?.orders" />
-        <RequestItem :item="history as BidWithName" :status="status" />
+        <RequestItem
+          show-date
+          :item="history as BidWithName"
+          :status="status" />
       </div>
     </ScrollArea>
   </div>

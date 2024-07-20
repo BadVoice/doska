@@ -19,6 +19,7 @@
   defineProps<{
     status: { color: string; text: string }[];
     item: BidWithName;
+    showDate?: boolean;
   }>();
 
   function renderFile(file: File) {
@@ -185,7 +186,30 @@
         alt="attachment"
         class="h-10 w-10 object-cover" />
     </div>
-    <div class="flex items-center gap-x-1">
+
+    <div v-if="showDate" class="flex w-full justify-between">
+      <div class="flex items-center gap-x-1">
+        <span
+          :style="{ backgroundColor: status[item.status ?? 0].color }"
+          class="mt-0.5 h-2 w-[9px] rounded-full" />
+        <p class="text-sm" :style="{ color: status[item.status ?? 0].color }">
+          {{ status[item.status ?? 0].text }}
+        </p>
+      </div>
+      <p class="text-[14px] font-normal text-[#667085]">
+        {{
+          new Date(Date.parse(item.created_at!))
+            .toLocaleString('ru-RU', {
+              timeStyle: 'short',
+              dateStyle: 'short',
+            })
+            .split(', ')
+            .reverse()
+            .join(' ')
+        }}
+      </p>
+    </div>
+    <div v-else class="flex items-center gap-x-1">
       <span
         :style="{ backgroundColor: status[item.status ?? 0].color }"
         class="mt-0.5 h-2 w-[9px] rounded-full" />

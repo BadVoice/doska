@@ -110,18 +110,32 @@
             </p>
           </div>
         </div>
-        <div class="flex items-center gap-x-1">
-          <span
-            class="mt-px h-2.5 w-2.5 rounded-full"
-            :style="{
-              backgroundColor: StatusDictionary[item.status as 0 | 1].color,
-            }" />
-          <p
-            class="text-[14px] font-normal"
-            :style="{
-              color: StatusDictionary[item.status as 0 | 1].color,
-            }">
-            {{ StatusDictionary[item.status as 0 | 1].label }}
+        <div class="flex w-full justify-between">
+          <div class="flex items-center gap-x-1">
+            <span
+              class="mt-px h-2.5 w-2.5 rounded-full"
+              :style="{
+                backgroundColor: StatusDictionary[item.status as 0 | 1].color,
+              }" />
+            <p
+              class="text-[14px] font-normal"
+              :style="{
+                color: StatusDictionary[item.status as 0 | 1].color,
+              }">
+              {{ StatusDictionary[item.status as 0 | 1].label }}
+            </p>
+          </div>
+          <p class="text-[14px] font-normal text-[#667085]">
+            {{
+              new Date(Date.parse(item.created_at!))
+                .toLocaleString('ru-RU', {
+                  timeStyle: 'short',
+                  dateStyle: 'short',
+                })
+                .split(', ')
+                .reverse()
+                .join(' ')
+            }}
           </p>
         </div>
       </div>
