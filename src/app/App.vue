@@ -2,48 +2,54 @@
   import { onMounted, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
 
-  import { CreateAdvertisement } from '@/features/create-advertisement';
+  import {
+    $showCreateAdvertisement,
+    CreateAdvertisement,
+  } from '@/features/create-advertisement';
   import { Filter } from '@/features/filter';
   import { OfferCard, ProductCard } from '@/pages/home';
-  import type { Item } from '@/shared/api/generated/Api';
-  import { Auth } from '@/widgets/auth';
+  import type { Item, Order, OrderReturns } from '@/shared/api/generated/Api';
+  import {
+    $showAuth,
+    addCompanyClicked,
+    Auth,
+    handleShowAuthChanged,
+  } from '@/widgets/auth';
   import { Header } from '@/widgets/header';
-  import { ManuallyAddOffer, Offers, Search } from '@/widgets/offers';
+  import {
+    $showAddOfferModal,
+    ManuallyAddOffer,
+    Offers,
+    Search,
+  } from '@/widgets/offers';
   import { Sidebar } from '@/widgets/sidebar';
 
   import { $selectedAdvertisement } from '@/entities/advertisement';
   import { searchQuery } from '@/entities/offer';
-  import type { BidWithName } from '@/entities/requests';
-  import { $showCreateAdvertisement } from '@/features/create-advertisement';
   import { AdvertisementPage } from '@/pages/advertisement';
-  import { OffersPage } from '@/pages/offers';
+  import {
+    $visibleOffersPage,
+    OffersPage,
+    offersPageVisibilityChanged,
+  } from '@/pages/offers';
 
   import {
     $currentPage,
     $filteredRequests,
     $requestViewMode,
-    RequestHistory,
     requestClicked,
+    RequestHistory,
     requestViewModeChanged,
   } from '@/pages/my-requests';
-  import {
-    $visibleOffersPage,
-    offersPageVisibilityChanged,
-  } from '@/pages/offers';
   import { Toaster } from '@/shared/ui/toast';
-  import {
-    $showAuth,
-    addCompanyClicked,
-    handleShowAuthChanged,
-  } from '@/widgets/auth';
   import {
     ChangeCompany,
     changeCompanyVisibleChanged,
   } from '@/widgets/change-company';
-  import { $showAddOfferModal } from '@/widgets/offers';
   import { useUnit } from 'effector-vue/composition';
   import { offerClicked } from '../entities/offer/model/offers-model';
   import { type Offer } from '../shared/api/generated/Api';
+  import type { BidWithName } from '@/entities/requests';
 
   const route = useRoute();
   const router = useRouter();
@@ -209,6 +215,9 @@
     productItem.value = undefined;
     offerItem.value = undefined;
   });
+  type IRequests = (BidWithName & {
+    orders: Order[];
+  } & { returns: OrderReturns & Order & { brand: string } })[];
 </script>
 
 <template>
@@ -226,7 +235,7 @@
             !isCreateAdvertisementOpen) ||
           (!isMobile && !isAuthOpen && !isSidebarOpen)
         "
-        :requests="filteredRequests as BidWithName[]"
+        :requests="filteredRequests as IRequests"
         @submit-login="changeAuthVisibility()"
         @open-sidebar="isSidebarOpen = true" />
 

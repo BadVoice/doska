@@ -19,8 +19,8 @@
   import { useRoute, useRouter } from 'vue-router';
   import {
     $currentPage,
-    $filterOpened,
     $filteredRequests,
+    $filterOpened,
     $searchQS,
     filterVisibilityChanged,
     pageSelected,
@@ -30,6 +30,7 @@
   import OrderItem from './order-item.vue';
   import RequestItem from './request-item.vue';
   import ReturnItem from './return-item.vue';
+
   const emit = defineEmits(['handleData']);
   const router = useRouter();
   const route = useRoute();
@@ -118,42 +119,23 @@
         </div>
       </div>
       <ScrollArea class="h-[calc(100vh-186px)]">
-        <DynamicScroller
-          v-if="selectedSortType >= -2 && !pending && filteredList"
-          :items="filteredList ?? []"
-          :min-item-size="148"
-          v-slot="{ item, index, active }"
-          class="my-4 flex flex-col gap-y-2 px-4">
-          <DynamicScrollerItem
-            :item="item"
-            :active="active"
-            :data-index="index"
-            :size-dependencies="[item.name]">
-            <div class="pb-4">
+        <div class="my-4 flex flex-col gap-y-6 px-4">
+          <div
+            v-if="selectedSortType >= -2 && !pending && filteredList"
+            v-for="item in filteredList">
+            <div class="flex flex-col gap-y-2.5">
+              <ReturnItem
+                hide-date
+                :item="returnItem as Return"
+                v-for="returnItem in item.returns" />
+              <OrderItem
+                :item="orderItem as Order"
+                v-for="orderItem in item.orders" />
               <RequestItem :item="item as Bid" :status="status" />
             </div>
-          </DynamicScrollerItem>
-        </DynamicScroller>
-        <DynamicScroller
-          v-if="selectedSortType === -1 && !pending && filteredList"
-          :items="
-            orders?.data.results?.filter?.((o) =>
-              selectedCompany?.id ? o.company === selectedCompany?.id : true,
-            ) ?? []
-          "
-          :min-item-size="148"
-          v-slot="{ item, index, active }"
-          class="flex flex-col gap-y-2 px-4">
-          <DynamicScrollerItem
-            :item="item"
-            :active="active"
-            :data-index="index"
-            :size-dependencies="[item.name]">
-            <div class="pb-4">
-              <OrderItem :item="item as Order" />
-            </div>
-          </DynamicScrollerItem>
-        </DynamicScroller>
+          </div>
+        </div>
+
         <Pagination
           v-if="!pending && filteredList.length > 150"
           v-slot="{ page }"

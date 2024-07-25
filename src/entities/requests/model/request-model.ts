@@ -34,18 +34,39 @@ export const myRequestsQuery = createQuery({
     ).data;
     const brands = (await $api.brands.getBrands()).data;
     const categories = (await $api.categories.getCategories()).data;
+    const returns = (await $api.orderReturns.getOrderReturns()).data;
+    const orders = (await $api.orders.getOrders()).data;
 
     const brandsMap = new Map(brands.map((brand) => [brand.id, brand.name]));
     const categoriesMap = new Map(
       categories.map((category) => [category.id, category.name]),
     );
 
-    const results = bids.results?.map((bid) => ({
-      ...bid,
-      article: bid.article || 'Не указано',
-      brandName: brandsMap.get(bid.brand) || 'Не указано',
-      categoryName: categoriesMap.get(bid.category) || 'Не указано',
-    }));
+    const results = bids.results?.map((bid) => {
+      const ordersArr = orders.results?.filter((order) => order.bid === bid.id);
+
+      return {
+        ...bid,
+        article: bid.article || 'Не указано',
+        brandName: brandsMap.get(bid.brand) || 'Не указано',
+        categoryName: categoriesMap.get(bid.category) || 'Не указано',
+        orders: ordersArr,
+        returns: returns
+          .filter((orderReturn) =>
+            ordersArr?.map((order) => order.id).includes(orderReturn.order),
+          )
+          .map((orderReturn) => {
+            const orderItem = ordersArr?.find(
+              (order) => order.id === orderReturn.order,
+            );
+
+            return {
+              ...orderItem,
+              ...orderReturn,
+            };
+          }),
+      };
+    });
 
     return {
       ...bids,

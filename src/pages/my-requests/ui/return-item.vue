@@ -14,6 +14,7 @@
   defineProps<{
     item: OrderReturn & Order & { brand: string };
     hideHistory?: boolean;
+    hideDate?: boolean;
   }>();
 
   const cancelReturn = useUnit(cancelReturnClicked);
@@ -101,7 +102,7 @@
               {{ StatusDictionary[item.status as 0 | 1].label }}
             </p>
           </div>
-          <p class="text-[14px] font-normal text-[#667085]">
+          <p class="text-[14px] font-normal text-[#667085]" v-if="!hideDate">
             {{
               new Date(Date.parse(item.created_at!))
                 .toLocaleString('ru-RU', {
