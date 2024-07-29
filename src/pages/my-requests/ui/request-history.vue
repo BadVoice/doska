@@ -5,7 +5,6 @@
   import { useUnit } from 'effector-vue/composition';
   import { historyQuery } from '../model/history-model';
   import { requestViewModeChanged } from '../model/view-mode';
-  import OrderHistory from './order-history.vue';
   import RequestItem from './request-item.vue';
 
   const changeViewMode = useUnit(requestViewModeChanged);
@@ -35,12 +34,10 @@
     </div>
     <ScrollArea class="h-[calc(100vh-41px)] px-4">
       <div class="mb-5 flex flex-col gap-y-4">
-        <OrderHistory
-          hideHistory
-          :item="item as OrderWithHistory"
-          v-for="item in (history?.history as unknown as IHistory)?.orders" />
         <RequestItem
           show-date
+          :statusHistory="statusHistory"
+          v-for="statusHistory in history?.status_history"
           :item="history as BidWithName"
           :status="status" />
       </div>

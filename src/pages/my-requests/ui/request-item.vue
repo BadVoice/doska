@@ -20,6 +20,7 @@
     status: { color: string; text: string }[];
     item: BidWithName;
     showDate?: boolean;
+    statusHistory?: { changed_at: number; status: number };
   }>();
 
   function renderFile(file: File) {
@@ -63,7 +64,12 @@
     <div class="flex w-full flex-col gap-y-1">
       <div class="flex w-full justify-between">
         <p class="text-sm font-normal text-[#101828]">{{ item.name }}</p>
-        <Popover @update:open="(value) => (popoverOpened = value)">
+
+        <Popover
+          v-if="
+            (showDate && item.status === statusHistory?.status) || !showDate
+          "
+          @update:open="(value) => (popoverOpened = value)">
           <PopoverTrigger @click.stop>
             <span
               :class="
@@ -190,15 +196,26 @@
     <div v-if="showDate" class="flex w-full justify-between">
       <div class="flex items-center gap-x-1">
         <span
-          :style="{ backgroundColor: status[item.status ?? 0].color }"
+          :style="{
+            backgroundColor:
+              status[statusHistory?.status ?? item.status ?? 0].color,
+          }"
           class="mt-0.5 h-2 w-[9px] rounded-full" />
-        <p class="text-sm" :style="{ color: status[item.status ?? 0].color }">
-          {{ status[item.status ?? 0].text }}
+        <p
+          class="text-sm"
+          :style="{
+            color: status[statusHistory?.status ?? item.status ?? 0].color,
+          }">
+          {{ status[statusHistory?.status ?? item.status ?? 0].text }}
         </p>
       </div>
       <p class="text-[14px] font-normal text-[#667085]">
         {{
-          new Date(Date.parse(item.created_at!))
+          new Date(
+            Date.parse(
+              statusHistory?.changed_at.toString() ?? item.created_at!,
+            ),
+          )
             .toLocaleString('ru-RU', {
               timeStyle: 'short',
               dateStyle: 'short',
@@ -211,10 +228,17 @@
     </div>
     <div v-else class="flex items-center gap-x-1">
       <span
-        :style="{ backgroundColor: status[item.status ?? 0].color }"
+        :style="{
+          backgroundColor:
+            status[statusHistory?.status ?? item.status ?? 0].color,
+        }"
         class="mt-0.5 h-2 w-[9px] rounded-full" />
-      <p class="text-sm" :style="{ color: status[item.status ?? 0].color }">
-        {{ status[item.status ?? 0].text }}
+      <p
+        class="text-sm"
+        :style="{
+          color: status[statusHistory?.status ?? item.status ?? 0].color,
+        }">
+        {{ status[statusHistory?.status ?? item.status ?? 0].text }}
       </p>
     </div>
   </div>

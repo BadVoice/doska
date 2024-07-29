@@ -16,12 +16,16 @@ export const historyQuery = createQuery({
     const brands = await $api.brands.getBrands();
     const categories = await $api.categories.getCategories();
 
-    return {
+    const data = {
       ...bid.data,
       brandName: brands.data.find((brand) => brand.id === bid.data.brand),
       categoryName: categories.data.find(
         (category) => category.id === bid.data.category,
       ),
+    };
+
+    return data as typeof data & {
+      status_history: { changed_at: number; status: number }[];
     };
   },
 });

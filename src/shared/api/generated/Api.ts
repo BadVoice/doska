@@ -24,6 +24,12 @@ export interface VerifyUser {
   recaptcha?: string;
 }
 
+export interface VerifyPhoneEmailUser {
+  phone?: string;
+  email?: string;
+  code: number;
+}
+
 export interface User {
   username?: string;
   recaptcha?: string;
@@ -350,8 +356,6 @@ export interface OrderPage {
   results?: Order[];
 }
 
-export type Orders = Order[];
-
 export interface OrderReturn {
   id?: number;
   /**
@@ -544,10 +548,6 @@ export interface InlineResponse204 {
   success?: boolean;
 }
 
-export interface NomenclaturesBody {
-  company_id?: number;
-}
-
 export interface CartBody {
   account_id: number;
   cart_id: string;
@@ -561,16 +561,12 @@ export interface CartBody1 {
   quantity: number;
 }
 
-export interface OrderBody {
-  account_id: number;
-}
-
 export interface OrderFieldValues {
   field_name?: string;
   value?: string;
 }
 
-export interface OrderBody1 {
+export interface OrderBody {
   account_id: number;
   form_id: string;
   field_values: OrderFieldValues[];
@@ -796,9 +792,7 @@ export class HttpClient<SecurityDataType = unknown> {
       ...requestParams,
       headers: {
         ...(requestParams.headers || {}),
-        ...(type && type !== ContentType.FormData
-          ? { 'Content-Type': type }
-          : {}),
+        ...(type ? { 'Content-Type': type } : {}),
       },
       params: query,
       responseType: responseFormat,
@@ -942,6 +936,30 @@ export class Api<
     verifyUser: (data: VerifyUser, params: RequestParams = {}) =>
       this.request<VerifyUserResponse, Error>({
         path: `/user_verify`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+  };
+  phoneEmailVerify = {
+    /**
+     * No description
+     *
+     * @tags User
+     * @name VerifyPhoneEmail
+     * @summary метод верификации phone и email пользователя
+     * @request POST:/phone_email_verify
+     * @secure
+     */
+    verifyPhoneEmail: (
+      data: VerifyPhoneEmailUser,
+      params: RequestParams = {},
+    ) =>
+      this.request<VerifyUserResponse, Error>({
+        path: `/phone_email_verify`,
         method: 'POST',
         body: data,
         secure: true,
@@ -1460,19 +1478,18 @@ export class Api<
      */
     getNomenclatures: (
       query?: {
+        /** идентификатор организации */
+        company_id?: number;
         /** поиск по наименованию, артикулу */
         search?: string;
       },
-      data?: NomenclaturesBody,
       params: RequestParams = {},
     ) =>
       this.request<Nomenclatures, Error>({
         path: `/nomenclatures/`,
         method: 'GET',
         query: query,
-        body: data,
         secure: true,
-        type: ContentType.Json,
         format: 'json',
         ...params,
       }),
@@ -2248,10 +2265,17 @@ export class Api<
      * @request GET:/cart
      * @secure
      */
-    getCart: (params: RequestParams = {}) =>
+    getCart: (
+      query: {
+        /** идентификатор аккаунта */
+        account_id: number;
+      },
+      params: RequestParams = {},
+    ) =>
       this.request<Vendors, Error>({
         path: `/cart`,
         method: 'GET',
+        query: query,
         secure: true,
         format: 'json',
         ...params,
@@ -2325,13 +2349,18 @@ export class Api<
      * @request GET:/order
      * @secure
      */
-    getQwepOrder: (data: OrderBody, params: RequestParams = {}) =>
+    getQwepOrder: (
+      query: {
+        /** идентификатор аккаунта */
+        account_id: number;
+      },
+      params: RequestParams = {},
+    ) =>
       this.request<Vendors, Error>({
         path: `/order`,
         method: 'GET',
-        body: data,
+        query: query,
         secure: true,
-        type: ContentType.Json,
         format: 'json',
         ...params,
       }),
@@ -2345,7 +2374,7 @@ export class Api<
      * @request POST:/order
      * @secure
      */
-    createQwepOrder: (data: OrderBody1, params: RequestParams = {}) =>
+    createQwepOrder: (data: OrderBody, params: RequestParams = {}) =>
       this.request<Response, Error>({
         path: `/order`,
         method: 'POST',
