@@ -15,6 +15,7 @@
     item: OrderReturn & Order & { brand: string };
     hideHistory?: boolean;
     hideDate?: boolean;
+    statusHistory?: { changed_at: string; status: 0 | 1 };
   }>();
 
   const cancelReturn = useUnit(cancelReturnClicked);
@@ -92,19 +93,31 @@
             <span
               class="mt-px h-2.5 w-2.5 rounded-full"
               :style="{
-                backgroundColor: StatusDictionary[item.status as 0 | 1].color,
+                backgroundColor:
+                  StatusDictionary[
+                    statusHistory?.status ?? (item.status as 0 | 1)
+                  ].color,
               }" />
             <p
               class="text-[14px] font-normal"
               :style="{
-                color: StatusDictionary[item.status as 0 | 1].color,
+                color:
+                  StatusDictionary[
+                    statusHistory?.status ?? (item.status as 0 | 1)
+                  ].color,
               }">
-              {{ StatusDictionary[item.status as 0 | 1].label }}
+              {{
+                StatusDictionary[
+                  statusHistory?.status ?? (item.status as 0 | 1)
+                ].label
+              }}
             </p>
           </div>
           <p class="text-[14px] font-normal text-[#667085]" v-if="!hideDate">
             {{
-              new Date(Date.parse(item.created_at!))
+              new Date(
+                Date.parse(statusHistory?.changed_at ?? item.created_at!),
+              )
                 .toLocaleString('ru-RU', {
                   timeStyle: 'short',
                   dateStyle: 'short',

@@ -239,6 +239,7 @@
             selectedSortType === -5 || (selectedSortType === -6 && returns)
           ">
           <ReturnItem
+            hide-date
             v-for="item in returns
               ?.filter((r) =>
                 selectedSortType === -6 ? r.status === 1 : r.status === 0,

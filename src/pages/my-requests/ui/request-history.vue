@@ -1,26 +1,27 @@
 <script lang="ts" setup>
   import type { BidWithName } from '@/entities/requests';
-  import type { OrderWithHistory } from '@/shared/api/generated/Api';
   import { ScrollArea } from '@/shared/ui/scroll-area';
   import { useUnit } from 'effector-vue/composition';
-  import { historyQuery } from '../model/history-model';
+  import { $fullHistory } from '../model/history-model';
   import { requestViewModeChanged } from '../model/view-mode';
   import RequestItem from './request-item.vue';
+  import OrderItem from '@/pages/my-requests/ui/order-item.vue';
+  import ReturnItem from '@/pages/my-requests/ui/return-item.vue';
 
   const changeViewMode = useUnit(requestViewModeChanged);
-  const { data: history, pending } = useUnit(historyQuery);
+
+  const fullHistory = useUnit($fullHistory);
+
   const status = [
     { color: '#FF9900', text: 'Создана' },
     { color: '#36E000', text: 'Опубликована' },
     { color: '#0017FC', text: 'Исполнена' },
     { color: '#FE2400', text: 'Архивирована' },
   ];
-
-  type IHistory = { orders: OrderWithHistory[] };
 </script>
 
 <template>
-  <div class="flex h-[100vh] flex-col gap-y-4" v-if="!pending">
+  <div class="flex h-[100vh] flex-col gap-y-4">
     <div
       class="flex items-center justify-between border-b border-[#D0D4DB] px-5 py-3">
       <div class="flex cursor-pointer items-center gap-x-2">
@@ -34,11 +35,23 @@
     </div>
     <ScrollArea class="h-[calc(100vh-41px)] px-4">
       <div class="mb-5 flex flex-col gap-y-4">
+        <ReturnItem
+          :item="fullHistory.return"
+          :statusHistory="statusHistory"
+          v-if="fullHistory.return"
+          v-for="statusHistory in fullHistory.orderReturnHistory" />
+        <OrderItem
+          show-date
+          :item="fullHistory.order"
+          v-if="fullHistory.order"
+          :status-history="statusHistory"
+          v-for="statusHistory in fullHistory.orderHistory" />
         <RequestItem
           show-date
+          v-if="fullHistory.request"
           :statusHistory="statusHistory"
-          v-for="statusHistory in history?.status_history"
-          :item="history as BidWithName"
+          v-for="statusHistory in fullHistory.requestHistory"
+          :item="fullHistory.request as BidWithName"
           :status="status" />
       </div>
     </ScrollArea>

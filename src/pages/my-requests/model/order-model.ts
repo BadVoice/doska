@@ -14,11 +14,10 @@ import {
   createEffect,
   createEvent,
   createStore,
-  sample,
   type EventCallable,
+  sample,
 } from 'effector';
 import { delay, spread } from 'patronum';
-import { historyQuery } from './history-model';
 import { changeRequestStatus } from './my-requests-model';
 
 export const deleteOrderClicked = createEvent<Order>();
@@ -108,6 +107,17 @@ sample({
     bidId: getBidCancel.start,
     order: deleteOrder.start,
   }),
+});
+
+sample({
+  clock: cancelOrderClicked,
+  filter: (clk) => clk.status === 1,
+  fn: (clk) =>
+    ({
+      ...clk,
+      status: 0,
+    }) as Order,
+  target: editOrderMutation.start,
 });
 
 sample({
@@ -239,13 +249,14 @@ sample({
   target: createReturnMutation.start,
 });
 
-sample({
-  source: $currentOrder,
-  clock: createReturnMutation.finished.success,
-  filter: (_, clk) => [201].includes(clk.result.status),
-  fn: (src) => src?.bid ?? 1,
-  target: historyQuery.start,
-});
+// sample({
+//   source: $currentOrder,
+//   clock: createReturnMutation.finished.success,
+//   filter: (_, clk) => [201].includes(clk.result.status),
+//   fn: (src) => src?.bid ?? 1,
+//   target: historyQuery.start,
+// });
+
 sample({
   clock: deleteOrderClicked,
   target: deleteOrderMutation.start,

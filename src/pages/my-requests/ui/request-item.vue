@@ -20,7 +20,7 @@
     status: { color: string; text: string }[];
     item: BidWithName;
     showDate?: boolean;
-    statusHistory?: { changed_at: number; status: number };
+    statusHistory?: { changed_at: string; status: number };
   }>();
 
   function renderFile(file: File) {
