@@ -73,6 +73,15 @@ export const historyOrderQuery = createQuery({
   },
 });
 
+sample({
+  clock: [historyClicked, historyClickedBid, historyClickedReturn],
+  target: [
+    historyQuery.reset,
+    historyReturnQuery.reset,
+    historyOrderQuery.reset,
+  ],
+});
+
 export const $fullHistory = combine(
   {
     first: historyQuery.$data,
