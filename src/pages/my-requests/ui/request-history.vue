@@ -5,8 +5,8 @@
   import { $fullHistory } from '../model/history-model';
   import { requestViewModeChanged } from '../model/view-mode';
   import RequestItem from './request-item.vue';
-  import OrderItem from '@/pages/my-requests/ui/order-item.vue';
-  import ReturnItem from '@/pages/my-requests/ui/return-item.vue';
+  import HistoryOrderItem from '@/pages/my-requests/ui/history-order-item.vue';
+  import HistoryReturnItem from '@/pages/my-requests/ui/history-return-item.vue';
 
   const changeViewMode = useUnit(requestViewModeChanged);
 
@@ -35,12 +35,12 @@
     </div>
     <ScrollArea class="h-[calc(100vh-41px)] px-4">
       <div class="mb-5 flex flex-col gap-y-4">
-        <ReturnItem
+        <HistoryReturnItem
           :item="fullHistory.return"
           :statusHistory="statusHistory"
           v-if="fullHistory.return"
           v-for="statusHistory in fullHistory.orderReturnHistory" />
-        <OrderItem
+        <HistoryOrderItem
           show-date
           :item="fullHistory.order"
           v-if="fullHistory.order"

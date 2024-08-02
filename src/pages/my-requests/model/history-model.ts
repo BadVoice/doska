@@ -1,5 +1,5 @@
 import { $api } from '@/shared/api';
-import type { Order, OrderReturn } from '@/shared/api/generated/Api';
+import type { Offer, Order, OrderReturn } from '@/shared/api/generated/Api';
 import { createQuery } from '@farfetched/core';
 import { combine, createEvent, sample } from 'effector';
 import type { BidWithName } from './my-requests-model';
@@ -27,6 +27,8 @@ export const historyQuery = createQuery({
 
 export const historyReturnQuery = createQuery({
   handler: async (orderReturn: OrderReturn & Order & { brand: string }) => {
+    const offers = (await $api.offers.getOffers()).data;
+
     const orderReturnHistory = (
       (await $api.orderReturns.getOrderReturn(orderReturn?.id ?? 1)).data as any
     ).status_history as { changed_at: string; status: 0 | 1 }[];
@@ -45,14 +47,21 @@ export const historyReturnQuery = createQuery({
         status: number;
       }[],
       request: requestHistory,
-      order: orderHistory,
-      orderReturn,
+      order: {
+        ...orderHistory,
+        offer: offers.find((o) => o.id === orderHistory?.offer ?? 1),
+      } as Order & { offer: Offer },
+      orderReturn: {
+        ...orderReturn,
+        offer: offers.find((o) => o.id === orderHistory?.offer ?? 1),
+      } as OrderReturn & Order & { offer: Offer } & { brand: string },
     };
   },
 });
 
 export const historyOrderQuery = createQuery({
   handler: async (order: Order) => {
+    const offers = (await $api.offers.getOffers()).data;
     const orderHistory = (
       (await $api.orders.getOrder(order?.id ?? 1)).data as any
     ).status_history as {
@@ -68,7 +77,10 @@ export const historyOrderQuery = createQuery({
         status: number;
       }[],
       request: requestHistory,
-      order,
+      order: {
+        ...order,
+        offer: offers.find((o) => o.id === order?.offer ?? 1),
+      } as Order & { offer: Offer },
     };
   },
 });
