@@ -42,7 +42,8 @@ sample({
         raw_brand: clk.brand,
       },
       src.$selectedCompany?.id && { company: src.$selectedCompany.id },
-      clk.parsedDelivery && {
+      (clk.parsedDelivery ||
+        (clk.parsedDelivery as unknown as number) === 0) && {
         delivery_time: clk.parsedDelivery,
       },
     ) as Offer,
